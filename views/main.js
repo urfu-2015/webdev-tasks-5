@@ -28,7 +28,7 @@ function swipe() {
     var nowPoint;
     var ldelay;
     document.addEventListener('touchstart', function(event) {
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
         startPoint.x=event.changedTouches[0].pageX;
         startPoint.y=event.changedTouches[0].pageY;
@@ -36,7 +36,7 @@ function swipe() {
     }, false);
     /*Ловим движение пальцем*/
     document.addEventListener('touchmove', function(event) {
-        event.preventDefault();
+        //event.preventDefault();
         event.stopPropagation();
         var otk={};
         nowPoint=event.changedTouches[0];
@@ -45,7 +45,7 @@ function swipe() {
         /*Для примера*/
         if(Math.abs(otk.x)>200){
             if(otk.x<0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
-                alert(nowPoint.pageX, nowPoint.pageY);
+                alert(nowPoint.pageY);
             }
             if(otk.x>0){/*СВАЙП ВПРАВО(СЛЕД.СТРАНИЦА)*/}
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
