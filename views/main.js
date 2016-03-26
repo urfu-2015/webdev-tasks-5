@@ -45,7 +45,7 @@ function swipe() {
         /*Для примера*/
         if(Math.abs(otk.x)>200){
             if(otk.x<0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
-                alert("NICE MOVE");
+                alert("ok");
             }
             if(otk.x>0){/*СВАЙП ВПРАВО(СЛЕД.СТРАНИЦА)*/}
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
