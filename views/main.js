@@ -13,6 +13,11 @@ function getListTodo() {
         } else {
             // вывести результат
             var container = document.getElementsByClassName('container')[0];
+            container.innerHTML = '<div class="header-cont">' +
+                '<div class="c2">' +
+                'TODO-хи' +
+                '</div>' +
+                '</div>';
             var result = JSON.parse(xhr.responseText);
             for (var i=0;i<result.length;i++) {
                 var div = document.createElement('div');
@@ -26,9 +31,10 @@ function getListTodo() {
 }
 function deleteElement(id) {
     var xhr = new XMLHttpRequest();
-
-    xhr.open('POST', '/list-delete', true);
-    xhr.send(id);
+    var body = 'name=' + encodeURIComponent(id);
+    xhr.open('DELETE', '/list-delete', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(body);
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState != 4) return;
@@ -37,6 +43,7 @@ function deleteElement(id) {
             // обработать ошибку
             alert(xhr.status + ': ' + xhr.statusText);
         } else {
+                console.log(xhr.responseText);
                 getListTodo();
             }
         }
@@ -45,7 +52,22 @@ function swipe() {
     var startPoint={};
     var nowPoint;
     var ldelay;
-    var div_top = document.getElementsByClassName('c2')[0];
+    document.addEventListener('touchstart', function(event) {
+        if (event.targetTouches.length == 1) {
+            var startTap = {};
+            startTap.x=event.changedTouches[0].pageX;
+            startTap.y=event.changedTouches[0].pageY;
+            /* Надо удалить если нажали на картинку с нужным id */
+            var elem = document.elementFromPoint(startTap.x, startTap.y);
+            var fullElemId = elem.getAttribute('id');
+            var elemId = elem.getAttribute('id').substr(0, 3);
+            if (elemId == 'img' || elemId == 'del') {
+                var numberId = fullElemId.slice(-1 * fullElemId.length + 3);
+                deleteElement(parseInt(numberId));
+                alert(numberId);
+            }
+        }
+    }, false);
     document.addEventListener('touchstart', function(event) {
         //event.preventDefault();
         event.stopPropagation();
@@ -71,9 +93,10 @@ function swipe() {
                 console.log(listNumber);
                 div.className = "delete";
                 div.setAttribute('id', 'del' + listNumber);
-                div.innerHTML = "<img id='" + listNumber + "' src='trash.png' style='max-height:50px;'>" + "</a>";
+                div.innerHTML = "<img id='img" + listNumber + "' src='trash.png' style='max-height:50px;'>" + "</a>";
                 var container = document.getElementById('list' + listNumber);
                 document.getElementById('cont' + listNumber).appendChild(div);
+                container = document.getElementById('list' + listNumber);
                 container.style.marginLeft = "0px";
                 container.style.marginRight = "0px";
                 //if (nowPoint.pageY < 150) {
@@ -90,7 +113,7 @@ function swipe() {
             {
                 var container = document.getElementById('cont' + listNumber);
                 container.removeChild(document.getElementById('del' + listNumber));
-                container = document.getElementById('cont' + listNumber);
+                container = document.getElementById('list' + listNumber);
                 container.style.marginLeft = "30px";
                 container.style.marginRight = "30px";
             }
