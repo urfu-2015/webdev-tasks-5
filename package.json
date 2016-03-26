@@ -1,0 +1,28 @@
+{
+  "name": "team3",
+  "version": "1.0.0",
+  "description": "todo-hi",
+  "main": "app.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "node app.js"
+  },
+  "author": "FrodoTheTrue",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "cookie-parser": "^1.4.1",
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "lodash": "^4.6.1",
+    "morgan": "^1.7.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "npm-run-all": "^1.5.3"
+  },
+  "engines": {
+    "node": "4.4.0"
+  }
+}
