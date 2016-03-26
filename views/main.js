@@ -28,7 +28,7 @@ function swipe() {
     var nowPoint;
     var ldelay;
     var div_top = document.getElementsByClassName('c2')[0];
-    div_top.addEventListener('touchstart', function(event) {
+    document.addEventListener('touchstart', function(event) {
         //event.preventDefault();
         event.stopPropagation();
         startPoint.x=event.changedTouches[0].pageX;
@@ -36,7 +36,7 @@ function swipe() {
         ldelay=new Date();
     }, false);
     /*Ловим движение пальцем*/
-    div_top.addEventListener('touchmove', function(event) {
+    document.addEventListener('touchmove', function(event) {
         //event.preventDefault();
         event.stopPropagation();
         var otk={};
@@ -44,28 +44,15 @@ function swipe() {
         otk.x=nowPoint.pageX-startPoint.x;
         /*Обработайте данные*/
         /*Для примера*/
-        if(Math.abs(otk.x)>200){
-            if(otk.x<0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
+        if(Math.abs(otk.x)>20){
+            if(otk.x < 0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
+                // надо добавить блок еще к моему
+                if (nowPoint.pageY < 150) {
+                    alert("here");
+                }
             }
             if(otk.x>0){/*СВАЙП ВПРАВО(СЛЕД.СТРАНИЦА)*/}
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
-        }
-    }, false);
-    /*Ловим отпускание пальца*/
-    div_top.addEventListener('touchend', function(event) {
-        var pdelay=new Date();
-        nowPoint=event.changedTouches[0];
-        var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
-        var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-        if ((xAbs > 20 || yAbs > 20) && (pdelay.getTime()-ldelay.getTime())<200) {
-            if (xAbs > yAbs) {
-                if (nowPoint.pageX < startPoint.x){/*СВАЙП ВЛЕВО*/alert("swipe :)");}
-                else{/*СВАЙП ВПРАВО*/}
-            }
-            else {
-                if (nowPoint.pageY < startPoint.y){/*СВАЙП ВВЕРХ*/}
-                else{/*СВАЙП ВНИЗ*/}
-            }
         }
     }, false);
 }
