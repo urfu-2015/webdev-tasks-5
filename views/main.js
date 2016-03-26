@@ -17,11 +17,29 @@ function getListTodo() {
             for (var i=0;i<result.length;i++) {
                 var div = document.createElement('div');
                 div.className = "header-cont";
-                div.innerHTML = "<div class='c2'>" + result[i] + "</div>";
+                div.setAttribute('id', 'cont' + i);
+                div.innerHTML = "<div id='list"+ i + "'class='c3'>" + result[i] + "</div>";
                 container.appendChild(div);
             }
         }
     }
+}
+function deleteElement(id) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open('POST', '/list-delete', true);
+    xhr.send(id);
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) return;
+
+        if (xhr.status != 200) {
+            // обработать ошибку
+            alert(xhr.status + ': ' + xhr.statusText);
+        } else {
+                getListTodo();
+            }
+        }
 }
 function swipe() {
     var startPoint={};
@@ -45,35 +63,36 @@ function swipe() {
         /*Обработайте данные*/
         /*Для примера*/
         if(Math.abs(otk.x)>20){
+            var elem = document.elementFromPoint(startPoint.x, startPoint.y);
+            var listNumber = elem.getAttribute('id').slice(4);
             if(otk.x < 0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
                 // надо добавить блок еще к моему
-                var listNumber = parseInt(nowPoint.pageY / 150);
-                var elem = document.elementFromPoint(startPoint.x, startPoint.y);
-                alert(elem);
-                if (nowPoint.pageY < 150) {
-                    var div = document.createElement('div');
-                    div.className = "delete";
-                    div.innerHTML = "<img id='" + listNumber + "' src='trash.png' style='max-height:50px;'>" + "</a>";
-                    var container = document.getElementsByClassName('c2')[0];
-                    document.getElementsByClassName('header-cont')[0].appendChild(div);
-                    container.style.marginLeft = "0px";
-                    container.style.marginRight = "0px";
-                }
-                if (nowPoint.pageY > 160 && nowPoint.pageY < 210) {
-                    alert("here2");
-                }
-                if (nowPoint.pageY > 220 && nowPoint.pageY < 370) {
-                    alert("here3");
-                }
+                var div = document.createElement('div');
+                console.log(listNumber);
+                div.className = "delete";
+                div.setAttribute('id', 'del' + listNumber);
+                div.innerHTML = "<img id='" + listNumber + "' src='trash.png' style='max-height:50px;'>" + "</a>";
+                var container = document.getElementById('list' + listNumber);
+                document.getElementById('cont' + listNumber).appendChild(div);
+                container.style.marginLeft = "0px";
+                container.style.marginRight = "0px";
+                //if (nowPoint.pageY < 150) {
+                //    var div = document.createElement('div');
+                //    div.className = "delete";
+                //    div.innerHTML = "<img id='" + listNumber + "' src='trash.png' style='max-height:50px;'>" + "</a>";
+                //    var container = document.getElementsByClassName('c2')[0];
+                //    document.getElementsByClassName('header-cont')[0].appendChild(div);
+                //    container.style.marginLeft = "0px";
+                //    container.style.marginRight = "0px";
+                //}
             }
-            if(otk.x>0){if (nowPoint.pageY < 150) {
-
-                var container = document.getElementsByClassName('header-cont')[0];
-                container.removeChild(document.getElementsByClassName('delete')[0]);
-                container = document.getElementsByClassName('c2')[0];
+            if(otk.x>0)
+            {
+                var container = document.getElementById('cont' + listNumber);
+                container.removeChild(document.getElementById('del' + listNumber));
+                container = document.getElementById('cont' + listNumber);
                 container.style.marginLeft = "30px";
                 container.style.marginRight = "30px";
-            }
             }
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
         }
