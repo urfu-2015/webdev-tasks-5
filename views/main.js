@@ -16,8 +16,8 @@ function getListTodo() {
             var result = JSON.parse(xhr.responseText);
             for (var i=0;i<result.length;i++) {
                 var div = document.createElement('div');
-                div.className = "c3";
-                div.innerHTML = result[i];
+                div.className = "header-cont";
+                div.innerHTML = "<div class='c2'>" + result[i] + "</div>";
                 container.appendChild(div);
             }
         }
@@ -36,7 +36,7 @@ function swipe() {
         ldelay=new Date();
     }, false);
     /*Ловим движение пальцем*/
-    document.addEventListener('touchmove', function(event) {
+    document.addEventListener('touchend', function(event) {
         //event.preventDefault();
         event.stopPropagation();
         var otk={};
@@ -48,10 +48,29 @@ function swipe() {
             if(otk.x < 0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
                 // надо добавить блок еще к моему
                 if (nowPoint.pageY < 150) {
-                    alert("here");
+                    var div = document.createElement('div');
+                    div.className = "delete";
+                    div.innerHTML = "delete1";
+                    var container = document.getElementsByClassName('c2')[0];
+                    container.style.marginLeft = "0px";
+                    container.style.marginRight = "0px";
+                    document.getElementsByClassName('header-cont')[0].appendChild(div);
+                }
+                if (nowPoint.pageY > 160 && nowPoint.pageY < 210) {
+                    alert("here2");
+                }
+                if (nowPoint.pageY > 220 && nowPoint.pageY < 370) {
+                    alert("here3");
                 }
             }
-            if(otk.x>0){/*СВАЙП ВПРАВО(СЛЕД.СТРАНИЦА)*/}
+            if(otk.x>0){if (nowPoint.pageY < 150) {
+
+                var container = document.getElementsByClassName('header-cont')[0];
+                container.removeChild(document.getElementsByClassName('delete')[0]);
+                container.style.marginLeft = "30px";
+                container.style.marginRight = "30px";
+            }
+            }
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
         }
     }, false);
