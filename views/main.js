@@ -49,7 +49,7 @@ function swipe() {
                 // надо добавить блок еще к моему
                 var listNumber = parseInt(nowPoint.pageY / 150);
                 var elem = document.elementFromPoint(startPoint.x, startPoint.y);
-                console.log(elem);
+                alert(elem);
                 if (nowPoint.pageY < 150) {
                     var div = document.createElement('div');
                     div.className = "delete";
