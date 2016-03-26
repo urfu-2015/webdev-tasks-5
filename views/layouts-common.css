@@ -23,7 +23,7 @@
 
 .delete {
   float:right;
-  background-color: #f75f42;
+  background-color: #4789f7;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-flow: row wrap;
@@ -34,5 +34,5 @@
     align-items: center;
     justify-content: center;
     width: 10%;
-    margin: 10px 0px 10px 30px;
+    margin: 10px 0px 10px 0px;
 }

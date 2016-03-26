@@ -50,11 +50,11 @@ function swipe() {
                 if (nowPoint.pageY < 150) {
                     var div = document.createElement('div');
                     div.className = "delete";
-                    div.innerHTML = "delete1";
+                    div.innerHTML = "<img src='trash.png' style='max-height:50px;'>";
                     var container = document.getElementsByClassName('c2')[0];
+                    document.getElementsByClassName('header-cont')[0].appendChild(div);
                     container.style.marginLeft = "0px";
                     container.style.marginRight = "0px";
-                    document.getElementsByClassName('header-cont')[0].appendChild(div);
                 }
                 if (nowPoint.pageY > 160 && nowPoint.pageY < 210) {
                     alert("here2");
@@ -67,6 +67,7 @@ function swipe() {
 
                 var container = document.getElementsByClassName('header-cont')[0];
                 container.removeChild(document.getElementsByClassName('delete')[0]);
+                container = document.getElementsByClassName('c2')[0];
                 container.style.marginLeft = "30px";
                 container.style.marginRight = "30px";
             }
