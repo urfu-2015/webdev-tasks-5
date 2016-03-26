@@ -47,10 +47,13 @@ function swipe() {
         if(Math.abs(otk.x)>20){
             if(otk.x < 0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
                 // надо добавить блок еще к моему
+                var listNumber = parseInt(nowPoint.pageY / 150);
+                var elem = document.elementFromPoint(startPoint.x, startPoint.y);
+                console.log(elem);
                 if (nowPoint.pageY < 150) {
                     var div = document.createElement('div');
                     div.className = "delete";
-                    div.innerHTML = "<img src='trash.png' style='max-height:50px;'>";
+                    div.innerHTML = "<img id='" + listNumber + "' src='trash.png' style='max-height:50px;'>" + "</a>";
                     var container = document.getElementsByClassName('c2')[0];
                     document.getElementsByClassName('header-cont')[0].appendChild(div);
                     container.style.marginLeft = "0px";
