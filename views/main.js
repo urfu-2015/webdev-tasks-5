@@ -78,6 +78,24 @@ function swipe() {
     //    event.preventDefault();
     //    addElement(document.getElementById('input-text').value);
     //});
+    var ldelay;
+    var betw={};
+    document.addEventListener('touchstart', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        ldelay=new Date();
+        betw.x=event.changedTouches[0].pageX;
+        betw.y=event.changedTouches[0].pageY;
+    }, false);
+    /*Ловим отпускание пальца*/
+    document.addEventListener('touchend', function(event) {
+        var pdelay=new Date();
+        if(event.changedTouches[0].pageX==betw.x &&
+            event.changedTouches[0].pageY==betw.y &&
+            (pdelay.getTime()-ldelay.getTime())>100){
+            alert("LONG TOUCH");
+        }
+    }, false);
     document.addEventListener('touchstart', function(event) {
         if (event.targetTouches.length == 1) {
             var startTap = {};
