@@ -80,7 +80,7 @@ function swipe() {
             startTap.x=event.changedTouches[0].pageX;
             startTap.y=event.changedTouches[0].pageY;
             /* Надо удалить если нажали на картинку с нужным id */
-            var elem = document.elementFromPoint(startTap.x, startTap.y);
+            var elem = document.elementFromPoint(startTap.x - window.pageXOffset, startTap.y - window.pageYOffset);
             var fullElemId = elem.getAttribute('id');
             var elemId = elem.getAttribute('id').substr(0, 3);
             if (elemId == 'img' || elemId == 'del') {
@@ -107,7 +107,7 @@ function swipe() {
         /*Обработайте данные*/
         /*Для примера*/
         if(Math.abs(otk.x)>20){
-            var elem = document.elementFromPoint(startPoint.x, startPoint.y);
+            var elem = document.elementFromPoint(startPoint.x - window.pageXOffset, startPoint.y - window.pageYOffset);
             var listNumber = elem.getAttribute('id').slice(4);
             if(otk.x < 0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
                 // надо добавить блок еще к моему
