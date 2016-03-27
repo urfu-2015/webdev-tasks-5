@@ -81,7 +81,6 @@ function swipe() {
     var ldelay;
     var betw={};
     document.addEventListener('touchstart', function(event) {
-        event.preventDefault();
         event.stopPropagation();
         ldelay=new Date();
         betw.x=event.changedTouches[0].pageX;
