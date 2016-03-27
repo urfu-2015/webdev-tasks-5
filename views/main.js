@@ -139,6 +139,19 @@ function swipe() {
                 changeElement(listItem, document.getElementById('input-change-text-' + listItem).value);
             });
         }
+        if(nowPoint.pageY > startPoint.y + 20){
+            console.log("here");
+            var container = document.getElementsByClassName('reloader')[0];
+            var div = document.createElement('div');
+            div.className = 'container-reload';
+            div.innerHTML = '<div class="header-cont">' +
+                '<div class="rld">' +
+                '<img src="reload.png" style="max-height:50px;">' +
+                '</div>' +
+                '</div>';
+            container.appendChild(div);
+            setTimeout(getListTodo, 1000);
+        }
         /*Обработайте данные*/
         /*Для примера*/
         if(Math.abs(otk.x)>20) {
@@ -166,19 +179,6 @@ function swipe() {
                 container.style.marginRight = "30px";
             }
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
-        }
-        if(nowPoint.pageY > startPoint.y){
-            console.log("here");
-            var container = document.getElementsByClassName('reloader')[0];
-            var div = document.createElement('div');
-            div.className = 'container-reload';
-            div.innerHTML = '<div class="header-cont">' +
-                '<div class="rld">' +
-                '<img src="reload.png" style="max-height:50px;">' +
-                '</div>' +
-                '</div>';
-            container.appendChild(div);
-            setTimeout(getListTodo, 1000);
         }
     }, false);
 }
