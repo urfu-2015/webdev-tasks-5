@@ -60,9 +60,10 @@
     <div class="container">
         <div class="header-cont">
             <div class="c2">
-                <textarea style="resize: none;">
-                </textarea>
-                <input type="submit" value="Отправить" style="margin-left: 10px;">
+                <form action="/list-add" method="POST">
+                    <input id="input-text" type="text" style="resize: none;">
+                    <input id="submit-btn" type="submit" value="Добавить" style="margin-left: 10px;">
+                </form>
             </div>
         </div>
     </div>

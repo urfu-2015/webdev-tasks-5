@@ -48,10 +48,32 @@ function deleteElement(id) {
             }
         }
 }
+function addElement(content) {
+    var xhr = new XMLHttpRequest();
+    var body = 'content=' + encodeURIComponent(content);
+    xhr.open('PUT', '/list-add', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(body);
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) return;
+
+        if (xhr.status != 200) {
+            // обработать ошибку
+            alert(xhr.status + ': ' + xhr.statusText);
+        } else {
+            getListTodo();
+        }
+    }
+}
 function swipe() {
     var startPoint={};
     var nowPoint;
     var ldelay;
+    document.getElementById('submit-btn').addEventListener('click', function (event) {
+        event.preventDefault();
+        addElement(document.getElementById('input-text').value);
+    });
     document.addEventListener('touchstart', function(event) {
         if (event.targetTouches.length == 1) {
             var startTap = {};
