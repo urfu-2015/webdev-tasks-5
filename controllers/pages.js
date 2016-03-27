@@ -21,5 +21,10 @@ exports.listAdd = (req, res) => {
     res.send(todos);
 };
 
+exports.listChange = (req, res) => {
+    todos[parseInt(req.body.id)] = req.body.content;
+    console.log(req.body);
+    res.send(todos);
+};
 
 exports.error404 = (req, res) => res.sendStatus(404);

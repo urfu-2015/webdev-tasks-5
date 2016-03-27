@@ -66,6 +66,25 @@ function addElement(content) {
         }
     }
 }
+function changeElement(id, content) {
+    var xhr = new XMLHttpRequest();
+    var body = 'content=' + encodeURIComponent(content) +
+    '&id=' + encodeURIComponent(id);
+    xhr.open('POST', '/list-change', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(body);
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState != 4) return;
+
+        if (xhr.status != 200) {
+            // обработать ошибку
+            alert(xhr.status + ': ' + xhr.statusText);
+        } else {
+            getListTodo();
+        }
+    }
+}
 function swipe() {
     var startPoint={};
     var nowPoint;
@@ -74,28 +93,8 @@ function swipe() {
         event.preventDefault();
         addElement(document.getElementById('input-text').value);
     });
-    //document.getElementById('open-btn').addEventListener('click', function (event) {
-    //    event.preventDefault();
-    //    addElement(document.getElementById('input-text').value);
-    //});
-    var ldelay;
-    var betw={};
     document.addEventListener('touchstart', function(event) {
         event.stopPropagation();
-        ldelay=new Date();
-        betw.x=event.changedTouches[0].pageX;
-        betw.y=event.changedTouches[0].pageY;
-    }, false);
-    /*Ловим отпускание пальца*/
-    document.addEventListener('touchend', function(event) {
-        var pdelay=new Date();
-        if(event.changedTouches[0].pageX==betw.x &&
-            event.changedTouches[0].pageY==betw.y &&
-            (pdelay.getTime()-ldelay.getTime())>100){
-            alert("LONG TOUCH");
-        }
-    }, false);
-    document.addEventListener('touchstart', function(event) {
         if (event.targetTouches.length == 1) {
             var startTap = {};
             startTap.x=event.changedTouches[0].pageX;
@@ -109,21 +108,34 @@ function swipe() {
                 deleteElement(parseInt(numberId));
             }
         }
-    }, false);
-    document.addEventListener('touchstart', function(event) {
-        //event.preventDefault();
-        event.stopPropagation();
         startPoint.x=event.changedTouches[0].pageX;
         startPoint.y=event.changedTouches[0].pageY;
         ldelay=new Date();
     }, false);
     /*Ловим движение пальцем*/
     document.addEventListener('touchend', function(event) {
-        //event.preventDefault();
         event.stopPropagation();
         var otk={};
         nowPoint=event.changedTouches[0];
         otk.x=nowPoint.pageX-startPoint.x;
+        // Если был ШортТач
+        var pdelay=new Date();
+        if(event.changedTouches[0].pageX==startPoint.x &&
+            event.changedTouches[0].pageY==startPoint.y &&
+            (pdelay.getTime()-ldelay.getTime())>100) {
+            // надо добавить форму в штуку, по которой я кликнул
+            var elem = document.elementFromPoint(startPoint.x - window.pageXOffset, startPoint.y - window.pageYOffset);
+            var listItem = elem.getAttribute('id').slice(4);
+            var div = document.createElement('div');
+            elem.innerHTML = '<form action="/list-change" method="POST">' +
+                '<input id="input-change-text-' + listItem +'" type="text" style="resize: none;" value="' + elem.innerText + '">' +
+                '<input id="submit-change-btn-' + listItem + '" type="submit" value="Изменить" style="margin-left: 10px;">' +
+                '</form>';
+            document.getElementById('submit-change-btn-' + listItem).addEventListener('click', function (event) {
+                event.preventDefault();
+                changeElement(listItem, document.getElementById('input-change-text-' + listItem).value);
+            });
+        }
         /*Обработайте данные*/
         /*Для примера*/
         if(Math.abs(otk.x)>20){

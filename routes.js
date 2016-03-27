@@ -6,6 +6,7 @@ module.exports = function (app) {
     app.get('/', pages.index);
     app.get('/list-todo', pages.listTodo);
     app.delete('/list-delete', pages.listDelete);
+    app.post('/list-change', pages.listChange);
     app.put('/list-add', pages.listAdd);
     app.all('*', pages.error404);
     app.use((err, req, res) => {
