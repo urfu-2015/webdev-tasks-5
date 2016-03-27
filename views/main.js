@@ -74,6 +74,10 @@ function swipe() {
         event.preventDefault();
         addElement(document.getElementById('input-text').value);
     });
+    //document.getElementById('open-btn').addEventListener('click', function (event) {
+    //    event.preventDefault();
+    //    addElement(document.getElementById('input-text').value);
+    //});
     document.addEventListener('touchstart', function(event) {
         if (event.targetTouches.length == 1) {
             var startTap = {};
@@ -86,7 +90,6 @@ function swipe() {
             if (elemId == 'img' || elemId == 'del') {
                 var numberId = fullElemId.slice(-1 * fullElemId.length + 3);
                 deleteElement(parseInt(numberId));
-                alert(numberId);
             }
         }
     }, false);
