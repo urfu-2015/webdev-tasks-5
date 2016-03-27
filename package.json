@@ -1,0 +1,29 @@
+{
+  "name": "webdev-tasks-5",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "lint:js": "node_modules/eslint .",
+    "watch:css": "stylus -w ./styles/botton.styl -o ./public/stylesheet/style.css"
+  },
+  "dependencies": {
+    "body-parser": "1.13.2",
+    "cookie-parser": "1.3.5",
+    "debug": "2.2.0",
+    "express": "4.13.1",
+    "express-stylus": "^0.1.0",
+    "hbs": "3.1.0",
+    "morgan": "1.6.1",
+    "nib": "^1.1.0",
+    "serve-favicon": "2.3.0",
+    "stylus": "^0.54.2"
+  },
+  "devDependencies": {
+    "eslint": "2.5.1",
+    "nib": "^1.1.0"
+  },
+  "engines": {
+    "node": "4.4.1"
+  }
+}

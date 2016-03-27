@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{title}}</title>
+        {{#each stylesheets}}
+            <link rel="stylesheet" href="stylesheets/{{filename}}.css" />
+        {{/each}}
+        <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="/images/favicon.png" type="image/png"/>
+    </head>
+    <body>
+        {{{body}}}
+    </body>
+</html>
