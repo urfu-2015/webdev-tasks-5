@@ -1,0 +1,19 @@
+{
+  "name": "webdev-tasks-5",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dotokoto/webdev-tasks-5.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dotokoto/webdev-tasks-5/issues"
+  },
+  "homepage": "https://github.com/Dotokoto/webdev-tasks-5#readme",
+  "dependencies": {
+    "express": "4.13.4"
+  }
+}
