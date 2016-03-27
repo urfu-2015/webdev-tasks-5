@@ -15,5 +15,11 @@ exports.listDelete = (req, res) => {
     console.log(todos);
     res.send(todos);
 };
+exports.listAdd = (req, res) => {
+    todos.push(req.body.content);
+    console.log(todos);
+    res.send(todos);
+};
+
 
 exports.error404 = (req, res) => res.sendStatus(404);
