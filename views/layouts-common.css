@@ -6,9 +6,19 @@
 }
 
 .container div {
-  box-sizing: border-box;
-  min-height: 100px;
-  min-width: 150px;
+    box-sizing: border-box;
+    min-height: 100px;
+    min-width: 150px;
+}
+.container-reload {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.container-reload div {
+    box-sizing: border-box;
+    min-height: 100px;
+    min-width: 150px;
 }
 
 .c2 {

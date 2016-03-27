@@ -16,7 +16,8 @@ exports.listDelete = (req, res) => {
     res.send(todos);
 };
 exports.listAdd = (req, res) => {
-    todos.push(req.body.content);
+    //todos.push(req.body.content);
+    todos.unshift(req.body.content);
     console.log(todos);
     res.send(todos);
 };

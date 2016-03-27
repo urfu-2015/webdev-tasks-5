@@ -12,6 +12,8 @@ function getListTodo() {
             alert(xhr.status + ': ' + xhr.statusText);
         } else {
             // вывести результат
+            var reload = document.getElementsByClassName('reloader')[0];
+            reload.innerHTML = "";
             var container = document.getElementsByClassName('container')[0];
             container.innerHTML = '<div class="header-cont">' +
                 '<div class="c2">' +
@@ -118,6 +120,7 @@ function swipe() {
         var otk={};
         nowPoint=event.changedTouches[0];
         otk.x=nowPoint.pageX-startPoint.x;
+        otk.y=nowPoint.pageY-startPoint.y;
         // Если был ШортТач
         var pdelay=new Date();
         if(event.changedTouches[0].pageX==startPoint.x &&
@@ -138,10 +141,10 @@ function swipe() {
         }
         /*Обработайте данные*/
         /*Для примера*/
-        if(Math.abs(otk.x)>20){
+        if(Math.abs(otk.x)>20) {
             var elem = document.elementFromPoint(startPoint.x - window.pageXOffset, startPoint.y - window.pageYOffset);
             var listNumber = elem.getAttribute('id').slice(4);
-            if(otk.x < 0){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
+            if(otk.x < 0 && Math.abs(otk.y) < 50){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
                 // надо добавить блок еще к моему
                 var div = document.createElement('div');
                 console.log(listNumber);
@@ -153,17 +156,8 @@ function swipe() {
                 container = document.getElementById('list' + listNumber);
                 container.style.marginLeft = "0px";
                 container.style.marginRight = "0px";
-                //if (nowPoint.pageY < 150) {
-                //    var div = document.createElement('div');
-                //    div.className = "delete";
-                //    div.innerHTML = "<img id='" + listNumber + "' src='trash.png' style='max-height:50px;'>" + "</a>";
-                //    var container = document.getElementsByClassName('c2')[0];
-                //    document.getElementsByClassName('header-cont')[0].appendChild(div);
-                //    container.style.marginLeft = "0px";
-                //    container.style.marginRight = "0px";
-                //}
             }
-            if(otk.x>0)
+            if(otk.x>0 && Math.abs(otk.y) < 50)
             {
                 var container = document.getElementById('cont' + listNumber);
                 container.removeChild(document.getElementById('del' + listNumber));
@@ -172,6 +166,19 @@ function swipe() {
                 container.style.marginRight = "30px";
             }
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
+        }
+        if(nowPoint.pageY > startPoint.y){
+            console.log("here");
+            var container = document.getElementsByClassName('reloader')[0];
+            var div = document.createElement('div');
+            div.className = 'container-reload';
+            div.innerHTML = '<div class="header-cont">' +
+                '<div class="rld">' +
+                '<img src="reload.png" style="max-height:50px;">' +
+                '</div>' +
+                '</div>';
+            container.appendChild(div);
+            setTimeout(getListTodo, 1000);
         }
     }, false);
 }
