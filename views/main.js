@@ -120,7 +120,7 @@ function swipe() {
             });
         }
         // Если свайп сверху вниз
-        if(nowPoint.pageY > startPoint.y + 20){
+        if(nowPoint.pageY > startPoint.y + 50){
             console.log("here");
             var container = document.getElementsByClassName('reloader')[0];
             var div = document.createElement('div');
