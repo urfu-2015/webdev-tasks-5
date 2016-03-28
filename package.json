@@ -1,0 +1,23 @@
+{
+  "name": "webdev-tasks-5",
+  "version": "1.0.0",
+  "description": "В отзывах вы писали нам, что задачи стали простые и однобокие,\r и мы решили подготовить сложную и многобокую задачу, а именно – реализовать\r целый сервис «TODOхи» для ведения списка задач.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VasiliiKuznecov/webdev-tasks-5.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VasiliiKuznecov/webdev-tasks-5/issues"
+  },
+  "homepage": "https://github.com/VasiliiKuznecov/webdev-tasks-5#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
