@@ -4,6 +4,7 @@ var todos = [
     'Навестить бабулю',
     'Сделать 5ую задачу'
 ];
+var responseMessage = 'ok';
 exports.index = (req, res) => {
     res.render('index.html');
 };
@@ -12,20 +13,16 @@ exports.listTodo = (req, res) => {
 };
 exports.listDelete = (req, res) => {
     todos.splice(parseInt(req.body.name), 1);
-    console.log(todos);
-    res.send(todos);
+    res.send(responseMessage);
 };
 exports.listAdd = (req, res) => {
-    //todos.push(req.body.content);
     todos.unshift(req.body.content);
-    console.log(todos);
-    res.send(todos);
+    res.send(responseMessage);
 };
 
 exports.listChange = (req, res) => {
     todos[parseInt(req.body.id)] = req.body.content;
-    console.log(req.body);
-    res.send(todos);
+    res.send(responseMessage);
 };
 
 exports.error404 = (req, res) => res.sendStatus(404);
