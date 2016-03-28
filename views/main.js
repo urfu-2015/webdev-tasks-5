@@ -1,22 +1,17 @@
 function getListTodo() {
     var xhr = new XMLHttpRequest();
-
     xhr.open('GET', '/list-todo', true);
     xhr.send();
-
     xhr.onreadystatechange = function() {
         if (xhr.readyState != 4) return;
-
         if (xhr.status != 200) {
-            // обработать ошибку
             alert(xhr.status + ': ' + xhr.statusText);
         } else {
-            // вывести результат
             var reload = document.getElementsByClassName('reloader')[0];
             reload.innerHTML = "";
             var container = document.getElementsByClassName('container')[0];
             container.innerHTML = '<div class="header-cont">' +
-                '<div class="c2">' +
+                '<div class="blue-container">' +
                 'TODO-хи' +
                 '</div>' +
                 '</div>';
@@ -25,7 +20,7 @@ function getListTodo() {
                 var div = document.createElement('div');
                 div.className = "header-cont";
                 div.setAttribute('id', 'cont' + i);
-                div.innerHTML = "<div id='list"+ i + "'class='c3'>" + result[i] + "</div>";
+                div.innerHTML = "<div id='list"+ i + "'class='white-container'>" + result[i] + "</div>";
                 container.appendChild(div);
             }
         }
@@ -37,15 +32,11 @@ function deleteElement(id) {
     xhr.open('DELETE', '/list-delete', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(body);
-
     xhr.onreadystatechange = function() {
         if (xhr.readyState != 4) return;
-
         if (xhr.status != 200) {
-            // обработать ошибку
             alert(xhr.status + ': ' + xhr.statusText);
         } else {
-                console.log(xhr.responseText);
                 getListTodo();
             }
         }
@@ -56,12 +47,9 @@ function addElement(content) {
     xhr.open('PUT', '/list-add', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(body);
-
     xhr.onreadystatechange = function() {
         if (xhr.readyState != 4) return;
-
         if (xhr.status != 200) {
-            // обработать ошибку
             alert(xhr.status + ': ' + xhr.statusText);
         } else {
             getListTodo();
@@ -75,12 +63,10 @@ function changeElement(id, content) {
     xhr.open('POST', '/list-change', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(body);
-
     xhr.onreadystatechange = function() {
         if (xhr.readyState != 4) return;
 
         if (xhr.status != 200) {
-            // обработать ошибку
             alert(xhr.status + ': ' + xhr.statusText);
         } else {
             getListTodo();
@@ -97,12 +83,11 @@ function swipe() {
     });
     document.addEventListener('touchstart', function(event) {
         event.stopPropagation();
+        startPoint.x=event.changedTouches[0].pageX;
+        startPoint.y=event.changedTouches[0].pageY;
+        ldelay=new Date();
         if (event.targetTouches.length == 1) {
-            var startTap = {};
-            startTap.x=event.changedTouches[0].pageX;
-            startTap.y=event.changedTouches[0].pageY;
-            /* Надо удалить если нажали на картинку с нужным id */
-            var elem = document.elementFromPoint(startTap.x - window.pageXOffset, startTap.y - window.pageYOffset);
+            var elem = document.elementFromPoint(startPoint.x - window.pageXOffset, startPoint.y - window.pageYOffset);
             var fullElemId = elem.getAttribute('id');
             var elemId = elem.getAttribute('id').substr(0, 3);
             if (elemId == 'img' || elemId == 'del') {
@@ -110,11 +95,7 @@ function swipe() {
                 deleteElement(parseInt(numberId));
             }
         }
-        startPoint.x=event.changedTouches[0].pageX;
-        startPoint.y=event.changedTouches[0].pageY;
-        ldelay=new Date();
     }, false);
-    /*Ловим движение пальцем*/
     document.addEventListener('touchend', function(event) {
         event.stopPropagation();
         var otk={};
@@ -126,7 +107,6 @@ function swipe() {
         if(event.changedTouches[0].pageX==startPoint.x &&
             event.changedTouches[0].pageY==startPoint.y &&
             (pdelay.getTime()-ldelay.getTime())>100) {
-            // надо добавить форму в штуку, по которой я кликнул
             var elem = document.elementFromPoint(startPoint.x - window.pageXOffset, startPoint.y - window.pageYOffset);
             var listItem = elem.getAttribute('id').slice(4);
             var div = document.createElement('div');
@@ -139,6 +119,7 @@ function swipe() {
                 changeElement(listItem, document.getElementById('input-change-text-' + listItem).value);
             });
         }
+        // Если свайп сверху вниз
         if(nowPoint.pageY > startPoint.y + 20){
             console.log("here");
             var container = document.getElementsByClassName('reloader')[0];
@@ -152,13 +133,11 @@ function swipe() {
             container.appendChild(div);
             setTimeout(getListTodo, 1000);
         }
-        /*Обработайте данные*/
-        /*Для примера*/
+        // Если свайп вправо
         if(Math.abs(otk.x)>20) {
             var elem = document.elementFromPoint(startPoint.x - window.pageXOffset, startPoint.y - window.pageYOffset);
             var listNumber = elem.getAttribute('id').slice(4);
-            if(otk.x < 0 && Math.abs(otk.y) < 50){/*СВАЙП ВЛЕВО(ПРЕД.СТРАНИЦА)*/
-                // надо добавить блок еще к моему
+            if(otk.x < 0 && Math.abs(otk.y) < 50){
                 var div = document.createElement('div');
                 console.log(listNumber);
                 div.className = "delete";
@@ -170,6 +149,7 @@ function swipe() {
                 container.style.marginLeft = "0px";
                 container.style.marginRight = "0px";
             }
+            // Если свайп влево
             if(otk.x>0 && Math.abs(otk.y) < 50)
             {
                 var container = document.getElementById('cont' + listNumber);
