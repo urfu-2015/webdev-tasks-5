@@ -1,0 +1,41 @@
+.task {
+    margin: 7% auto;
+    width: 70%;
+    display: flex;
+    justify-content: center;
+}
+
+.task__text {
+    font-size: 4vh;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+    width: 85%;
+    border: 3px solid #000;
+    padding: 5% 0;
+}
+
+.task__delete {
+    width: 15%;
+    display: none;
+    background: url('delete.png') no-repeat center;
+    background-size: contain;
+    border: 3px solid #f00;
+}
+
+.task__rename {
+    display: none;
+    border: 3px solid #000;
+}
+
+.rename-text {
+    font-size: 4vh;
+    width: 95%;
+    margin: 3%;
+}
+
+.rename-submit {
+    font-size: 3vh;
+    margin: 10px 0 10px 45%;
+}
