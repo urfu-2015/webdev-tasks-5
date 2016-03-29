@@ -63,7 +63,7 @@ button
 {
     height: 100%;
     width: 30px;
-    background: url('http://www.free-icons-download.net/images/open--trash-can-icon-80062.png') no-repeat 0px 0px;
+    background: url('//www.free-icons-download.net/images/open--trash-can-icon-80062.png') no-repeat 0px 0px;
     -webkit-background-size: contain;
     background-size: contain;
 }
@@ -108,7 +108,7 @@ button
 {
     height: 50px;
     width: 50px;
-    background: url('http://upload.wikimedia.org/wikipedia/commons/b/bc/Refresh_icon.png');
+    background: url('//upload.wikimedia.org/wikipedia/commons/b/bc/Refresh_icon.png');
     -webkit-background-size: contain;
     background-size: contain;
     transition-duration: 5s;
