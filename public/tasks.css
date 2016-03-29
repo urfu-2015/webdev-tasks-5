@@ -1,0 +1,115 @@
+body
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #eee;
+}
+
+button
+{
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+.tasks
+{
+    display: flex;
+    flex-direction: column;
+    width: Calc(100% - 20px);
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    transition-duration: 1s;
+}
+
+.task
+{
+    display: flex;
+    width: 100%;
+    margin: 5px 0;
+    height: 30px;
+}
+
+.task_edit
+{
+    width: 100%;
+    margin: 5px 0;
+    text-align: right;
+    padding: 3px;
+    background: #ddd;
+}
+
+.task__name,
+.add-task__name
+{
+    display: flex;
+    width: 100%;
+    padding: 3px;
+    align-items: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: #aaa 1px 1px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    transition-duration: .5s;
+}
+
+.task__delete-button
+{
+    height: 100%;
+    width: 30px;
+    background: url('http://www.free-icons-download.net/images/open--trash-can-icon-80062.png') no-repeat 0px 0px;
+    -webkit-background-size: contain;
+    background-size: contain;
+}
+
+.task__edit-field
+{
+    width: 100%;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+.task__save-edit
+{
+    height: 30px;
+    width: 50%;
+    max-width: 200px;
+    margin-top: 5px;
+    background: #fff;
+    box-shadow: #aaa 1px 1px;
+}
+
+.add-task
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.add-task__button
+{
+    display: block;
+    height: 30px;
+    width: 50%;
+    max-width: 200px;
+    background: #fff;
+    box-shadow: #aaa 1px 1px;
+}
+
+.refresh
+{
+    height: 50px;
+    width: 50px;
+    background: url('http://upload.wikimedia.org/wikipedia/commons/b/bc/Refresh_icon.png');
+    -webkit-background-size: contain;
+    background-size: contain;
+    transition-duration: 5s;
+}
