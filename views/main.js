@@ -78,7 +78,7 @@ function getById(id) {
     return document.getElementById(id);
 }
 function createChangeForm(id, value) {
-    return '<form action="/list-change" method="POST">' +
+    return '<form class="changeForm" action="/list-change" method="POST">' +
         '<input id="input-change-text-' + id +
         '" type="text" style="resize: none;" value="' + value + '">' +
         '<input id="submit-change-btn-' + id +
@@ -131,12 +131,14 @@ function checkEvents() {
         if(event.changedTouches[0].pageX == startPoint.x &&
             event.changedTouches[0].pageY == startPoint.y &&
             (endTime.getTime()-startTime.getTime()) > 20) { // тач на месте - предлагаем изменить блок
-            var listItem = clickedElem.getAttribute('id').slice(4); // берем номер блока
-            clickedElem.innerHTML = createChangeForm(listItem, clickedElem.innerText);
-            getById('submit-change-btn-' + listItem).addEventListener('click', function (event) {
-                event.preventDefault();
-                changeElement(listItem, getById('input-change-text-' + listItem).value);
-            });
+            if (!getClassByNumber('changeForm', 0)) { // если еще не вставляли
+                var listItem = clickedElem.getAttribute('id').slice(4); // берем номер блока
+                clickedElem.innerHTML = createChangeForm(listItem, clickedElem.innerText);
+                getById('submit-change-btn-' + listItem).addEventListener('click', function (event) {
+                    event.preventDefault();
+                    changeElement(listItem, getById('input-change-text-' + listItem).value);
+                });
+            }
         }
         // Если свайп сверху вниз, обновляем страничку
         if(nowPoint.pageY > startPoint.y + 50) {
