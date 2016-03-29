@@ -125,7 +125,7 @@ function checkEvents() {
         nowPoint = event.changedTouches[0];
         shift.x = nowPoint.pageX - startPoint.x;
         shift.y = nowPoint.pageY - startPoint.y;
-        var clickedElem = document.elementFromPoint(startPoint.x - window.pageXOffset, startPoint.y - window.pageYOffset);
+        var clickedElem = event.target;
         // Если был ШортТач
         var endTime=new Date();
         if(event.changedTouches[0].pageX == startPoint.x &&
