@@ -6,7 +6,7 @@
     "deploy": "git push heroku master",
     "lint:js": "eslint --fix .",
     "lint:css": "stylelint **/*.css",
-    "run": "node app.js"
+    "start": "node app.js"
   },
   "license": "MIT",
   "dependencies": {
