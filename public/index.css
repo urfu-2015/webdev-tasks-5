@@ -1,0 +1,41 @@
+html,
+body
+{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#root,
+#root__todos-container
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.root__todos
+{
+    margin: 10px 0;
+}
+
+.todos-container__todo
+{
+    width: 90%;
+    margin: 2px;
+    padding: 2px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.todo
+{
+    text-align: center;
+}
+
+.root__header
+{
+    color:red;
+    font-size: 20px;
+}
