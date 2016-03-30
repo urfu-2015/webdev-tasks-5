@@ -1,0 +1,17 @@
+<section id="todoSection" class="todohi-block">
+    {{#todos}}
+        <div id="todo_{{id}}" class="todohi-item">
+            <div class="todohi-item__todoha">
+                <span class="todohi-item__title off-events">{{text}}</span>
+            </div>
+        </div>
+    {{/todos}}
+    <div id="addTodo" class="todohi-item">
+        <div class="todohi-item__todoha">
+            <form class="todohi-add-block" action="" method="put">
+                <input id="newTodoText" class="todohi-add-block__input" value="" maxlength="12" required placeholder="Введите вашу ТуДу-Ху =)">
+                <a id="add-button" class="todohi-item-add-block__add-button">Добавить</a>
+            </form>
+        </div>
+    </div>
+</section>
