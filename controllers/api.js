@@ -20,7 +20,7 @@ exports.addTask = function (req, res) {
 		return res.status(400).json({ message: 'No text' });
 	}
 	database.push({
-		id: database.length + 1,
+		id: Date.now(),
 		text: req.body.text
 	});
 	res.status(201).json({ message: 'OK' });
@@ -34,4 +34,12 @@ exports.changeTask = function (req, res) {
 	} else {
 		res.status(404).json({ message: 'No task with this id'});
 	}
+};
+
+exports.deleteTask = function (req, res) {
+	for (var i = 0;
+		i < database.length && database[i].id != req.params.id;
+		i++) {}
+	database.splice(i, 1);
+	res.status(200).json({ message: 'OK' });
 };
