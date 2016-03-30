@@ -24,14 +24,15 @@ exports.create = (req, res) => {
 
 exports.change = (req, res) => {
     const note = Note.find(req.body.name);
-    note.change(req.change);
+    console.log('change', note, 'to', req.body.changeNote);
+    note.change(req.body.changeNote);
     res.send(note); // ?
 };
 
 exports.deleteNote = (req, res) => {
     const note = Note.find(req.body.name);
-    console.log(note);
-    Note.deleteNote(note);
+    console.log('delete', note);
+    note.deleteNote();
     res.send(note); // ?
 };
 

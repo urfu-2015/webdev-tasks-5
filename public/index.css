@@ -34,12 +34,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 .container__item__text {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   margin: 15px;
 }
-.container__delete {
+.delete {
   position: absolute;
   background-color: #f00;
   background-image: url("/images/delete.png");

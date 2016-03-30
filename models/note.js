@@ -12,7 +12,7 @@ function readNotes() {
     }
 }
 
-const notes = readNotes();
+const notes = [];
 
 function write() {
     fs.writeFile('./models/notes.txt', JSON.stringify(notes), (err) => {
@@ -37,8 +37,8 @@ class Note {
         write();
     }
 
-    static deleteNote(note) {
-        notes.slice(notes.indexOf(note), 1);
+    deleteNote() {
+        notes.splice(notes.indexOf(this), 1);
         write();
     }
 
@@ -52,5 +52,10 @@ class Note {
         return notes;
     }
 }
+
+readNotes().forEach((note) => {
+    notes.push(new Note(note));
+});
+console.log(notes);
 
 module.exports = Note;

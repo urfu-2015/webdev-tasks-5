@@ -1,7 +1,7 @@
 'use strict';
 
 var container = document.querySelector('.container');
-var del = document.querySelector('.container__delete');
+var del = document.querySelector('.delete');
 var formAdd = document.querySelector('.add');
 var reload = document.querySelector('.reload');
 var countMove = 0;
@@ -22,7 +22,7 @@ function xhrRequest(method, puth, hundler, body) {
     } else {
         xhr.send();
     }
-    xhr.onreadystatechange = () => {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState != 4) return;
         if (xhr.status != 200) {
             alert(xhr.status + ': ' + xhr.statusText);
@@ -46,24 +46,26 @@ function createNote(text) {
 
 function resetFormSave() {
     noteSave.removeChild(formSave);
-    noteSave.childNodes[1].style.display = 'inline';
+    noteSave.childNodes[0].style.display = 'inline';
     formSave = undefined;
 }
 
 function resetDel() {
-    target.style.transform = 'translateX(' + 0 + '%)';
     del.style.display = 'none';
+    del.style.top = 0;
+    del.style.left = 0;
 }
 
 function resetTransform() {
-    console.log(target);
-    target.style.transform = 'translateX(' + 0 + ')';
+    if (target && target.closest('.container__item')) {
+        target.closest('.container__item').style.transform = 'translateX(' + 0 + ')';
+    }
 }
 
 function createFormSave(note, noteText) {
     var form = document.createElement('form');
     var inputText = document.createElement('input');
-    var inputBtn = document.createElement('button');
+    var inputBtn = document.createElement('input');
     formSave = form;
     noteSave = note;
 
@@ -83,15 +85,15 @@ function createFormSave(note, noteText) {
     form.appendChild(inputText);
     form.appendChild(inputBtn);
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
 
         var text = document.querySelector('.save__text').value;
-        var name = noteSave.childNodes[i].innerText;
-        var body = 'name=' + encodeURIComponent(name) + '&change=' + encodeURIComponent(text);
+        var name = noteSave.childNodes[0].innerText;
+        var body = 'name=' + encodeURIComponent(name) + '&changeNote=' + encodeURIComponent(text);
 
-        xhrRequest('PUT', '/change-note', (response) => {
-            noteSave.childNodes[1].innerText = response.name;
+        xhrRequest('PUT', '/change-note', function (response) {
+            noteSave.childNodes[0].innerText = response.name;
             resetFormSave();
         }, body);
     }, false);
@@ -104,9 +106,41 @@ function createDel() {
     del.style.height = target.offsetHeight + 'px';
 }
 
+function swipe(xAbs, yAbs) {
+    if (xAbs > yAbs) {
+        //Свайп влево
+        if (finalPoint.pageX < initialPoint.pageX && finalPoint.target.closest('.container__item')){
+            target = finalPoint.target.closest('.container__item');
+            target.style.transform = 'translateX(-' + 20 + '%)';
+            createDel();
+        }
+    } else {
+        if (finalPoint.pageY > initialPoint.pageY && finalPoint.target.closest('header')){
+            //Свайп вниз
+            event.preventDefault();
+            document.body.style.marginTop = 0;
+            //get notes
+            xhrRequest('GET', '/list-notes', function (response) {
+                setTimeout(function () {
+                    document.body.style.marginTop = -40 + 'px';
+                }, 500);
 
+                var items = document.querySelectorAll('.container__item');
 
-formAdd.addEventListener('submit', event => {
+                var i = 0;
+                for (i; i < items.length; i++) {
+                    container.removeChild(items[i]);
+                }
+
+                response.forEach(function (note) {
+                    createNote(note.name);
+                });
+            });
+        }
+    }
+}
+
+formAdd.addEventListener('submit', function (event) {
     event.preventDefault();
 
     var note = document.querySelector('#input_text').value;
@@ -115,21 +149,21 @@ formAdd.addEventListener('submit', event => {
     }
     var body = 'name=' + encodeURIComponent(note);
 
-    xhrRequest('POST', '/add-path', (response) => {
+    xhrRequest('POST', '/add-note', function (response) {
         createNote(response.name);
+        document.querySelector('#input_text').value = '';
     }, body);
 });
 
-del.addEventListener('touchstart', (event) => {
+del.addEventListener('touchstart', function (event) {
     event.preventDefault();
 
-    //console.log(target);
-    var name = target.childNodes[1].innerText;
+    var name = target.childNodes[0].innerText;
     var body = 'name=' + encodeURIComponent(name);
 
-    xhrRequest('DELETE', 'delete-note', () => {
-        del.style.display = 'none';
+    xhrRequest('DELETE', 'delete-note', function() {
         container.removeChild(target);
+        resetDel();
     }, body);
 
     event.stopPropagation();
@@ -146,9 +180,7 @@ var lastX;
 var lastY;
 
 
-document.body.addEventListener('touchstart', (event) => {
-    console.log('touchstart');
-
+document.addEventListener('touchstart', function (event) {
     if (event.targetTouches.length === 1) {
         initialPoint = event.changedTouches[0];
         var touch = event.targetTouches[0];
@@ -156,15 +188,15 @@ document.body.addEventListener('touchstart', (event) => {
 
         if (!touch.target.closest('.save') && formSave) {
             resetFormSave();
-            return;
         }
 
-        if (touch.target.closest('.container__delete')) {
+        if (touch.target.closest('.delete')) {
             return;
         }
 
         if (target) {
             resetDel();
+            resetTransform();
         }
 
         target = touch.target;
@@ -177,10 +209,16 @@ document.body.addEventListener('touchstart', (event) => {
 }, false);
 
 
-container.addEventListener('touchmove', (event) => {
+container.addEventListener('touchmove', function (event) {
+    if (formSave) {
+        return;
+    }
+
     if (event.targetTouches.length == 1 && countMove > 5) {
+
         var touch = event.targetTouches[0];
         var touchTarget = touch.target;
+
         var item = touchTarget.closest('.container__item');
 
         if (!item) {
@@ -197,128 +235,50 @@ container.addEventListener('touchmove', (event) => {
     countMove += 1;
 }, false);
 
-container.addEventListener('touchend', (event) => {
-    console.log('touchend');
+container.addEventListener('touchend', function (event) {
     if (event.changedTouches.length == 1 && lastEvent === 'touchstart') {
-
-        if (!target.closest('.save') && formSave) {
-            resetFormSave();
-        }
-
+        //
+        //if (!target.closest('.save') && formSave) {
+        //    resetFormSave();
+        //}
 
         if (target.className !== 'container__item' &&
             target.className !== 'container__item__text') {
             return;
         }
 
-        var text = target.childNodes[1] || target;
         var note;
+        var text;
         if (target.className === 'container__item') {
             note = target;
+            text = target.childNodes[0];
         } else {
             note = target.parentNode;
+            text = target;
         }
 
         createFormSave(note, text.innerText);
         text.style.display = 'none';
 
         event.stopPropagation();
-        lastEvent = undefined;
         countMove = 0;
     }
 
 }, false);
 
-//container.addEventListener('touchend', (event) => {
-    //console.log(lastEvent);
-//    if (event.changedTouches.length == 1 && lastEvent === 'touchmove') {
-//
-//        console.log('touchmoveend');
-//        var target = event.changedTouches[0].target;
-//
-//        if (!target.closest('.container__item')) {
-//            return;
-//        }
-//
-//        //event.preventDefault();
-//        var item;
-//        if (target.className === '.container__item__text') {
-//            item = target.parentNode;
-//        } else {
-//            item = target;
-//        }
-//
-//        var width = item.offsetWidth;
-//        var height = item.offsetHeight;
-//        var x = item.offsetLeft;
-//        var y = item.offsetTop;
-//        if(
-//            (event.changedTouches[0].pageX > x) &&
-//            (event.changedTouches[0].pageX < (x + width)) &&
-//            (event.changedTouches[0].pageY > y) &&
-//            (event.changedTouches[0].pageY < (y + height))){
-//            /*Мы над объектом tarobj*/
-//        }
-//
-//    }
-//    touchOffsetX = undefined;
-//    touchOffsetY = undefined;
-//    lastEvent = undefined;
-//}, false);
-
-
-document.addEventListener('touchend', function(event) {
-    event.preventDefault();
-    event.stopPropagation();
+document.addEventListener('touchend', function (event) {
     finalPoint = event.changedTouches[0];
-    target = finalPoint.target.closest('.container__item');
 
-    if (!target) {
+    resetTransform();
+
+    if (finalPoint.target.closest('.container__del') || formSave) {
         return;
     }
+    resetDel();
 
     var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
     var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
     if (xAbs > 50 || yAbs > 50) {
-        if (xAbs > yAbs) {
-            if (finalPoint.pageX < initialPoint.pageX){
-                target.style.transform = 'translateX(-' + 20 + '%)';
-                createDel();
-            }
-            else{
-                /*СВАЙП ВПРАВО*/}
-        }
-        else {
-            if (finalPoint.pageY < initialPoint.pageY){
-                /*СВАЙП ВВЕРХ*/}
-            else{
-                /*СВАЙП ВНИЗ*/
-                event.preventDefault();
-                document.body.style.marginTop = 0;
-                //get notes
-                xhrRequest('GET', '/list-notes', (response) => {
-                    setTimeout(() => {
-                        document.body.style.marginTop = -40 + 'px';
-                    }, 500);
-
-                    var items = document.querySelectorAll('.container__item');
-                    items.forEach((item) => {
-                        container.removeChild(item);
-                    });
-
-                    response.forEach((note) => {
-                        createNote(note.name);
-                    });
-
-                    for (note in response) {
-                        if (response.hasOwnProperty(note)) {
-                            createNote(response[name].name)
-                        }
-                    }
-                });
-            }
-        }
-    } else {
-        resetTransform();
+        swipe(xAbs, yAbs);
     }
 }, false);

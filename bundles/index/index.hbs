@@ -21,15 +21,14 @@
 <div class="container">
     {{#if notes.length}}
         {{#each notes}}
-            <div class="container__item">
-                <p class="container__item__text">{{ name }}</p>
-            </div>
+            <div class="container__item"><p class="container__item__text">{{ name }}</p></div>
         {{/each}}
     {{^}}
         <p>Notes not found!</p>
     {{/if}}
-    <div class="container__delete"></div>
+
 </div>
+<div class="delete"></div>
 <form method="post" action="/add-note" class="add">
     <input id="input_text" type="text" placeholder="Введите текст задачи" class="add__text">
     <input id="input_btn" type="submit" value="Добавить" class="add__btn">
