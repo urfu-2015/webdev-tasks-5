@@ -6,6 +6,7 @@
 	var __makeQuery = function (method, url, body, cb) {
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
 		xhr.onreadystatechange = function () {
 			if (xhr.readyState != 4) {
 				return;
@@ -28,7 +29,7 @@
 		__makeQuery('PUT', url, JSON.stringify(bodyObject), cb);
 	};
 	
-	window.XHR.deleteJSON = function (url, bodyObject, cb) {
+	window.XHR.deleteJSON = function (url, cb) {
 		__makeQuery('DELETE', url, undefined, cb);
 	};
 	

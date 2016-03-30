@@ -32,7 +32,7 @@
         var deleteHandler = new TapHandler(deleteButton);
         deleteHandler.tapCB = (function () {
            this.deleteTaskCB(this); 
-        });
+        }).bind(this);
     };
 	
 	TaskHandler.prototype.getNode = function () {
@@ -59,8 +59,12 @@
 	TaskHandler.prototype.setText = function (text) {
         this.__text = text;
 		this.__node.getElementsByClassName('task-item__name')[0].innerHTML = text;
-        this.__node.getElementsByClassName('task-item__editor__area')[0].innerHTML = text;
+        this.__node.getElementsByClassName('task-item__editor__area')[0].value = text;
 	};
+    
+    TaskHandler.prototype.getEditedText = function () {
+        return this.__node.getElementsByClassName('task-item__editor__area')[0].value;
+    };
 	
     TaskHandler.prototype.switchToEditMode = function () {
         this.__mode = 'edit';

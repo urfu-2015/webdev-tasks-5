@@ -1,3 +1,10 @@
+body {
+    text-align: center;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .template
 {
 	display: none;
@@ -21,5 +28,44 @@
 .task-item_delete_false .task-item__delete-task
 {
     display: none;
+}
+
+.task-list
+{
+    margin: 10px;
+    display: inline-block;
+    width: 90%;
+    max-width: 700px;
+}
+
+.task-item
+{
+    position: relative;
+    border-radius: 3px;
+    margin: 4px 0;
+    padding: 3px;
+    background: #ccccff;
+    height: 50px;
+    vertical-align: middle;
+    font-family: Tahoma, sans-serif;
+    font-size: x-large;
+    
+}
+
+.task-item_delete_true
+{
+    left: -50px;
+}
+
+.task-item__delete-task
+{
+    background: #ff9980;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -50px;
+    border-radius: 3px;
+    width: 45px;
+    
 }
 
