@@ -18,10 +18,15 @@
   },
   "license": "MIT",
   "dependencies": {
+    "autoprefixer": "6.3.3",
     "body-parser": "1.15.0",
+    "cssnano": "3.5.2",
     "express": "4.13.4",
     "hbs": "4.0.0",
-    "morgan": "1.7.0"
+    "morgan": "1.7.0",
+    "webpack": "1.12.14",
+    "extract-text-webpack-plugin": "1.0.1"
+
   },
   "devDependencies": {
     "autoprefixer": "6.3.3",
