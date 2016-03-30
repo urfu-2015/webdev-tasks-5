@@ -55,6 +55,26 @@ h1
     line-height: 1.5em;
 }
 
+.task-item__textarea
+{
+
+}
+
+.task-item__textarea_hidden
+{
+    display: none;
+}
+
+.task-item__button
+{
+
+}
+
+.task-item__button_hidden
+{
+    display: none;
+}
+
 .task-item__delete
 {
     background: url("../img/trashbox.png") no-repeat;
