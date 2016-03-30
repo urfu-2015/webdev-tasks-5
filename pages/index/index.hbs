@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <title>TODO List</title>
+        <meta name="description" content="">
+        <style type="text/css">
+            body
+            {
+                width: 100%;
+                height: 100%;
+                font-size: 60px;
+            }
+            h1
+            {
+                text-align: center;
+                font-size: 70px;
+            }
+            .task-list-item
+            {
+                width: 70%;
+                height: 150px;
+                border: 1px solid gray;
+                margin: 0 auto;
+                margin-bottom: 50px;
+                text-align: center;
+                position: relative;
+            }
+            .task-list-item-text
+            {
+                text-align: center;
+                height: 50px;
+                float: left;
+                position: absolute;
+                top: 50%;
+                transform: translate(0, -50%);
+            }
+            .task-list-item-text-area
+            {
+                width: 80%;
+                height: 100%;
+                float: left;
+                font-size: 60px;
+            }
+            .task-list-item-text-submit-btn
+            {
+                width: 18%;
+                height: 150px;
+                border: 1px solid gray;
+                margin-right: 0;
+                float: right;
+            }
+            .task-list-item-del
+            {
+                width: 18%;
+                height: 150px;
+                margin-right: 0;
+                float: right;
+            }
+            img
+            {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>TODO LIST</h1>
+        <div class="task-list"></div>
+        <script type="text/javascript">
+            var prevEvent;
+            var body = document.querySelector("body");
+            body.addEventListener("touchstart", function (evt) {
+                prevEvent = evt;
+                prevEvent._currentTarget = evt.currentTarget;
+            }, false);
+            body.addEventListener("touchend", function (evt) {
+            }, false);
+            body.addEventListener("touchmove", function (evt) {
+            }, false);
+            function getTasks() {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', '/tasks');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState !== 4) {
+                        return;
+                    }
+                    if (xhr.status !== 200) {
+                        console.log(xhr.status + ': ' + xhr.statusText);
+                    } else {
+                        var tasks = JSON.parse(xhr.responseText).tasks;
+                        var body = document.getElementsByTagName('body')[0];
+                        tasks.forEach((taskData) => {
+                            var task = document.createElement('div');
+                            task.className += 'task-list-item';
+                            task.setAttribute('taskid', taskData.id);
+                            task.addEventListener("touchmove", function (evt) {
+                                var currTouch = evt.touches[0];
+                                var prevTouch = prevEvent.touches[0];
+                                if (
+                                    evt.currentTarget === prevEvent._currentTarget &&
+                                    prevEvent.type === 'touchmove' &&
+                                    prevTouch.pageX - currTouch.pageX > 0
+                                    && evt.currentTarget.children.length === 1
+                                ) {
+                                    var taskDeletionBtn = document.createElement('div');
+                                    taskDeletionBtn.className += 'task-list-item-del';
+                                    var taskDeletionBtnImg = document.createElement('img');
+                                    taskDeletionBtnImg.src = 'images/delete.png'
+                                    taskDeletionBtn.appendChild(taskDeletionBtnImg);
+                                    task.appendChild(taskDeletionBtn);
+                                    var unTargetHandler = function () {
+                                        task.removeChild(taskDeletionBtn);
+                                        body.removeEventListener("touchstart", unTargetHandler); 
+                                    };
+                                    body.addEventListener('touchstart', unTargetHandler);
+                                }
+                                prevEvent = evt;
+                                prevEvent._currentTarget = evt.currentTarget;
+                                evt.stopPropagation();
+                            }, false);
+                            task.addEventListener("touchend", function (evt) {
+                                if (
+                                    prevEvent.type === 'touchstart' &&
+                                    evt.currentTarget.children.length === 1
+                                ) {
+                                    var taskTextArea = document.createElement('textarea');
+                                    taskTextArea.className += 'task-list-item-text-area';
+                                    var taskTextField = task.children[0];
+                                    taskTextArea.innerText = taskTextField.innerText;
+                                    task.replaceChild(taskTextArea, taskTextField);
+                                    var taskSubmitBtn = document.createElement('div');
+                                    taskSubmitBtn.className += 'task-list-item-text-submit-btn';
+                                    var taskSubmitBtnImg = document.createElement('img');
+                                    taskSubmitBtnImg.src = 'images/ok.png'
+                                    taskSubmitBtn.appendChild(taskSubmitBtnImg);
+                                    task.appendChild(taskSubmitBtn);
+                                    var unTargetHandler = function () {
+                                        task.removeChild(taskSubmitBtn);
+                                        task.replaceChild(taskTextField, taskTextArea);
+                                        body.removeEventListener("touchstart", unTargetHandler); 
+                                    };
+                                    body.addEventListener('touchstart', unTargetHandler);
+                                    prevEvent = evt;
+                                    prevEvent._currentTarget = evt.currentTarget;
+                                }
+                            }, false);
+                            task.addEventListener("touchstart", function (evt) {
+                                if (
+                                    prevEvent &&
+                                    evt.currentTarget === prevEvent._currentTarget
+                                ) {
+                                    evt.stopPropagation();
+                                    return;
+                                }
+                                prevEvent = evt;
+                                prevEvent._currentTarget = evt.currentTarget;
+                            }, false);
+                            var taskTextField = document.createElement('div');
+                            taskTextField.className += 'task-list-item-text';
+                            taskTextField.innerText = taskData.text;
+                            task.appendChild(taskTextField);
+                            var taskList = document.querySelector('.task-list');
+                            taskList.appendChild(task);
+                        });
+                    }
+                }
+            }
+            getTasks();
+        </script>
+    </body>
+</html>
