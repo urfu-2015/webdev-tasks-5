@@ -33,6 +33,8 @@ app.use((req, res, next) => {
 
 require('./routes')(app);
 
+hbs.registerPartials(viewsDir);
+
 app.listen(app.get('port'),
     () => console.log(`Listening on port ${app.get('port')}`));
 

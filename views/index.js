@@ -18,7 +18,8 @@ function refresh() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             var refreshBlock = document.getElementsByClassName('pull-and-refresh')[0];
             refreshBlock.style.display = 'none';
-            //...
+            var taskContainer = document.getElementsByClassName('tasks-container')[0];
+            taskContainer.innerHTML = xhr.responseText;
         }
     }
 }
