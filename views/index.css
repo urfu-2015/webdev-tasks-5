@@ -1,0 +1,89 @@
+.pull-and-refresh
+{
+    margin: auto;
+}
+.header-text
+{
+    font-size: 40px;
+    text-align: center;
+}
+.tasks-container
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.task
+{
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    font-size: 25px;
+    width: 60%;
+}
+.task__text
+{
+    background-color: #EBE775;
+    padding: 15px;
+    width: 90%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 10px;
+}
+.task__delete
+{
+    background-color: #E25D4B;
+    padding: 15px 20px;
+    color: #FFFFFF;
+    width: 10%;
+    text-align: center;
+    font-size: 30px;
+    border-radius: 10px;
+}
+.task__edit-form
+{
+    background-color: #EBE775;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    display: none;
+}
+.task__edit-text,
+.text-to-add
+{
+    font-size: 25px;
+    width: 95%;
+}
+.task__edit-submit,
+.butn-to-add
+{
+    margin-top: 10px;
+    font-size: 20px;
+    border-radius: 10px;
+    padding: 5px;
+}
+.add-container
+{
+    margin-top: 10px;
+    width: 60%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin: auto;
+    background-color: #E25D4B;
+    border-radius: 10px;
+}
+.text-to-add
+{
+    margin-bottom: 10px;
+}

@@ -4,11 +4,10 @@ const pages = require('./controllers/pages');
 const tasks = require('./controllers/tasks');
 
 module.exports = function (app) {
-    app.get('/', pages.main);
-    app.post('/show-list', tasks.list);
-    app.put('/add-to-list', tasks.add);
-    app.delete('/remove-from-list', tasks.remove);
-    app.post('/edit-list', tasks.edit);
+    app.get('/', tasks.list);
+    app.post('/', tasks.add);
+    app.delete('/', tasks.remove);
+    app.put('/', tasks.edit);
     
     app.all('*', pages.error404);
     app.use((err, req, res) => {

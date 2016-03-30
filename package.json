@@ -2,12 +2,13 @@
   "private": true,
   "main": "app.js",
   "scripts": {
-  	"start": "node app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
     "hbs": "^4.0.0",
-    "morgan": "^1.7.0"
+    "morgan": "^1.7.0",
+    "xmlhttprequest": "^1.8.0"
   }
 }

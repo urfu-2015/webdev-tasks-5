@@ -3,7 +3,10 @@
 const Task = require('../models/task');
 
 exports.list = (req, res) => {
-    res.send(Task.findAll());
+    var data = {
+        list: Task.findAll()
+    };
+    res.render('index', data);
 };
 
 exports.add = (req, res) => {
