@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="{{ meta.charset }}">
+    <title>TODOхи</title>
+    <meta name="description" content="{{ meta.description }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="index.css">
+    <link href='https://fonts.googleapis.com/css?family=Marck+Script&subset=latin,cyrillic'
+          rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Kurale&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div class="reload">
+    <img src="images/update.png" class="reload__img">
+</div>
+<header>
+    <h2>TODOхи</h2>
+</header>
+<div class="container">
+    {{#if notes.length}}
+        {{#each notes}}
+            <div class="container__item">
+                <p class="container__item__text">{{ name }}</p>
+            </div>
+        {{/each}}
+    {{^}}
+        <p>Notes not found!</p>
+    {{/if}}
+    <div class="container__delete"></div>
+</div>
+<form method="post" action="/add-note" class="add">
+    <input id="input_text" type="text" placeholder="Введите текст задачи" class="add__text">
+    <input id="input_btn" type="submit" value="Добавить" class="add__btn">
+</form>
+<script src="index.js"></script>
+</body>
+</html>

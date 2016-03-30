@@ -1,0 +1,17 @@
+{
+  "name": "todo",
+  "version": "0.0.1",
+  "main": "app.js",
+  "scripts": {
+    "start": ""
+  },
+  "engines": {
+    "node": "4.4.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "fs": "0.0.2",
+    "hbs": "^4.0.0"
+  }
+}

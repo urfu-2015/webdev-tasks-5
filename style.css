@@ -1,0 +1,30 @@
+.container {
+  padding: 2%;
+  background-color: #0effce;
+}
+.container__item {
+  color: #000;
+  background-color: #fffd02;
+  box-shadow: #000 5px 5px;
+  margin: 0.5rem;
+  text-align: center;
+  height: 3rem;
+  width: 97%;
+  margin-left: 0;
+}
+.container__delete {
+  position: relative;
+  background-color: #f00;
+  background-image: url("public/images/delete.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  box-shadow: #000 5px 5px;
+  height: 3rem;
+  margin-left: 78%;
+  margin-top: -3.3rem;
+  display: none;
+  width: 40px;
+}
+header h2 {
+  text-align: center;
+}
