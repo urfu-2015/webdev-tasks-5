@@ -2,61 +2,70 @@
 
 	getTask();
 
+	var curentElementId = undefined;
+
 	var buttonAdd = document.getElementsByClassName('task-button-add')[0];
 	var inputAdd = document.getElementsByClassName('task-input-text')[0];
 
-	buttonAdd.addEventListener('click', function () {
+	// buttonAdd.addEventListener('click', function () {
+	// 	hiddenChangeBlock();
+	// 	if (inputAdd.value.length > 0) {
+	// 		addTask(inputAdd.value);
+	// 	}
+	// });
+
+	buttonAdd.addEventListener('touchstart', function () {
+		hiddenChangeBlock();
 		if (inputAdd.value.length > 0) {
 			addTask(inputAdd.value);
 		}
 	});
+	inputAdd.addEventListener('click', function () {
+		hiddenChangeBlock();
+	}, false);
+
 	updateTaskListener();
 
 
 	function updateTaskListener() {
 		var taskButtonsRemove = document.getElementsByClassName('task-button-remove');
 		for (var i = 0; i < taskButtonsRemove.length; i++) {
-		// 	// alert(i);
 			taskButtonsRemove[i].addEventListener('click', deleteTask);
 		}
 		var buttonsSave = document.getElementsByClassName('button-save');
 		for (var i = 0; i < buttonsSave.length; i++) {
 			buttonsSave[i].addEventListener('click', changeTextTask);
 		}
+		var taskText = document.getElementsByClassName('task-text');
+		for (var i = 0; i < taskText.length; i++) {
+			taskText[i].addEventListener('click', showChangeBlock);
+		}
+	}
+	function hiddenChangeBlock() {
+		if (curentElementId !== undefined) {
+			var taskText = document.getElementsByClassName('task-text-' + curentElementId)[0];
+			taskText.classList.remove('hidden');
+			var containerInputTask = document.getElementsByClassName('container-input-task-' + curentElementId)[0];
+			containerInputTask.classList.add('hidden');
+			curentElementId = undefined;
+		}
+	}
 
-// var ball = document.getElementsByClassName('task-text')[0];
-// ball.addEventListener('ondragenter', dragEnter);
-// ball.addEventListener('ondrop', dragDrop);
-// ball.addEventListener('ondragover', dragOver);
+	function showChangeBlock() {
+		hiddenChangeBlock();
 
-
-// ball.dragStart = function(e) { // 1. отследить нажатие
-//   shiftY = e.pageY - getCoords(ball).top;
-//   // alert(startY);
-//   moveAt(e);
-//   ball.style.zIndex = 1000; // показывать мяч над другими элементами
-//   function moveAt(e) {
-//   	// view.changeCordinateX()
-//     ball.style.transform = 'translateY(' + (e.pageY - shiftY)  + 'px)';
-//   }
-// 	document.onmousemove = function(e) {
-//     moveAt(e);
-//   }
-// 	ball.dragEnd = function() {
-// 		// alert('no');
-// 	ball.style.transform = 'none'; 
-//     document.onmousemove = null;
-//     ball.onmouseup = null;
-//     alert(e.pageY + '  ' + shiftY);
-//     changeOrderTask(view.tasks[0].id , Math.ceil((e.page - YshiftY) / 50) - 1);
-//   }
-// }
-
+		var id = this.dataset.taskId;
+		curentElementId = id;
+		this.classList.add('hidden');
+		
+		var windowChange = document.getElementsByClassName('container-input-task-' + id)[0];
+		windowChange.classList.remove('hidden');
 
 	}
 
 	function changeTextTask() {
 		var id = this.dataset.taskId;
+
 		var xhr = getXmlHttp();
 		xhr.open('POST', '/task/change/', true);
 		
