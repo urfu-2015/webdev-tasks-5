@@ -1,29 +1,102 @@
+
+
 header
 {
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 main
 {
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 h1
 {
-
+    display: block;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #1e104b;
 }
 
 .task-container
 {
-
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    margin: 20px auto;
 }
 
 .task-item
 {
+    border: 2px solid #ffab00;
+    background-color: #e1ff00;
+    width: 70%;
+    min-height: 40px;
+    height: 30%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
 
+.task-item span
+{
+    font-weight: 700;
+    font-family: serif;
+    font-size: 1.3em;
+    padding-left: 10px;
+    line-height: 1.5em;
+}
+
+.task-item__delete
+{
+    background: url("../img/trashbox.png") no-repeat;
+    background-size: contain;
+    width: 40px;
+    height: 100%;
+
+}
+
+.task-item__delete_hidden
+{
+    visibility: hidden;
+}
+
+.reload
+{
+    display: block;
+    height: 60px;
+    width: 60px;
+}
+
+.reload_hidden
+{
+    display: none;
+}
+
+.task-controllers
+{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
 }
 
 .task-controllers__button-add
 {
-
+    background: #34ff4f;
+    height: 40px;
+    width: 30%;
+    border: 1px;
+    border-radius: 5px;
+    font-size: 1.3em;
+    font-weight: 700;
+    font-family: sans-serif;
 }

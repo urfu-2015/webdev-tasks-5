@@ -15,5 +15,8 @@
   "homepage": "https://github.com/Dotokoto/webdev-tasks-5#readme",
   "dependencies": {
     "express": "4.13.4"
+  },
+  "engines": {
+    "node": "4.4.0"
   }
 }

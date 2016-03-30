@@ -1,3 +1,15 @@
-/**
- * Created by Dotokoto on 27.03.2016.
- */
+'use strict';
+
+exports.getTodos = (req, res) => {
+
+};
+
+exports.addTodo = (req, res) => {
+
+};
+
+exports.deleteTodo = (req, res) => {
+
+};
+
+exports.error404 = (req, res) => res.sendStatus(404);
