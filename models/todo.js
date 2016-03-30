@@ -18,7 +18,10 @@ class Todo {
     }
 
     static find(id) {
-        return memoryStorage.filter(todo => todo.id === id).pop();
+        /* eslint eqeqeq: 0 */
+        return memoryStorage.filter(todo => {
+            return todo.id == id;
+        })[0];
     }
 
     static del(id) {

@@ -55,7 +55,6 @@ document.addEventListener('touchstart', function (event) {
     // Ещё одно получение фокуса
     if ((event.target.parentNode.nodeName !== '#document') &&
         (event.target.getAttribute('class') === 'todohi-edit-block__input')) {
-        console.log('shiet');
         tempStr = event.target.value;
         event.target.focus();
         event.target.value = '';
@@ -75,7 +74,7 @@ document.addEventListener('touchstart', function (event) {
                 newTodoDiv.setAttribute('id', 'todo_' + response.id);
                 newTodoDiv.setAttribute('class', 'todohi-item');
                 newTodo = '<div class="todohi-item__todoha">' +
-                    '<span class="todohi-item__title">' + response.text + '</span>' +
+                    '<span class="todohi-item__title off-events">' + response.text + '</span>' +
                     '</div>';
                 newTodoDiv.innerHTML = newTodo;
                 beforeElem.insertBefore(newTodoDiv, beforeElem.children[0]);
@@ -130,12 +129,12 @@ document.addEventListener('touchend', function (event) {
             (event.target.parentNode.getAttribute('class') === 'todohi-item') &&
             (event.target.parentNode.getAttribute('id') !== 'addTodo') &&
             (event.target.getAttribute('class') !== 'todohi-item__delete-button')) {
-            editForm = '<form class="todohi-edit-block" action="" method="post">' +
-                '<input class="todohi-edit-block__input" ' +
-                    'value=' + event.target.getElementsByTagName('span')[0].innerText +
-                    ' required>' +
-                '<button class="todohi-edit-block__save-button" type="submit">Сохранить</button>' +
-                '</form>';
+            editForm = '<div class="todohi-edit-block">' +
+                    '<input class="todohi-edit-block__input" ' +
+                        'value=' + event.target.getElementsByTagName('span')[0].innerText +
+                        ' required>' +
+                    '<button class="todohi-edit-block__save-button">Сохранить</button>' +
+                '</div>';
             event.target.innerHTML = editForm;
         }
     }
@@ -195,7 +194,7 @@ document.addEventListener('touchend', function (event) {
                         newTodoDiv.setAttribute('id', 'todo_' + todo.id);
                         newTodoDiv.setAttribute('class', 'todohi-item');
                         newTodo = '<div class="todohi-item__todoha">' +
-                            '<span class="todohi-item__title">' + todo.text + '</span>' +
+                            '<span class="todohi-item__title off-events">' + todo.text + '</span>' +
                             '</div>';
                         newTodoDiv.innerHTML = newTodo;
                         beforeElem.insertBefore(newTodoDiv, beforeElem.children[0]);
