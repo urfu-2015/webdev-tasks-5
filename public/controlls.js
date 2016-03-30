@@ -3,11 +3,14 @@
 	getTask();
 
 	var curentElementId = undefined;
+	var touchElementX;
+	var touchElementY;
+
 
 	var buttonAdd = document.getElementsByClassName('task-button-add')[0];
 	var inputAdd = document.getElementsByClassName('task-input-text')[0];
 
-	var isMobile = false;
+	var isMobile = true;
 	if (!isMobile) {
 		buttonAdd.addEventListener('click', function () {
 			hiddenChangeBlock();
@@ -54,17 +57,32 @@
 		}
 		var buttonsSave = document.getElementsByClassName('button-save');
 		for (var i = 0; i < buttonsSave.length; i++) {
-			buttonsSave[i].addEventListener('touchstart', changeTextTask);
+			buttonsSave[i].addEventListener('touchend', changeTextTask);
 		}
 		var taskText = document.getElementsByClassName('task-text');
 		for (var i = 0; i < taskText.length; i++) {
-			taskText[i].addEventListener('touchstart', showChangeBlock);
-			taskText[i].addEventListener('touchend', showDeleteButton);
+			taskText[i].addEventListener('touchstart', startTouch);
+			taskText[i].addEventListener('touchend', endTouch);
 		}
 		// var taskButtonRemove = document.getElementsByClassName('task-button-remove');
 		// for (var i = 0; i < taskText.length; i++) {
 		// 	taskButtonRemove[i].addEventListener('touchend', showDeleteButton);
 		// }
+	}
+
+	function startTouch(event) {
+		hiddenChangeBlock();
+		curentElementId = this.dataset.taskId;
+		touchElementX = event.touches[0].pageX; // Собираем данные
+  		touchElementY = event.touches[0].pageY; 
+	}
+	function endTouch(event) {
+		// alert(event.touches[0].pageX - touchElementX);
+		if (event.touches[0].pageX + 50 < touchElementX) {
+			showDeleteButton.call(this);
+		} else {
+			showChangeBlock.call(this);
+		}
 	}
 
 	function hiddenChangeBlock() {
@@ -80,7 +98,7 @@
 	}
 	function showDeleteButton() {
 		var id = this.dataset.taskId;
-		var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + id);
+		var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + id)[0];
 		buttonDeleteTask.classList.remove('hidden');		
 	};
 
@@ -152,7 +170,11 @@
 			// alert(this.responseText);
   			view.tasks = JSON.parse(this.responseText);
   			view.update();
-  			updateTaskListener();
+  			if (isMobile) {
+  				updateTaskListenerMobile();
+  			} else {
+  				updateTaskListener();
+  			}
 		}
 	}
 

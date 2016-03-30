@@ -4,7 +4,8 @@ body {
 }
 
 .wrapper {
-	width: 480px;
+	width: 100vw;
+	min-height: 100vh;
 	background-color: #111;
 	display: flex;
 	flex-flow: column nowrap;
