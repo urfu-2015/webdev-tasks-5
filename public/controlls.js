@@ -9,7 +9,7 @@
 	var buttonAdd = document.getElementsByClassName('task-button-add')[0];
 	var inputAdd = document.getElementsByClassName('task-input-text')[0];
 
-	var isMobile = false;
+	var isMobile = true;
 	if (!isMobile) {
 		buttonAdd.addEventListener('click', function () {
 			hiddenChangeBlock();
