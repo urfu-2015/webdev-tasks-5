@@ -33,11 +33,11 @@ module.exports.getRemarks = function(req, res, next) {
 };
 
 module.exports.newRemark = function(req, res, next) {
-    Remarks.create(req.body.text, function (err) {
+    Remarks.create(req.body.text, function (err, data) {
         if (err != undefined) {
             console.log(err);
         }
-        res.send();
+        res.send({id: data.id});
     });
 };
 

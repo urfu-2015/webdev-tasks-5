@@ -3,16 +3,22 @@
 </header>
 <main class="main">
 {{#each data}}
-    <div class="card">
+    <div class="card" server_id="{{@index}}">
         {{this.text}}
     </div>
 {{/each}}
 <input type="submit" value="Создать новую" class="new-remark">
-<form class="redo-form creating" name="creating">
-    <textarea row="10" cols="40" name="text" placeholder="Введите вашу заметку..."
+    <form class="redo-form creating" name="creating">
+        <textarea row="10" cols="40" name="text" placeholder="Введите вашу заметку..."
 class="redo-form_text" form="creating" class="redo-form_text"></textarea>
-    <input type="submit" value="Сохранить запись" class="redo-form_send">
-    <input type="button" value="Отмена" class="redo-form_cancel">
-</form>
+        <input type="submit" value="Сохранить запись" class="redo-form_send">
+        <input type="button" value="Отмена" class="redo-form_cancel">
+    </form>
+    <form class="redo-form redo" name="redo">
+    <textarea row="10" cols="40" name="text" placeholder="Введите вашу заметку..."
+form="creating" class="redo_text"></textarea>
+        <input type="submit" value="Сохранить запись" class="redo_send">
+        <input type="button" value="Отмена" class="redo_cancel">
+    </form>
 </main>
 <footer>&copy; 2016 Air_breathing</footer>

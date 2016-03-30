@@ -19,13 +19,13 @@ class Remark{
         this.text = text;
     }
 
-    static save (callback) {
+    static save (callback, data) {
         let strMem= JSON.stringify(Remark.memoryStorage);
         fs.writeFile(fileWithData, strMem,(err) => {
             if (err != undefined) {
                 callback(err);
             } else {
-                callback();
+                callback(undefined, data);
             }
         });
     }
@@ -43,8 +43,9 @@ class Remark{
     };
 
     static create (text, callback) {
+        let id = Remark.memoryStorage.remarks.length;
         Remark.memoryStorage.remarks.push(new Remark({text}));
-        Remark.save(callback);
+        Remark.save(callback, {id});
     };
 
     static redo (id, text, callback) {
@@ -78,6 +79,7 @@ class Remark{
     };
 
     static getAll (callback) {
+
         callback(undefined, Remark.memoryStorage.remarks);
     }
 };
