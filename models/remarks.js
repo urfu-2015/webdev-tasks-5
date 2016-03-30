@@ -15,7 +15,7 @@ class Remark{
 
     //эти метода снаруже лучше не использовать
     //для этого есть статические методы
-    set setNewText(text) {
+    setNewText(text) {
         this.text = text;
     }
 
@@ -50,7 +50,7 @@ class Remark{
 
     static redo (id, text, callback) {
         if (id < Remark.memoryStorage.remarks.length) {
-            Remark.memoryStorage.remarks[id].setNewText(text);
+            Remark.memoryStorage.remarks[id].text = text;
             Remark.save(callback);
         } else {
             callback('ErrorInRedo');

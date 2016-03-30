@@ -42,11 +42,23 @@ module.exports.newRemark = function(req, res, next) {
 };
 
 module.exports.redoRemark = function(req, res, next) {
-
+    Remarks.redo(req.params.id, req.body.text, function (err) {
+        if (err != undefined) {
+            console.log(err);
+        } else {
+            res.send();
+        }
+    });
 };
 
 module.exports.deleteRemark = function(req, res, next) {
-
+    Remarks.remove(req.params.id, function (err, data) {
+        if (err != undefined) {
+            console.log(err);
+        } else {
+            res.send();
+        }
+    });
 };
 
 module .exports.changeNumber = function(req, res, netx) {

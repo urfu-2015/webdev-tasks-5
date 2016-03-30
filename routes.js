@@ -10,7 +10,7 @@ router.get('/', main.getIndex);
 router.get('/remarks', remarks.getRemarks);
 
 //добавление новой заметки
-router.post('/remarks/new', remarks.newRemark);
+router.post('/remarks//new', remarks.newRemark);
 
 //редактрование заметки
 router.put('/remarks/:id', remarks.redoRemark);
@@ -19,6 +19,6 @@ router.put('/remarks/:id', remarks.redoRemark);
 router.delete('/remarks/:id', remarks.deleteRemark);
 
 //поменять номер заметки(доп)
-router.put('/remark/:id/:newId', remarks.changeNumber);
+router.post('/remark/:id/:newId', remarks.changeNumber);
 
 module.exports = router;
