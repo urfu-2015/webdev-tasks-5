@@ -6,11 +6,10 @@
 	var touchElementX;
 	var touchElementY;
 
-
 	var buttonAdd = document.getElementsByClassName('task-button-add')[0];
 	var inputAdd = document.getElementsByClassName('task-input-text')[0];
 
-	var isMobile = true;
+	var isMobile = false;
 	if (!isMobile) {
 		buttonAdd.addEventListener('click', function () {
 			hiddenChangeBlock();
@@ -46,7 +45,8 @@
 		}
 		var taskText = document.getElementsByClassName('task-text');
 		for (var i = 0; i < taskText.length; i++) {
-			taskText[i].addEventListener('click', showChangeBlock);
+			taskText[i].addEventListener('mousedown', startClick);
+			taskText[i].addEventListener('mouseup', endClick);
 		}
 	}
 
@@ -64,21 +64,29 @@
 			taskText[i].addEventListener('touchstart', startTouch);
 			taskText[i].addEventListener('touchend', endTouch);
 		}
-		// var taskButtonRemove = document.getElementsByClassName('task-button-remove');
-		// for (var i = 0; i < taskText.length; i++) {
-		// 	taskButtonRemove[i].addEventListener('touchend', showDeleteButton);
-		// }
+	}
+
+	function startClick(event) {
+		hiddenChangeBlock();
+		curentElementId = this.dataset.taskId;
+		touchElementX = event.clientX;
+  		touchElementY = event.clientY; 
+	}
+	function endClick(event) {
+		if (event.clientX + 50 < touchElementX) {
+			showDeleteButton.call(this);
+		} else {
+			showChangeBlock.call(this);
+		}
 	}
 
 	function startTouch(event) {
 		hiddenChangeBlock();
-		alert(start);
 		curentElementId = this.dataset.taskId;
-		touchElementX = event.touches[0].pageX; // Собираем данные
+		touchElementX = event.touches[0].pageX;
   		touchElementY = event.touches[0].pageY; 
 	}
 	function endTouch(event) {
-		alert(event.touches[0].pageX - touchElementX);
 		if (event.touches[0].pageX + 50 < touchElementX) {
 			showDeleteButton.call(this);
 		} else {
