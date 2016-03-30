@@ -1,0 +1,19 @@
+.todo__item
+    display: flex
+    flex-flow: row wrap
+    align-items: center
+    justify-content: center
+    width: 100%
+    background-color: #eaeaea
+
+.todo__item.animate-left
+    transform: translate(-70px);
+    transition-property: transform;
+    transition-duration: 0.4s;
+    transition-timing-function: linear;
+
+.todo__item.animate-right
+    transform: translate(0);
+    transition-property: transform ;
+    transition-duration: 0.4s;
+    transition-timing-function: linear;
