@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="{{ meta.charset }}">
+    <title>{{page.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    {{> header/header }}
+    <div class="list">
+    {{#if tasks.length}}
+        {{#each tasks}}
+            <div class="list__task_num_{{orderNum}}">{{ todo }}</div>
+        {{/each}}
+    {{^}}
+        <p>Create your first task!</p>
+    {{/if}}
+    </div>
+    <div class="form-place">
+            <button class="task-creater__add" id="add-task">Add task</button>
+    </div>
+    {{> footer/footer }}
+    <script src="main.js"></script>
+</body>
+</html>
+
