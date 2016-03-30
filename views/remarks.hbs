@@ -1,7 +1,7 @@
 <header>
     <h1>{{title}}</h1>
 </header>
-<main>
+<main class="main">
 {{#each data}}
     <div class="card">
         {{this.text}}
@@ -10,7 +10,7 @@
 <input type="submit" value="Создать новую" class="new-remark">
 <form class="redo-form creating" name="creating">
     <textarea row="10" cols="40" name="text" placeholder="Введите вашу заметку..."
-class="redo-form_text"></textarea>
+class="redo-form_text" form="creating" class="redo-form_text"></textarea>
     <input type="submit" value="Сохранить запись" class="redo-form_send">
     <input type="button" value="Отмена" class="redo-form_cancel">
 </form>
