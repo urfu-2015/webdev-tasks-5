@@ -3,9 +3,12 @@
     <head>
         <title>{{title}}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
+
         {{#each stylesheets}}
-            <link rel="stylesheet" href="stylesheets/{{filename}}.css" />
+            <link rel="stylesheet" href="stylesheets/{{this}}.css" />
+        {{/each}}
+        {{#each scripts}}
+            <script type="text/javascript" src="javascripts/{{this}}.js"></script>
         {{/each}}
         <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon"/>
         <link rel="shortcut icon" href="/images/favicon.png" type="image/png"/>

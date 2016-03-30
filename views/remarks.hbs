@@ -1,1 +1,7 @@
 <h1>{{title}}</h1>
+{{#each data}}
+    <div class="card">
+        {{this.text}}
+    </div>
+{{/each}}
+<input type="submit" value="Создать новую">
