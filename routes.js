@@ -1,10 +1,11 @@
 'use strict';
 
-const pages = require('./controllers/pages');
+const pages = require('./controllers/pages.js');
 
 module.exports = function (app) {
-    app.get('/', pages.getTodos);
-    app.post('/', pages.addTodo);
-    app.delete('/:todo_id', pages.deleteTodo);
+    app.get('/tasks', pages.getTodos);
+    app.post('/tasks', pages.addTodo);
+    app.delete('/tasks', pages.deleteTodo);
+    app.patch('/tasks', pages.changeTodo);
     app.all('*', pages.error404);
 };
