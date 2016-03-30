@@ -14,7 +14,7 @@ var noteSave;
 var delItem;
 
 function xhrRequest(method, puth, hundler, body) {
-    const xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.open(method, puth, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     if (body) {
@@ -109,11 +109,11 @@ function createDel() {
 formAdd.addEventListener('submit', event => {
     event.preventDefault();
 
-    const note = document.querySelector('#input_text').value;
+    var note = document.querySelector('#input_text').value;
     if (!note) {
         return;
     }
-    const body = 'name=' + encodeURIComponent(note);
+    var body = 'name=' + encodeURIComponent(note);
 
     xhrRequest('POST', '/add-path', (response) => {
         createNote(response.name);
