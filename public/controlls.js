@@ -2,61 +2,134 @@
 
 	getTask();
 
+	var curentElementId = undefined;
+	var touchElementX;
+	var touchElementY;
+
 	var buttonAdd = document.getElementsByClassName('task-button-add')[0];
 	var inputAdd = document.getElementsByClassName('task-input-text')[0];
 
-	buttonAdd.addEventListener('click', function () {
-		if (inputAdd.value.length > 0) {
-			addTask(inputAdd.value);
-		}
-	});
-	updateTaskListener();
-
+	var isMobile = true;
+	if (!isMobile) {
+		buttonAdd.addEventListener('click', function () {
+			hiddenChangeBlock();
+			if (inputAdd.value.length > 0) {
+				addTask(inputAdd.value);
+			}
+		});
+		inputAdd.addEventListener('click', function () {
+			hiddenChangeBlock();
+		}, false);
+		updateTaskListener();
+	} else {
+		buttonAdd.addEventListener('touchstart', function () {
+			hiddenChangeBlock();
+			if (inputAdd.value.length > 0) {
+				addTask(inputAdd.value);
+			}
+		});
+		inputAdd.addEventListener('touchstart', function () {
+			hiddenChangeBlock();
+		}, false);
+		updateTaskListenerMobile();
+	}
 
 	function updateTaskListener() {
 		var taskButtonsRemove = document.getElementsByClassName('task-button-remove');
 		for (var i = 0; i < taskButtonsRemove.length; i++) {
-		// 	// alert(i);
 			taskButtonsRemove[i].addEventListener('click', deleteTask);
 		}
 		var buttonsSave = document.getElementsByClassName('button-save');
 		for (var i = 0; i < buttonsSave.length; i++) {
 			buttonsSave[i].addEventListener('click', changeTextTask);
 		}
+		var taskText = document.getElementsByClassName('task-text');
+		for (var i = 0; i < taskText.length; i++) {
+			taskText[i].addEventListener('mousedown', startClick);
+			taskText[i].addEventListener('mouseup', endClick);
+		}
+	}
 
-// var ball = document.getElementsByClassName('task-text')[0];
-// ball.addEventListener('ondragenter', dragEnter);
-// ball.addEventListener('ondrop', dragDrop);
-// ball.addEventListener('ondragover', dragOver);
+	function updateTaskListenerMobile() {
+		var taskButtonsRemove = document.getElementsByClassName('task-button-remove');
+		for (var i = 0; i < taskButtonsRemove.length; i++) {
+			taskButtonsRemove[i].addEventListener('touchstart', deleteTask);
+		}
+		var buttonsSave = document.getElementsByClassName('button-save');
+		for (var i = 0; i < buttonsSave.length; i++) {
+			buttonsSave[i].addEventListener('touchend', changeTextTask);
+		}
+		var taskText = document.getElementsByClassName('task-text');
+		for (var i = 0; i < taskText.length; i++) {
+			taskText[i].addEventListener('touchstart', startTouch);
+			taskText[i].addEventListener('touchend', endTouch);
+		}
+	}
 
+	function startClick(event) {
+		hiddenChangeBlock();
+		curentElementId = this.dataset.taskId;
+		touchElementX = event.clientX;
+  		touchElementY = event.clientY; 
+	}
+	function endClick(event) {
+		if (event.clientX + 50 < touchElementX) {
+			showDeleteButton.call(this);
+		} else {
+			showChangeBlock.call(this);
+		}
+	}
 
-// ball.dragStart = function(e) { // 1. отследить нажатие
-//   shiftY = e.pageY - getCoords(ball).top;
-//   // alert(startY);
-//   moveAt(e);
-//   ball.style.zIndex = 1000; // показывать мяч над другими элементами
-//   function moveAt(e) {
-//   	// view.changeCordinateX()
-//     ball.style.transform = 'translateY(' + (e.pageY - shiftY)  + 'px)';
-//   }
-// 	document.onmousemove = function(e) {
-//     moveAt(e);
-//   }
-// 	ball.dragEnd = function() {
-// 		// alert('no');
-// 	ball.style.transform = 'none'; 
-//     document.onmousemove = null;
-//     ball.onmouseup = null;
-//     alert(e.pageY + '  ' + shiftY);
-//     changeOrderTask(view.tasks[0].id , Math.ceil((e.page - YshiftY) / 50) - 1);
-//   }
-// }
+	function startTouch(e) {
+		e.preventDefault();
+		hiddenChangeBlock();
+		curentElementId = this.dataset.taskId;
+		
+		touchElementX = e.touches[0].pageX;
+  		touchElementY = e.touches[0].pageY; 
+	}
+	function endTouch(e) {
+		// e.preventDefault();
+		// alert(event.touches[0].pageX + 'end');
+		if (e.touches[0].pageX + 50 < touchElementX) {
+			showDeleteButton.call(this);
+		} else {
+			showChangeBlock.call(this);
+		}
+	}
 
+	function hiddenChangeBlock() {
+		if (curentElementId !== undefined) {
+			var taskText = document.getElementsByClassName('task-text-' + curentElementId)[0];
+			taskText.classList.remove('hidden');
+			var containerInputTask = document.getElementsByClassName('container-input-task-' + curentElementId)[0];
+			containerInputTask.classList.add('hidden');
+			var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + curentElementId)[0];
+			buttonDeleteTask.classList.add('hidden');
+			curentElementId = undefined;
+		}
+	}
+	function showDeleteButton() {
+		var id = this.dataset.taskId;
+		var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + id)[0];
+		buttonDeleteTask.classList.remove('hidden');		
+	};
+
+	function showChangeBlock() {
+		hiddenChangeBlock();
+
+		var id = this.dataset.taskId;
+		curentElementId = id;
+		this.classList.add('hidden');
+		
+		var windowChange = document.getElementsByClassName('container-input-task-' + id)[0];
+		windowChange.classList.remove('hidden');
 
 	}
 
 	function changeTextTask() {
 		var id = this.dataset.taskId;
+
 		var xhr = getXmlHttp();
 		xhr.open('POST', '/task/change/', true);
 		
@@ -110,7 +183,11 @@
 			// alert(this.responseText);
   			view.tasks = JSON.parse(this.responseText);
   			view.update();
-  			updateTaskListener();
+  			if (isMobile) {
+  				updateTaskListenerMobile();
+  			} else {
+  				updateTaskListener();
+  			}
 		}
 	}
 

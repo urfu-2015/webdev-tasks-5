@@ -1,9 +1,5 @@
 exports.index = (req, res) => {
-    const data = {
-        message: 'Hello, User!'
-    };
-
-    res.render('main', Object.assign(data, req.commonData));
+    res.render('index');
 };
 
 exports.error404 = (req, res) => res.sendStatus(404);
