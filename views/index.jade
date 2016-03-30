@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    div.reload
+        img(src="/images/reload.gif")
+    div.main-container
+        div.main-container__header
+            h1= title
+        div.main-container__list
+        div.main-container__button
+            button.add-button Добавить
+    script(src="/javascripts/index.js")
