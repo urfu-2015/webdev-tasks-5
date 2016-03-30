@@ -18,6 +18,39 @@ function addEventListeners() {
             textField.value = '';
         });
     });
+
+    var content = document.getElementsByClassName('content')[0];
+    content.style.top = '0px';
+    var currentTop = 0;
+    var startPoint = {};
+
+    document.body.addEventListener('touchstart', function (event) {
+        startPoint = event.changedTouches[0];
+    });
+
+    document.body.addEventListener('touchmove', function (event) {
+        var newPoint = event.changedTouches[0];
+        var dy = newPoint.pageY - startPoint.pageY;
+        currentTop = Math.min(currentTop + dy, 60);
+        currentTop = Math.max(currentTop, 0);
+        startPoint = newPoint;
+        content.style.top = currentTop + 'px';
+    });
+
+    document.body.addEventListener('touchend', function (event) {
+        if (currentTop > 10) {
+            updateTodos();
+        }
+
+        content.classList.add('content_slide-up');
+        currentTop = 0;
+        content.style.top = '0px';
+
+
+        setTimeout(function () {
+            content.classList.remove('content_slide-up');
+        }, 300);
+    });
 }
 
 function updateTodos() {
@@ -120,7 +153,7 @@ function makeItemBlock(id, text) {
         }
         var newPoint = event.changedTouches[0];
         var dx = newPoint.pageX - startPoint.pageX;
-        if (dx < -2) {
+        if (dx < -1) {
             item.classList.add('item--swiped');
         } else {
             item.classList.remove('item--swiped');
@@ -152,6 +185,8 @@ function addTodoItem(id, text) {
     ids[id] = todoItem;
     todo_list.appendChild(todoItem);
 }
+
+
 //server
 function deleteTodo(id, callback) {
     var xhr = new XMLHttpRequest();

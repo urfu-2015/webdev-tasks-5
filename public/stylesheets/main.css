@@ -1,3 +1,6 @@
+body {
+  margin: 0;
+}
 .header {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -10,6 +13,25 @@
 }
 .create-block {
   padding-top: 30px;
+}
+.back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background-color: #808080;
+  z-index: -1;
+}
+.content {
+  background-color: #fff;
+  position: relative;
+  top: 0px;
+  z-index: 1;
+}
+.content_slide-up {
+  transition-property: top;
+  transition-duration: 0.3s;
 }
 .todo-list {
   display: flex;
