@@ -201,7 +201,7 @@ document.addEventListener('touchend', function (event) {
                         newTodoDiv.innerHTML = newTodo;
                         beforeElem.insertBefore(newTodoDiv, beforeElem.children[0]);
                     });
-                    setTimeout(function() {
+                    setTimeout(function () {
                         loadGif.setAttribute('class', 'loading-block__invisible');
                     }, 1000);
                 });
