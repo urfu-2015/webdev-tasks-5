@@ -29,21 +29,3 @@ exports.change = (req, res) => {
 
     res.send(Task.findAll());
 };
-
-// exports.item = (req, res) => {
-//     const name = req.params.name;
-//     const note = Note.find(name);
-
-//     if (!note) {
-//         res.sendStatus(404);
-
-//         return;
-//     }
-
-//     const data = {
-//         name: note.name,
-//         text: note.text
-//     };
-
-//     res.render('note', Object.assign(data, req.commonData));
-// };
