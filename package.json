@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-	"uglifyjs": "uglifyjs ./public/scripts/xhr.js ./public/scripts/index.js -o ./public/scripts/bundle.js",
-    "start": "npm run uglifyjs && node ./bin/www"
+	"uglifyjs": "uglifyjs ./public/scripts/classlib.js ./public/scripts/xhr.js ./public/scripts/taskhandler.js ./public/scripts/index.js -o ./public/scripts/bundle.js",
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
