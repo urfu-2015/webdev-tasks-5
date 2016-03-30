@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "clean": "rimraf node_modules/",
-    "build": "webpack",
+    "build": "webpack --config webpack.config.js",
     "build-dev": "webpack --config webpack.dev.config.js",
     "deploy:dynamic": "git push heroku master",
     "dev": "webpack --config webpack.dev.config.js && npm start",
