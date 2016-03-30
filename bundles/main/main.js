@@ -132,7 +132,7 @@ document.addEventListener('touchend', function (event) {
             editForm = '<div class="todohi-edit-block">' +
                     '<input class="todohi-edit-block__input" ' +
                         'value=' + event.target.getElementsByTagName('span')[0].innerText +
-                        ' required>' +
+                        ' maxlength="12" required>' +
                     '<button class="todohi-edit-block__save-button">Сохранить</button>' +
                 '</div>';
             event.target.innerHTML = editForm;
