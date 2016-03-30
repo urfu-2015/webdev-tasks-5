@@ -2,7 +2,10 @@
   "name": "webdev-tasks-5",
   "version": "1.0.0",
   "main": "app.js",
-  "scripts": {},
+  "scripts": {
+    "deploy": "git push heroku master",
+    "start": "node app.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Dotokoto/webdev-tasks-5.git"
@@ -14,6 +17,7 @@
   },
   "homepage": "https://github.com/Dotokoto/webdev-tasks-5#readme",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "express": "4.13.4"
   },
   "engines": {
