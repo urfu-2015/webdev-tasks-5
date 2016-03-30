@@ -7,7 +7,7 @@ Remarks.preload(
     function (err) {
         if (err != undefined) {
             console.log(err);
-        };
+        }
     }
 );
 
@@ -33,7 +33,7 @@ module.exports.getRemarks = function(req, res, next) {
 };
 
 module.exports.newRemark = function(req, res, next) {
-
+    console.log(req);
 };
 
 module.exports.redoRemark = function(req, res, next) {
