@@ -131,7 +131,7 @@ document.addEventListener('touchend', function (event) {
             (event.target.getAttribute('class') !== 'todohi-item__delete-button')) {
             editForm = '<div class="todohi-edit-block">' +
                     '<input class="todohi-edit-block__input" ' +
-                        'value=' + event.target.getElementsByTagName('span')[0].innerText +
+                        'value="' + event.target.getElementsByTagName('span')[0].innerText + '"' +
                         ' maxlength="12" required>' +
                     '<button class="todohi-edit-block__save-button">Сохранить</button>' +
                 '</div>';
