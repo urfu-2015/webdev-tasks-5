@@ -14,6 +14,13 @@ document.addEventListener('touchend', function(event) {
     handleTouchEnd(event);
 });
 
+document.addEventListener('touchmove', function(event) {
+    if (event.touches.length > 1) {
+        return;
+    }
+    handleTouchMove(event);
+});
+
 document.addEventListener('scroll-load', handleDocumentScrollLoad);
 
 function init (event) {
@@ -82,6 +89,8 @@ function handleTouchStart(event) {
 }
 
 function  handleTouchEnd(event) {
+    document.querySelector('.root__load').style.top = '-30px';
+
     if (Math.abs(touch.startPosition.pageX - event.changedTouches[0].pageX) < 5 &&
         Math.abs(touch.startPosition.pageY - event.changedTouches[0].pageY) < 5)
     {
@@ -104,9 +113,16 @@ function  handleTouchEnd(event) {
     }
 
 
-    if (window.pageYOffset + 100 < event.changedTouches[0].pageY - touch.startPosition.pageY) {
+    if (window.pageYOffset + 60 < event.changedTouches[0].pageY - touch.startPosition.pageY) {
         event.target.dispatchEvent(new Event('scroll-load', { bubbles: true }));
         return;
+    }
+}
+
+function handleTouchMove(event) {
+    if (window.pageYOffset + 60 >= event.changedTouches[0].pageY - touch.startPosition.pageY) {
+        document.querySelector('.root__load').style.top =
+            (-30 + event.targetTouches[0].pageY - touch.startPosition.pageY - window.pageYOffset)+'px';
     }
 }
 
