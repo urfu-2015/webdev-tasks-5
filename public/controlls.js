@@ -59,11 +59,12 @@
 		var taskText = document.getElementsByClassName('task-text');
 		for (var i = 0; i < taskText.length; i++) {
 			taskText[i].addEventListener('touchstart', showChangeBlock);
+			taskText[i].addEventListener('touchend', showDeleteButton);
 		}
-		var taskButtonRemove = document.getElementsByClassName('task-button-remove');
-		for (var i = 0; i < taskText.length; i++) {
-			taskButtonRemove[i].addEventListener('touchend', showDeleteButton);
-		}
+		// var taskButtonRemove = document.getElementsByClassName('task-button-remove');
+		// for (var i = 0; i < taskText.length; i++) {
+		// 	taskButtonRemove[i].addEventListener('touchend', showDeleteButton);
+		// }
 	}
 
 	function hiddenChangeBlock() {
