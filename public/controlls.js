@@ -80,18 +80,18 @@
 		}
 	}
 
-	function startTouch(event) {
-		event.preventDefault();
+	function startTouch(e) {
+		e.preventDefault();
 		hiddenChangeBlock();
 		curentElementId = this.dataset.taskId;
 		
-		touchElementX = event.touches[0].pageX;
-  		touchElementY = event.touches[0].pageY; 
+		touchElementX = e.touches[0].pageX;
+  		touchElementY = e.touches[0].pageY; 
 	}
-	function endTouch(event) {
-		event.preventDefault();
+	function endTouch(e) {
+		// e.preventDefault();
 		// alert(event.touches[0].pageX + 'end');
-		if (event.touches[0].pageX + 50 < touchElementX) {
+		if (e.touches[0].pageX + 50 < touchElementX) {
 			showDeleteButton.call(this);
 		} else {
 			showChangeBlock.call(this);
