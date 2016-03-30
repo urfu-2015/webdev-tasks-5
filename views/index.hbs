@@ -15,16 +15,7 @@
             <p class="header-text">TODO-хи</p>
         </div>
         <div class="tasks-container">
-            {{#each list}}
-            <div class="task" id="task_{{id}}">
-                <div class="task__text" id="text_{{id}}">{{text}}</div>
-                <!-- <div class="task__delete" id="delete_{{id}}"><i class="fa fa-trash"></i></div>
-                <form class="task__edit-form" id="edit-form_{{id}}">
-                    <input type="text" class="task__edit-text" id="edit-text_{{id}}">
-                    <input type="submit" class="task__edit-submit" id="edit-submit_{{id}}">
-                </form> -->
-            </div>
-            {{/each}}
+            {{> list }}
         </div>
         <div class="add-container">
             <input class="text-to-add" type="text">

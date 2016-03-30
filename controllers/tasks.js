@@ -6,7 +6,7 @@ exports.list = (req, res) => {
     var data = {
         list: Task.findAll()
     };
-    res.render('index', data);
+    res.render('list', data);
 };
 
 exports.add = (req, res) => {

@@ -12,12 +12,13 @@ addButton.addEventListener('click', function (event) {
 
 function refresh() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/', true);
+    xhr.open('GET', '/list', true);
     xhr.send();
     xhr.onreadystatechange = function () {
         if (xhr.status === 200 && xhr.readyState === 4) {
             var refreshBlock = document.getElementsByClassName('pull-and-refresh')[0];
             refreshBlock.style.display = 'none';
+            //...
         }
     }
 }
