@@ -174,6 +174,8 @@ document.addEventListener('touchend', function (event) {
             /* eslint no-lonely-if: 0 */
             if (finalPoint.pageY > initialPoint.pageY) {
                 callAjax('/todos/all', 'get', undefined, function (response) {
+                    var loadGif = document.getElementById('loadGif');
+                    loadGif.setAttribute('class', 'loading-block');
                     response = JSON.parse(response);
                     var beforeElem = document.getElementById('todoSection');
                     var oldTodos = document.getElementsByClassName('todohi-item');
@@ -199,6 +201,9 @@ document.addEventListener('touchend', function (event) {
                         newTodoDiv.innerHTML = newTodo;
                         beforeElem.insertBefore(newTodoDiv, beforeElem.children[0]);
                     });
+                    setTimeout(function() {
+                        loadGif.setAttribute('class', 'loading-block__invisible');
+                    }, 1000);
                 });
             }
         }

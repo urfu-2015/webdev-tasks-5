@@ -2,3 +2,12 @@
 {
     text-align: center;
 }
+
+.loading-block {
+    width: 200px;
+}
+
+.loading-block__invisible {
+    display: none;
+    width: 200px;
+}
