@@ -14,7 +14,7 @@ const publicDir = path.join(__dirname, 'public');
 
 app.set('views', viewsDir);
 app.set('view engine', 'hbs');
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 8080));
 
 app.use(morgan('dev'));
 app.use(express.static(publicDir));
@@ -47,4 +47,6 @@ app.use((req, res, next) => {
 
 require('./routes')(app);
 
-app.listen(8080, () => console.log('Listening on port 8080'));
+app.listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
