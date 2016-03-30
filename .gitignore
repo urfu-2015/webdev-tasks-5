@@ -2,6 +2,7 @@
 .git
 .idea
 node_modules
+heroku
 npm-debug.log
 .env
 Dockerfile
