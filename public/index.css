@@ -34,7 +34,7 @@ body {
 .task-text {
 	margin: 5px;
 	height: 50px;
-	width: 400px;
+	width: 350px;
 	background-color: #ccc;
 	border: 2px solid #111;
 	border-radius: 4px;
@@ -49,7 +49,7 @@ body {
 }
 .task-button-add {
 	margin: 10px;
-	width: 400px;
+	width: 350px;
 	font-size: 30px;
 	background-color: #ccc;
 	border: 2px solid #111;
@@ -57,13 +57,13 @@ body {
 }
 .task-input-text {
 	margin: 10px;
-	width: 400px;
+	width: 350px;
 	height: 40px;
 	font-size: 30px;
 }
 
 .task-save-text {
-	width: 400px;
+	width: 350px;
 	font-size: 30px;
 }
 .button-save {
