@@ -37,7 +37,7 @@ class Todo {
     }
 }
 
-var tasks = ['Сделать таск', 'Запушить таск', 'Заслать PR', 'Выспаться'];
+var tasks = ['code таск', 'push таск', 'Заслать PR', 'Выспаться', 'Катнуть ТВ'];
 
 tasks.forEach((task, index) => {
     memoryStorage.push(
