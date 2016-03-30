@@ -81,6 +81,7 @@
 	}
 
 	function startTouch(event) {
+		event.preventDefault();
 		hiddenChangeBlock();
 		curentElementId = this.dataset.taskId;
 		
@@ -88,7 +89,8 @@
   		touchElementY = event.touches[0].pageY; 
 	}
 	function endTouch(event) {
-		alert(event.touches[0].pageX + 'end');
+		event.preventDefault();
+		// alert(event.touches[0].pageX + 'end');
 		if (event.touches[0].pageX + 50 < touchElementX) {
 			showDeleteButton.call(this);
 		} else {
