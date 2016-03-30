@@ -1,8 +1,7 @@
-//const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 refresh();
 
-document.addEventListener('touchstart', setTouchStartEvent(event), false);
-document.addEventListener('touchend', setTouchEndEvent(event), false);
+document.addEventListener('touchstart', setTouchStartEvent, false);
+document.addEventListener('touchend', setTouchEndEvent, false);
 
 var addButton = document.getElementsByClassName('butn-to-add')[0];
 addButton.addEventListener('click', function (event) {
@@ -15,29 +14,12 @@ function refresh() {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/', true);
     xhr.send();
-    xhr.onreadystatechange = () => {
-        if (req.status === 200 && req.readyState === 4) {
+    xhr.onreadystatechange = function () {
+        if (xhr.status === 200 && xhr.readyState === 4) {
             var refreshBlock = document.getElementsByClassName('pull-and-refresh')[0];
-            refreshBlock.style.display = none;
-            var response = JSON.parse(xhr.response);
-            var container = document.getElementsByClassName('tasks-container')[0];
-            for (var i = 0; i < response.length; i++) {
-                container.appendChild(appendTask(response[i]));
-            }
+            refreshBlock.style.display = 'none';
         }
     }
-}
-
-function appendTask(data) {
-    var task = document.createElement('div');
-    task.className = 'task';
-    task.setAttribute('id', 'task_' + data.id);
-    var text = document.createElement('div');
-    text.className = 'task__text';
-    text.setAttribute('id', 'text_' + data.id);
-    text.innerHTML = data.text;
-    task.appendChild(text);
-    return task;
 }
 
 function addTask(text) {
@@ -46,8 +28,8 @@ function addTask(text) {
     xhr.open('POST', '/', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(params);
-    xhr.onreadystatechange = () => {
-        if (req.status === 200 && req.readyState === 4) {
+    xhr.onreadystatechange = function () {
+        if (xhr.status === 200 && xhr.readyState === 4) {
             refresh();
         }
     }
@@ -59,8 +41,8 @@ function removeTask(id) {
     xhr.open('DELETE', '/', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(params);
-    xhr.onreadystatechange = () => {
-        if (req.status === 200 && req.readyState === 4) {
+    xhr.onreadystatechange = function () {
+        if (xhr.status === 200 && xhr.readyState === 4) {
             refresh();
         }
     }
@@ -72,8 +54,8 @@ function editTask(id, text) {
     xhr.open('PUT', '/', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send(params);
-    xhr.onreadystatechange = () => {
-        if (req.status === 200 && req.readyState === 4) {
+    xhr.onreadystatechange = function () {
+        if (xhr.status === 200 && xhr.readyState === 4) {
             refresh();
         }
     }
@@ -131,13 +113,8 @@ function setTouchEndEvent(event) {
 }
 
 function pullAndRefreshEvent() {
-    //pull and refresh element
     var parElement = document.getElementsByClassName('pull-and-refresh')[0];
-    var loaderImg = document.createElement('img');
-    loaderImg.src = 'loader.gif';
-    loaderImg.className = 'pull-and-refresh__loader';
-    parElement.appendChild(loaderImg);
-    //передавать ли callback в refresh, чтобы удалить loaderImg?
+    parElement.style.display = 'block';
     setTimeout(refresh, 1000);
 }
 

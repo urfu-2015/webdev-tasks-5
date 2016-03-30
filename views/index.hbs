@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+        <title>ToDo-хи</title>
+        <link rel="stylesheet" href="index.css">
+        <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.css">
+    </head>
+    <body>
+        <div class="pull-and-refresh">
+            <img src="loader.gif" class="pull-and-refresh__loader">
+        </div>
+        <div class="header">
+            <p class="header-text">TODO-хи</p>
+        </div>
+        <div class="tasks-container">
+            {{#each list}}
+            <div class="task" id="task_{{id}}">
+                <div class="task__text" id="text_{{id}}">{{text}}</div>
+                <!-- <div class="task__delete" id="delete_{{id}}"><i class="fa fa-trash"></i></div>
+                <form class="task__edit-form" id="edit-form_{{id}}">
+                    <input type="text" class="task__edit-text" id="edit-text_{{id}}">
+                    <input type="submit" class="task__edit-submit" id="edit-submit_{{id}}">
+                </form> -->
+            </div>
+            {{/each}}
+        </div>
+        <div class="add-container">
+            <input class="text-to-add" type="text">
+            <input class="butn-to-add" type="submit" value="Добавить">
+        </div>
+        <script src="index.js"></script>
+    </body>
+</html>

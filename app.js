@@ -5,6 +5,10 @@ const app = express();
 const path = require('path');
 const morgan = require('morgan');
 const viewsDir = path.join(__dirname, 'views');
+const hbs = require('hbs');
+
+app.set('views', viewsDir);
+app.set('view engine', 'hbs');
 
 app.use(express.static(viewsDir));
 
