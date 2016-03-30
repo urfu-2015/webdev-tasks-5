@@ -7,7 +7,7 @@
 	var buttonAdd = document.getElementsByClassName('task-button-add')[0];
 	var inputAdd = document.getElementsByClassName('task-input-text')[0];
 
-	var isMobile = true;
+	var isMobile = false;
 	if (!isMobile) {
 		buttonAdd.addEventListener('click', function () {
 			hiddenChangeBlock();
@@ -73,7 +73,7 @@
 			taskText.classList.remove('hidden');
 			var containerInputTask = document.getElementsByClassName('container-input-task-' + curentElementId)[0];
 			containerInputTask.classList.add('hidden');
-			var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + id);
+			var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + curentElementId)[0];
 			buttonDeleteTask.classList.add('hidden');
 			curentElementId = undefined;
 		}

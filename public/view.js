@@ -52,6 +52,7 @@ function createTask(task) {
 	// inputText.dataset.taskId = task.id;
 	inputText.value = task.text;
 	inputText.classList.add('task-save-text-' + task.id);
+	inputText.classList.add('task-save-text');
 	
 	var buttonSave = document.createElement('button');
 	buttonSave.dataset.taskId = task.id;
