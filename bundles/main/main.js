@@ -31,12 +31,13 @@ var endTime;
 // var lastEditForm;
 
 document.addEventListener('touchstart', function (event) {
-    event.preventDefault();
-    event.stopPropagation();
+    // event.preventDefault();
+    // event.stopPropagation();
 
     if (event.target.parentNode.nodeName === '#document') {
         return;
     }
+
     startTime = new Date();
     initialPoint = event.changedTouches[0];
     var data;
@@ -46,12 +47,15 @@ document.addEventListener('touchstart', function (event) {
     var beforeElem;
 
     // Получение фокуса
-    if (event.target.getAttribute('id') === 'newTodoText') {
+    if ((event.target.parentNode.nodeName !== '#document') &&
+        (event.target.getAttribute('id') === 'newTodoText')) {
         event.target.focus();
     }
 
     // Ещё одно получение фокуса
-    if (event.target.getAttribute('class') === 'todohi-edit-block__input') {
+    if ((event.target.parentNode.nodeName !== '#document') &&
+        (event.target.getAttribute('class') === 'todohi-edit-block__input')) {
+        console.log('shiet');
         tempStr = event.target.value;
         event.target.focus();
         event.target.value = '';
@@ -59,7 +63,8 @@ document.addEventListener('touchstart', function (event) {
     }
 
     // Добавление
-    if (event.target.getAttribute('id') === 'add-button') {
+    if ((event.target.parentNode.nodeName !== '#document') &&
+        (event.target.getAttribute('id') === 'add-button')) {
         var newTodoText = document.getElementById('newTodoText').value;
         if (newTodoText !== '') {
             data = {text: document.getElementById('newTodoText').value};
@@ -79,7 +84,8 @@ document.addEventListener('touchstart', function (event) {
     }
 
     // Удаление
-    if ((event.target.parentNode.getAttribute('class') === 'todohi-item') &&
+    if ((event.target.parentNode.nodeName !== '#document') &&
+        (event.target.parentNode.getAttribute('class') === 'todohi-item') &&
         (event.target.parentNode.getAttribute('id') !== 'addTodo') &&
         (event.target.getAttribute('class') === 'todohi-item__delete-button')) {
         data = {id: event.target.parentNode.getAttribute('id').replace(/\D/g, '')};
@@ -90,7 +96,8 @@ document.addEventListener('touchstart', function (event) {
     }
 
     // Изменение
-    if (event.target.getAttribute('class') === 'todohi-edit-block__save-button') {
+    if ((event.target.parentNode.nodeName !== '#document') &&
+        (event.target.getAttribute('class') === 'todohi-edit-block__save-button')) {
         data = {
             id: event.target.parentNode.parentNode.parentNode.getAttribute('id').replace(/\D/g, ''),
             editText: event.target.parentNode.getElementsByTagName('input')[0].value
@@ -98,7 +105,7 @@ document.addEventListener('touchstart', function (event) {
         callAjax('/todos/edit', 'post', data, function (response) {
             response = JSON.parse(response);
             newTodo = '<div class="todohi-item__todoha">' +
-                '<span class="todohi-item__title">' + response.editText + '</span>' +
+                '<span class="todohi-item__title off-events">' + response.editText + '</span>' +
                 '</div>';
             event.target.parentNode.parentNode.parentNode.innerHTML = newTodo;
         });
@@ -106,11 +113,8 @@ document.addEventListener('touchstart', function (event) {
 });
 
 document.addEventListener('touchend', function (event) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.target.parentNode.nodeName === '#document') {
-        return;
-    }
+    // event.preventDefault();
+    // event.stopPropagation();
 
     endTime = new Date();
     finalPoint = event.changedTouches[0];
@@ -122,7 +126,8 @@ document.addEventListener('touchend', function (event) {
     if ((initialPoint.pageX === finalPoint.pageX) &&
         (initialPoint.pageY === finalPoint.pageY) &&
         (endTime - startTime) < 300) {
-        if ((event.target.parentNode.getAttribute('class') === 'todohi-item') &&
+        if ((event.target.parentNode.nodeName !== '#document') &&
+            (event.target.parentNode.getAttribute('class') === 'todohi-item') &&
             (event.target.parentNode.getAttribute('id') !== 'addTodo') &&
             (event.target.getAttribute('class') !== 'todohi-item__delete-button')) {
             editForm = '<form class="todohi-edit-block" action="" method="post">' +
@@ -143,7 +148,8 @@ document.addEventListener('touchend', function (event) {
         if (xAbs > yAbs) {
             if (finalPoint.pageX < initialPoint.pageX) {
                 // СВАЙП left
-                if ((event.target.parentNode.getAttribute('class') === 'todohi-item') &&
+                if ((event.target.parentNode.nodeName !== '#document') &&
+                    (event.target.parentNode.getAttribute('class') === 'todohi-item') &&
                     (event.target.parentNode.getAttribute('id') !== 'addTodo')) {
                     if (event.target.parentNode.getElementsByTagName('img').length === 0) {
                         delBut = document.createElement('img');
@@ -155,7 +161,8 @@ document.addEventListener('touchend', function (event) {
             } else {
                 // СВАЙП right
                 /* eslint no-lonely-if: 0 */
-                if ((event.target.parentNode.getAttribute('class') === 'todohi-item') &&
+                if ((event.target.parentNode.nodeName !== '#document') &&
+                    (event.target.parentNode.getAttribute('class') === 'todohi-item') &&
                     (event.target.parentNode.getAttribute('id') !== 'addTodo')) {
                     delBut = event.target.parentNode.getElementsByTagName('img');
                     if (delBut.length === 1) {
