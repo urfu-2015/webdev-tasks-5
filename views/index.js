@@ -25,6 +25,7 @@ function refresh() {
 }
 
 function addTask(text) {
+    document.getElementsByClassName('text-to-add')[0].value = '';
     var xhr = new XMLHttpRequest();
     var params = 'text=' + encodeURIComponent(text);
     xhr.open('POST', '/', true);
@@ -72,14 +73,10 @@ function setTouchStartEvent(event) {
     startX = event.changedTouches[0].pageX;
     startY = event.changedTouches[0].pageY;
     startT = new Date().getTime();
+    var element = event.target;
 
-    if (event.targetTouches.length === 1) {
-        deleteEvent(event.target);
-    }
-}
-
-function deleteEvent(element) {
-    if (element.className.indexOf('task__delete') != -1) {
+    if (event.targetTouches.length === 1 &&
+        element.id.indexOf('delete') != -1) {
         var id = element.id.split('_')[1];
         removeTask(id);
     }
@@ -88,11 +85,11 @@ function deleteEvent(element) {
 function setTouchEndEvent(event) {
     event.preventDefault();
     var deltaX = event.changedTouches[0].pageX - startX,
-        deltaY = event.changedTouches[0].pageY - startY,   
+        deltaY = event.changedTouches[0].pageY - startY,
         deltaT = new Date().getTime() - startT,
         element = event.target,
         minUpDelta = 70,
-        delta = 30;
+        delta = 15;
 
     var isSwipeToUp = deltaY >= minUpDelta;
     var isHorizontalSwipe = Math.abs(deltaY) < delta;
@@ -127,7 +124,7 @@ function swipeToLeft(element) {
         var deleteDiv = document.createElement('div');
         deleteDiv.className = 'task__delete';
         deleteDiv.id = 'delete_' + id;
-        div.innerHTML = '<i class="fa fa-trash"></i>';
+        deleteDiv.innerHTML = '<i class="fa fa-trash"></i>';
         task.appendChild(deleteDiv);
         task.className = task.className + ' task_swipedToLeft';
     }
@@ -137,52 +134,49 @@ function swipeToRight(element) {
     if (element.className.indexOf('task') != -1) {
         var id = element.id.split('_')[1];
         var task = document.getElementById('task_' + id);
-        task.removeChild('delete_' + id);
+        task.removeChild(document.getElementById('delete_' + id));
         task.className = 'task';
     }
 }
 
 function touchToEdit(element) {
-    if (element.className.indexOf('task') != -1) {
-        var id = element.id.split('_')[1];
+    var id = element.id.split('_')[1];
+    if (element.id.indexOf('task') != -1
+        || element.id.indexOf('text') != -1) {        
         var task = document.getElementById('task_' + id);
-        var oldText = document.getElementById('text_' + id);
-        removeAllChildren(task);
+        var oldText = document.getElementById('text_' + id).innerHTML;
+        task.innerHTML = '';
         task.appendChild(createEditForm(id, oldText));
-        editEvent(id);
+        //editEvent(id);
+    }
+    if (element.id.indexOf('edit-submit') != -1) {
+        var inputText = document.getElementById('edit-text_' + id);
+        editTask(id, inputText.value);
     }
 }
 
 function createEditForm(id, oldText) {
     var form = document.createElement('form');
-    form.setAttribute('method', 'POST');
-    form.setAttribute('action', '/');
+    form.method = 'POST';
+    form.action = '/';
     form.className = 'task__edit-form';
     form.id = 'edit-form_' + id;
 
     var inputText = document.createElement('input');
-    inputText.setAttribute('type', 'text');
+    inputText.type = 'text';
     inputText.setAttribute('value', oldText);
     inputText.className = 'task__edit-text'; 
     inputText.id = 'edit-text_' + id;
+    form.appendChild(inputText);
 
     var inputSubmit = document.createElement('input');
-    inputText.setAttribute('type', 'submit');
-    inputText.setAttribute('value', 'Сохранить');
-    inputText.className = 'task__edit-submit'; 
-    inputText.id = 'edit-submit_' + id;
-
-    form.appendChild(inputText);
+    inputSubmit.type = 'submit';
+    inputSubmit.setAttribute('value', 'Сохранить');
+    inputSubmit.className = 'task__edit-submit'; 
+    inputSubmit.id = 'edit-submit_' + id;    
     form.appendChild(inputSubmit);
 
     return form;
-}
-
-//прочитала, что работает быстрее, чем просто element.innerHTML = ''
-function removeAllChildren(element) {
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
 }
 
 function editEvent(id) {

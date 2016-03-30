@@ -4,7 +4,7 @@
 }
 .header-text
 {
-    font-size: 40px;
+    font-size: 25px;
     text-align: center;
 }
 .tasks-container
@@ -21,13 +21,13 @@
     flex-direction: row;
     justify-content: center;
     align-items: stretch;
-    font-size: 25px;
+    font-size: 15px;
     width: 60%;
 }
 .task__text
 {
     background-color: #EBE775;
-    padding: 15px;
+    padding: 10px;
     width: 90%;
     text-align: center;
     white-space: nowrap;
@@ -38,47 +38,48 @@
 .task__delete
 {
     background-color: #E25D4B;
-    padding: 15px 20px;
+    padding: 10px 15px;
     color: #FFFFFF;
     width: 10%;
     text-align: center;
-    font-size: 30px;
+    font-size: 20px;
     border-radius: 10px;
 }
 .task__edit-form
 {
     background-color: #EBE775;
-    padding: 15px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
     width: 100%;
-    display: none;
+    border-radius: 10px;
 }
 .task__edit-text,
 .text-to-add
 {
-    font-size: 25px;
+    font-size: 15px;
     width: 95%;
 }
 .task__edit-submit,
 .butn-to-add
 {
     margin-top: 10px;
-    font-size: 20px;
+    font-size: 15px;
     border-radius: 10px;
     padding: 5px;
 }
 .add-container
 {
     margin-top: 10px;
-    width: 60%;
-    padding: 15px;
-    display: flex;
+    width: 55%;
+    padding: 10px;
+   /* display: flex;
     flex-direction: column;
     justify-content: space-around;
-    align-items: center;
+    align-items: center;*/
+    text-align: center;
     margin: auto;
     background-color: #E25D4B;
     border-radius: 10px;
