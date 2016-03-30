@@ -1,0 +1,71 @@
+body {
+    text-align: center;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Tahoma, sans-serif;
+}
+
+.template
+{
+	display: none;
+}
+
+.task-item_edit_false .task-item__editor
+{
+    display: none;
+}
+
+.task-item_edit_true .task-item__name
+{
+    display: none;
+}
+
+.task-item_delete_true .task-item__delete-task
+{
+    display: block;
+}
+
+.task-item_delete_false .task-item__delete-task
+{
+    display: none;
+}
+
+.task-list
+{
+    margin: 10px;
+    display: inline-block;
+    width: 90%;
+    max-width: 700px;
+}
+
+.task-item
+{
+    position: relative;
+    border-radius: 3px;
+    margin: 4px 0;
+    padding: 3px;
+    background: #ccccff;
+    min-height: 50px;
+    vertical-align: middle;
+    font-size: x-large;
+    
+}
+
+.task-item_delete_true
+{
+    left: -50px;
+}
+
+.task-item__delete-task
+{
+    background: #ff9980;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -50px;
+    border-radius: 3px;
+    width: 45px;
+    
+}
+
