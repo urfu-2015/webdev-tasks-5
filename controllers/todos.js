@@ -12,7 +12,8 @@ module.exports.list = (req, res) => {
     todos = todos.map((todo) => {
         return {
             text: todo.text,
-            order: todo.order
+            order: todo.order,
+            _id: todo._id
         };
     });
 
@@ -27,7 +28,11 @@ module.exports.create = (req, res) => {
     });
     todo.save();
 
-    req.sendStatus(201);
+    res.send({
+        text: todo.text,
+        oreder: todo.order,
+        _id: todo._id
+    });
 };
 
 module.exports.item = (req, res) => {
@@ -41,7 +46,8 @@ module.exports.item = (req, res) => {
 
     res.json({
         name: todo.name,
-        order: todo.order
+        order: todo.order,
+        _id: todo._id
     });
 
 };

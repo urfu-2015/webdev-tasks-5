@@ -15,7 +15,7 @@ class Todo {
     }
 
     delete() {
-        todosStorage[_id] = undefined;
+        todosStorage[this._id] = undefined;
     }
 
     static findById(id) {

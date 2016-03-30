@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', loadTodos);
+document.addEventListener('DOMContentLoaded', init);
 
 document.addEventListener('touchstart', function(event) {
     if (event.touches.length > 1) {
@@ -14,35 +14,60 @@ document.addEventListener('touchend', function(event) {
     handleTouchEnd(event);
 });
 
-document.addEventListener('tap', function(event) {
-    alert('tap');
-});
-document.addEventListener('swipe-left', function(event) {
-    alert('swipe');
-});
-document.addEventListener('scroll-load', function(event) {
-    alert('load');
-});
+document.addEventListener('scroll-load', handleDocumentScrollLoad);
 
-function loadTodos (event) {
-    console.log('!');
+function init (event) {
     request('GET', 'api/todos', null, renderTodos);
+    document.querySelector('.root__add-button').addEventListener('tap', handleAddButtonTap);
 }
 
 function renderTodos (data) {
-    const todosContainer = document.getElementById('root__todos-container');
+    var todosContainer = document.querySelector('#root__todos-container');
     todosContainer.innerHTML = '';
 
-    data.todos.forEach(function(todo) {
-        var todoElement = document.createElement('div');
-        todoElement.classList.add('todos-container__todo', 'todo', 'todo_' + todo._id);
-        todosContainer.appendChild(todoElement);
-
-        var todoText = document.createElement('div');
-        todoText.classList.add('todo__text');
-        todoText.innerHTML = todo.text;
-        todoElement.appendChild(todoText);
+    data.todos.forEach(function(todo) {;
+        todosContainer.appendChild(getTodoElement(todo));
     });
+}
+
+function getTodoElement (todo) {
+    var todoElement = document.createElement('div');
+
+    todoElement.classList.add('todos-container__todo', 'todo', 'todo_' + todo._id);
+    todoElement.addEventListener('tap', function(event) {
+        var _id = todo._id;
+        handleTodoTap(event, _id);
+    });
+    todoElement.addEventListener('swipe-left', function (event) {
+        var _id = todo._id;
+        handleTodoSwipeLeft(event, _id);
+    });
+    todoElement.addEventListener('swipe-right', function (event) {
+        var _id = todo._id;
+        handleTodoSwipeRight(event, _id);
+    });
+
+    todoElement.appendChild(getTodoTextElement(todo.text));
+
+    var deleteButton = document.createElement('div');
+    deleteButton.textContent = 'X';
+    deleteButton.classList.add('todo__delete');
+    deleteButton.addEventListener('tap', function(event) {
+        var _id = todo._id;
+        handleTodoDeleteTap(event, _id);
+    });
+    todoElement.appendChild(deleteButton);
+
+    return todoElement;
+}
+
+function getTodoTextElement(text) {
+    var todoText = document.createElement('div');
+
+    todoText.classList.add('todo__text');
+    todoText.innerHTML = text;
+
+    return todoText;
 }
 
 var touch = {};
@@ -57,11 +82,8 @@ function handleTouchStart(event) {
 }
 
 function  handleTouchEnd(event) {
-    console.log(window.pageYOffset);
-    console.log(event.changedTouches[0].pageX + ' ' + event.changedTouches[0].pageY);
-    if (touch.startPosition.pageX === event.changedTouches[0].pageX &&
-        touch.startPosition.pageY === event.changedTouches[0].pageY &&
-        (new Date()).getTime() - touch.startTime < 200)
+    if (Math.abs(touch.startPosition.pageX - event.changedTouches[0].pageX) < 5 &&
+        Math.abs(touch.startPosition.pageY - event.changedTouches[0].pageY) < 5)
     {
         event.target.dispatchEvent(new Event('tap', { bubbles: true }));
         return;
@@ -74,14 +96,131 @@ function  handleTouchEnd(event) {
         return;
     }
 
-    if (window.pageYOffset + 50 < event.changedTouches[0].pageY - touch.startPosition.pageY) {
+    if (Math.abs(touch.startPosition.pageY - event.changedTouches[0].pageY) < 20 &&
+        event.changedTouches[0].pageX - touch.startPosition.pageX > 50)
+    {
+        event.target.dispatchEvent(new Event('swipe-right', { bubbles: true }));
+        return;
+    }
+
+
+    if (window.pageYOffset + 100 < event.changedTouches[0].pageY - touch.startPosition.pageY) {
         event.target.dispatchEvent(new Event('scroll-load', { bubbles: true }));
         return;
     }
 }
 
+function handleTodoTap(event, id) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    showTodoForm(event.currentTarget, id);
+}
+
+function showTodoForm(todoElement, id) {
+    if (todoElement.classList.contains('todo_swiped') || todoElement.classList.contains('todo_modification')) {
+        return;
+    } else {
+        todoElement.classList.add('todo_modification');
+    }
+
+    var oldText = todoElement.firstChild.textContent;
+    var todoForm = getTodoForm(oldText, id);
+
+    todoElement.innerHTML = '';
+    todoElement.appendChild(todoForm);
+}
+
+function handleTodoSwipeLeft(event, id) {
+    if (event.currentTarget.classList.contains('todo_swiped') ||
+        event.currentTarget.classList.contains('todo_modification'))
+    {
+        return;
+    } else {
+        event.currentTarget.classList.add('todo_swiped');
+    }
+}
+
+function handleTodoSwipeRight(event, id) {
+    if (!event.currentTarget.classList.contains('todo_swiped'))
+    {
+        return;
+    } else {
+        event.currentTarget.classList.remove('todo_swiped');
+    }
+
+}
+
+function handleTodoDeleteTap(event, id) {
+    request('DELETE', 'api/todos/' + id, {}, function () {
+        var todosContainer = document.querySelector('#root__todos-container');
+        var todoElement = document.querySelector('.todo_' + id);
+        todosContainer.removeChild(todoElement);
+    });
+}
+
+function handleDocumentScrollLoad() {
+    document.querySelector('.root__load').classList.add('.root__load_spinning');
+    request('GET', 'api/todos', null, function (todos) {
+        renderTodos(todos);
+        document.querySelector('.root__load').classList.remove('.root__load_spinning');
+    });
+}
+
+function handleAddButtonTap(event) {
+    request('POST', 'api/todos', { text: '' }, function (body) {
+        var todosContainer = document.querySelector('#root__todos-container');
+        var todoElement = getTodoElement(body);
+
+        todosContainer.appendChild(todoElement);
+        showTodoForm(todoElement, body._id);
+    });
+}
+
+function getTodoForm(text, id) {
+    var todoForm = document.createElement('div');
+    todoForm.classList.add('todo__form', 'input-form');
+
+    var todoInput = document.createElement('textarea');
+    todoInput.classList.add('input-form__input');
+    todoInput.textContent = text;
+    todoInput.rows = 3;
+
+    var todoSubmit = document.createElement('button');
+    todoSubmit.classList.add('input-form__submit');
+    todoSubmit.textContent = 'Сохранить';
+    todoSubmit.addEventListener('tap', function (event) {
+        var _id = id;
+        handleSubmitChanges(event, _id);
+    });
+
+    todoForm.appendChild(todoInput);
+    todoForm.appendChild(todoSubmit);
+    return todoForm;
+}
+
+function handleSubmitChanges(event, id) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    var todo = document.querySelector('.todo_' + id);
+    var newText = todo.firstChild.firstChild.value;
+
+    request('PATCH', 'api/todos/' + id, {
+        text: newText
+    });
+
+    var todosContainer = document.querySelector('#root__todos-container');
+    var todoElement = getTodoElement({
+        text: newText,
+        _id: id
+    });
+
+    todosContainer.replaceChild(todoElement, todo);
+}
+
 function request(method, location, body, callback) {
-    const req = new XMLHttpRequest();
+    var req = new XMLHttpRequest();
 
     req.onload = function() {
         if (req.status >= 400) {
@@ -89,7 +228,13 @@ function request(method, location, body, callback) {
             return;
         }
         if (callback !== undefined) {
-            callback(JSON.parse(req.responseText));
+            var parsedResponse = {};
+            try {
+                parsedResponse = JSON.parse(req.responseText);
+            } catch (error) {
+                parsedResponse = {};
+            }
+            callback(parsedResponse);
         }
     };
 
@@ -99,6 +244,10 @@ function request(method, location, body, callback) {
 
     req.timeout = 30000;
     req.open(method, location, true);
-    req.setRequestHeader('ContentType', 'application/json');
-    req.send(body);
+    if (body) {
+        req.setRequestHeader('Content-type', 'application/json');
+        req.send(JSON.stringify(body));
+    } else {
+        req.send();
+    }
 }
