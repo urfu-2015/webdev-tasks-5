@@ -19,11 +19,12 @@ exports.addTask = function (req, res) {
 	if (!req.body.text) {
 		return res.status(400).json({ message: 'No text' });
 	}
-	database.push({
+    var task = {
 		id: Date.now(),
 		text: req.body.text
-	});
-	res.status(201).json({ message: 'OK' });
+	};
+	database.push(task);
+	res.status(201).json({ message: 'OK', task: task });
 };
 
 exports.changeTask = function (req, res) {

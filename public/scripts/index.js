@@ -18,18 +18,31 @@ function deleteTask(th) {
         handlers.splice(i, 1);
         document.getElementsByClassName('task-list__append-zone')[0].removeChild(th.getNode());
     });
-};
+}
 
-function getTasks() {
-    XHR.getJSON('/api/task', function (code, tasks) {
-        tasks.forEach(function (task) {
-            var th = new TaskHandler(task.id, task.text);
-            document.getElementsByClassName('task-list__append-zone')[0].appendChild(th.getNode());    
-            th.changeTaskCB = changeTask;
-            th.deleteTaskCB = deleteTask;
-            handlers.push(th);
-        });
+function addTask() {
+    var text = document.getElementsByClassName('add-item-area')[0].value;
+    XHR.postJSON('/api/task', { text: text}, function (code, res) {
+       createTaskOnFront(res.task);
     });
 }
 
+function createTaskOnFront(task) {
+    var th = new TaskHandler(task.id, task.text);
+    document.getElementsByClassName('task-list__append-zone')[0].appendChild(th.getNode());    
+    th.changeTaskCB = changeTask;
+    th.deleteTaskCB = deleteTask;
+    handlers.push(th);
+}
+
+function getTasks() {
+    XHR.getJSON('/api/task', function (code, tasks) {
+        tasks.forEach(createTaskOnFront);
+    });
+}
+
+window.addEventListener('load', function () {
+    document.getElementsByClassName('task-item__add-button')[0]
+    .addEventListener('click', addTask);
+});
 window.addEventListener('load', getTasks);

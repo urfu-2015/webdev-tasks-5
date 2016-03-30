@@ -3,6 +3,7 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
+    font-family: Tahoma, sans-serif;
 }
 
 .template
@@ -45,9 +46,8 @@ body {
     margin: 4px 0;
     padding: 3px;
     background: #ccccff;
-    height: 50px;
+    min-height: 50px;
     vertical-align: middle;
-    font-family: Tahoma, sans-serif;
     font-size: x-large;
     
 }
