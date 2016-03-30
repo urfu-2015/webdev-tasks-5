@@ -83,7 +83,7 @@
 	function startTouch(event) {
 		hiddenChangeBlock();
 		curentElementId = this.dataset.taskId;
-		alert(touchElementX);
+		
 		touchElementX = event.touches[0].pageX;
   		touchElementY = event.touches[0].pageY; 
 	}
