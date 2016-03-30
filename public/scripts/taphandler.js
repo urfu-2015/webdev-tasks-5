@@ -28,9 +28,12 @@
     };
     
     TapHandler.prototype.__touchEnd = function (event) {
-        if (Math.abs(this.__startY - this.__endY) > 30) {
+        if (this.__endX === undefined || this.__endY == undefined) {
+            return this.tapCB();
+        }
+        if (this.__startX - this.__endX > 30) {
             return this.swipeLeftCB();
-        } else if (Math.abs(this.__endY - this.__startY) > 30) {
+        } else if (this.__endX - this.__startX > 30) {
             return this.swipeRightCB();
         } else {
             return this.tapCB();
