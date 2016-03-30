@@ -13,6 +13,7 @@ const publicDir = path.join(__dirname, 'public');
 
 app.set('views', viewsDir);
 app.set('view engine', 'hbs');
+app.set('port', (process.env.PORT || 5000));
 
 app.use(morgan('dev'));
 app.use(express.static(publicDir));
