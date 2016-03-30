@@ -4,10 +4,13 @@
 	
 	var TaskHandler = function (id, text) {
 		this.__node = document.createElement('DIV');
+        this.__mode = 'normal';
 		this.__fillNode();
         this.setId(id);
         this.setText(text);
         this.__setEventHandlers();
+        this.changeTaskCB = function () {};
+        this.deleteTaskCB = function () {};
 	};
     
     TaskHandler.prototype.__setEventHandlers = function () {
@@ -15,6 +18,21 @@
         var taskItemHandler = new TapHandler(taskItemNode);
         taskItemHandler.swipeLeftCB = this.showDelete.bind(this);
         taskItemHandler.swipeRightCB = this.hideDelete.bind(this);
+        taskItemHandler.tapCB = (function () {
+            this.__mode == 'normal' ?
+            this.switchToEditMode() :
+            this.switchToNormalMode();
+        }).bind(this);
+        var saveButton = this.__node.getElementsByClassName('task-item__save-button')[0];
+        var changeTaskHandler = new TapHandler(saveButton);
+        changeTaskHandler.tapCB = (function () {
+            this.changeTaskCB(this);
+        }).bind(this);
+        var deleteButton = this.__node.getElementsByClassName('task-item__delete-task')[0];
+        var deleteHandler = new TapHandler(deleteButton);
+        deleteHandler.tapCB = (function () {
+           this.deleteTaskCB(this); 
+        });
     };
 	
 	TaskHandler.prototype.getNode = function () {
@@ -45,11 +63,13 @@
 	};
 	
     TaskHandler.prototype.switchToEditMode = function () {
+        this.__mode = 'edit';
         ClassLib.removeClass(this.__node.children[0], 'task-item_edit_false');
         ClassLib.addClass(this.__node.children[0], 'task-item_edit_true');
     };
     
     TaskHandler.prototype.switchToNormalMode = function () {
+        this.__mode = 'normal';
         ClassLib.removeClass(this.__node.children[0], 'task-item_edit_true');
         ClassLib.addClass(this.__node.children[0], 'task-item_edit_false');
     };
