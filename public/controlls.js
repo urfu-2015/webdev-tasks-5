@@ -7,25 +7,30 @@
 	var buttonAdd = document.getElementsByClassName('task-button-add')[0];
 	var inputAdd = document.getElementsByClassName('task-input-text')[0];
 
-	// buttonAdd.addEventListener('click', function () {
-	// 	hiddenChangeBlock();
-	// 	if (inputAdd.value.length > 0) {
-	// 		addTask(inputAdd.value);
-	// 	}
-	// });
-
-	buttonAdd.addEventListener('touchstart', function () {
-		hiddenChangeBlock();
-		if (inputAdd.value.length > 0) {
-			addTask(inputAdd.value);
-		}
-	});
-	inputAdd.addEventListener('click', function () {
-		hiddenChangeBlock();
-	}, false);
-
-	updateTaskListener();
-
+	var isMobile = true;
+	if (!isMobile) {
+		buttonAdd.addEventListener('click', function () {
+			hiddenChangeBlock();
+			if (inputAdd.value.length > 0) {
+				addTask(inputAdd.value);
+			}
+		});
+		inputAdd.addEventListener('click', function () {
+			hiddenChangeBlock();
+		}, false);
+		updateTaskListener();
+	} else {
+		buttonAdd.addEventListener('touchstart', function () {
+			hiddenChangeBlock();
+			if (inputAdd.value.length > 0) {
+				addTask(inputAdd.value);
+			}
+		});
+		inputAdd.addEventListener('touchstart', function () {
+			hiddenChangeBlock();
+		}, false);
+		updateTaskListenerMobile();
+	}
 
 	function updateTaskListener() {
 		var taskButtonsRemove = document.getElementsByClassName('task-button-remove');
@@ -41,15 +46,42 @@
 			taskText[i].addEventListener('click', showChangeBlock);
 		}
 	}
+
+	function updateTaskListenerMobile() {
+		var taskButtonsRemove = document.getElementsByClassName('task-button-remove');
+		for (var i = 0; i < taskButtonsRemove.length; i++) {
+			taskButtonsRemove[i].addEventListener('touchstart', deleteTask);
+		}
+		var buttonsSave = document.getElementsByClassName('button-save');
+		for (var i = 0; i < buttonsSave.length; i++) {
+			buttonsSave[i].addEventListener('touchstart', changeTextTask);
+		}
+		var taskText = document.getElementsByClassName('task-text');
+		for (var i = 0; i < taskText.length; i++) {
+			taskText[i].addEventListener('touchstart', showChangeBlock);
+		}
+		var taskButtonRemove = document.getElementsByClassName('task-button-remove');
+		for (var i = 0; i < taskText.length; i++) {
+			taskButtonRemove[i].addEventListener('touchend', showDeleteButton);
+		}
+	}
+
 	function hiddenChangeBlock() {
 		if (curentElementId !== undefined) {
 			var taskText = document.getElementsByClassName('task-text-' + curentElementId)[0];
 			taskText.classList.remove('hidden');
 			var containerInputTask = document.getElementsByClassName('container-input-task-' + curentElementId)[0];
 			containerInputTask.classList.add('hidden');
+			var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + id);
+			buttonDeleteTask.classList.add('hidden');
 			curentElementId = undefined;
 		}
 	}
+	function showDeleteButton() {
+		var id = this.dataset.taskId;
+		var buttonDeleteTask = document.getElementsByClassName('task-button-remove-' + id);
+		buttonDeleteTask.classList.remove('hidden');		
+	};
 
 	function showChangeBlock() {
 		hiddenChangeBlock();
