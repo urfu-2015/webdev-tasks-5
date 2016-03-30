@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="{{ meta.charset }}">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    <link rel="stylesheet" type="text/css" href="/index.css">
+</head>
+<body>
+    {{#if tasks.length}}
+        <ul class="todo-list">
+            {{#each tasks}}
+                <li>
+                    <span class="todo-list__task">{{text}}</span>
+                    <form method="post" action="/deletion" class="todo-list__deletion">
+                        <input type="hidden" name="id" value={{id}}>
+                        <input type="submit" value="Удалить" class="todo-list__deletion-button">
+                    </form>
+                </li>
+            {{/each}}
+        </ul>
+    {{^}}
+        <p>No tasks!</p>
+    {{/if}}
+    <form method="post" action="/">
+        <input type="text" name="message">
+        <input type="submit" value="Добавить">
+    </form>
+    <script src="/index.js"></script>
+</body>
+</html>

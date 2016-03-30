@@ -1,0 +1,28 @@
+{
+  "name": "webdev-tasks-5",
+  "version": "1.0.0",
+  "description": "TODOhi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "jscs ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dodo888/webdev-tasks-5.git"
+  },
+  "author": "Vladimir Smirnov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dodo888/webdev-tasks-5/issues"
+  },
+  "homepage": "https://github.com/Dodo888/webdev-tasks-5#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "hbs": "^4.0.0"
+  },
+  "devDependencies": {
+    "jscs": "^2.11.0"
+  }
+}

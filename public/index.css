@@ -1,0 +1,23 @@
+body
+{
+    text-align: center;
+}
+.todo-list
+{
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+li
+{
+    flex-direction: row;
+    width: 100%;
+}
+
+.todo-list__deletion
+{
+    display: flex;
+    justify-content: flex-end;
+}
