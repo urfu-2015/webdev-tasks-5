@@ -124,8 +124,8 @@ del.addEventListener('touchstart', (event) => {
     event.preventDefault();
 
     //console.log(target);
-    const name = target.childNodes[1].innerText;
-    const body = 'name=' + encodeURIComponent(name);
+    var name = target.childNodes[1].innerText;
+    var body = 'name=' + encodeURIComponent(name);
 
     xhrRequest('DELETE', 'delete-note', () => {
         del.style.display = 'none';
@@ -301,7 +301,7 @@ document.addEventListener('touchend', function(event) {
                         document.body.style.marginTop = -40 + 'px';
                     }, 500);
 
-                    const items = document.querySelectorAll('.container__item');
+                    var items = document.querySelectorAll('.container__item');
                     items.forEach((item) => {
                         container.removeChild(item);
                     });
