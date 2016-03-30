@@ -1,0 +1,53 @@
+body {
+	margin: 0;
+	/*width: 100%;*/
+}
+
+.wrapper {
+	width: 100%;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+}
+
+.task-list {
+	display: flex;
+	flex-flow: column wrap;
+	justify-content: center;
+	/*align-items: stretch;*/
+}
+
+.task {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin: 5px;
+}
+.task-button-remove {
+	height: 50px;
+	width: 50px;
+	background-color: #d30;
+	margin: 5px;
+}
+.task-text {
+	margin: 5px;
+	height: 50px;
+	width: 200px;
+	background-color: #ccc;
+	border: 2px solid #111;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.task-button-add {
+	margin: 10px;
+	width: 200px;
+	background-color: #ccc;
+	border: 2px solid #111;
+	border-radius: 4px;
+}
+
+.hidden {
+	display: none;
+}
