@@ -7,6 +7,8 @@
         this.tapCB = function () {};
         this.swipeLeftCB = function () {};
         this.swipeRightCB = function () {};
+        this.swipeUpCB = function () {};
+        this.swipeDownCB = function () {};
         this.__setEventHandlers();
     };
     
@@ -31,12 +33,20 @@
         if (this.__endX === undefined || this.__endY == undefined) {
             return this.tapCB();
         }
-        if (this.__startX - this.__endX > 30) {
-            return this.swipeLeftCB();
-        } else if (this.__endX - this.__startX > 30) {
-            return this.swipeRightCB();
+        var deltaY = Math.abs(this.__endY - this.__startY);
+        var deltaX = Math.abs(this.__endX - this.__startX);
+        if (deltaY > deltaX) {
+            if (this.__startY > this.__endY) {
+                return this.swipeUpCB();
+            } else {
+                return this.swipeDownCB();
+            }
         } else {
-            return this.tapCB();
+            if (this.__startX > this.__endX) {
+                return this.swipeLeftCB();
+            } else {
+                return this.swipeRightCB();
+            }
         }
     };
     

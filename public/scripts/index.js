@@ -35,7 +35,28 @@ function createTaskOnFront(task) {
     handlers.push(th);
 }
 
+function showLoading() {
+    document.getElementsByClassName('loading-image')[0].style.display = 'inline';
+}
+
+function hideLoading() {
+    document.getElementsByClassName('loading-image')[0].style.display = 'none';
+}
+
+function getNewTasks() {
+    showLoading();
+    XHR.getJSON('/api/task', function (code, tasks) {
+        hideLoading();
+        tasks.filter(function (task) {
+            return !handlers.some(function (handler) {
+                return handler.getId() == task.id;
+            });
+        }).forEach(createTaskOnFront);
+    });
+}
+
 function getTasks() {
+    hideLoading();
     XHR.getJSON('/api/task', function (code, tasks) {
         tasks.forEach(createTaskOnFront);
     });
@@ -44,5 +65,8 @@ function getTasks() {
 window.addEventListener('load', function () {
     document.getElementsByClassName('task-item__add-button')[0]
     .addEventListener('click', addTask);
+    var updateHandler = 
+        new TapHandler(document.getElementsByClassName('task-list')[0]);
+   updateHandler.swipeDownCB = getNewTasks;
 });
 window.addEventListener('load', getTasks);
