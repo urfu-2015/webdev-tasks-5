@@ -61,10 +61,14 @@ allCards = Array.prototype.slice.call(allCards);
 var startPoint={};
 var nowPoint;
 var startTime;
+var lastElementInLeft;
 allCards.map(function(elem, index, array) {
     elem.addEventListener('touchstart', function(event) {
         //event.preventDefault();
         //event.stopPropagation();
+        if (lastElementInLeft != undefined) {
+            lastElementInLeft.setAttribute('style', 'transform: translateX(0px)')
+        }
         startPoint.x = event.changedTouches[0].pageX;
         startPoint.y = event.changedTouches[0].pageY;
         startTime = new Date();
@@ -72,24 +76,27 @@ allCards.map(function(elem, index, array) {
     elem.addEventListener('touchmove', function(event) {
         //event.preventDefault();
         //event.stopPropagation();
+        alert('qweqwe');
         nowPoint = event.changedTouches[0];
         var dif = nowPoint.pageX-startPoint.x;
 
         if(Math.abs(dif) > 200){
+            lastElementInLeft = elem;
             event.preventDefault();
             event.stopPropagation();
-            if(dif < 0) {
+            var but = document.querySelector('.delButton');
+            elem.setAttribute('style', 'transform: translateX(' + dif + 'px)');
+            /*if(dif < 0) {
                 var but = document.querySelector('.delButton');
                 document.querySelector('.main').removeChild(but);
                 insertAfter(but, elem);
                 but.setAttribute('style', 'display: inline');
-                //пока такой очень грубый способ перемещения
-                elem.setAttribute('style', 'margin-left: -50px');
+                elem.setAttribute('style', 'transform: translateX(' + dif + 'px)');
             } else {
                 var but = document.querySelector('.delButton');
                 but.setAttribute('style', 'display: none');
-                elem.setAttribute('style', 'margin-left: 0px');
-            }
+                elem.setAttribute('style', 'transform: translateX(' + 0 + 'px)');
+            }*/
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
         }
     }, false);
@@ -99,7 +106,7 @@ allCards.map(function(elem, index, array) {
         nowPoint = event.changedTouches[0];
         var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
         var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-        console.log(endTime.getTime()-startTime.getTime());
+        console.log(xAbs, yAbs);
         //swipes
         if ((xAbs > 10 || yAbs > 10) && (endTime.getTime()-startTime.getTime())>200) {
             //по горизонтали
@@ -107,13 +114,17 @@ allCards.map(function(elem, index, array) {
                 event.preventDefault();
                 event.stopPropagation();
                 if (startPoint.x < nowPoint.pageX) {
-                    //addDelete(elem);
+                    elem.setAttribute('style', 'transform: translateX(0)');
                 } else {
-                    //event.preventDefault();
-                    //event.stopPropagation();
+                    elem.setAttribute('style', 'transform: translateX(-10%);');
                 }
                 //вертикаль
             } else {
+                event.preventDefault();
+                event.stopPropagation();
+                if (startPoint.y < nowPoint.pageY) {
+                    console.log('here');
+                }
             }
         }  else {
             //tap
@@ -139,6 +150,7 @@ allCards.map(function(elem, index, array) {
                     event.preventDefault();
                     document.querySelector('.redo').setAttribute('style', 'display: none;');
                     card.setAttribute('style', 'display:block;');
+                    newRemark.setAttribute('style', 'display: block;');
                 });
                 //отправка изменения
                 document.querySelector('.redo_send').addEventListener('click', function (event) {
