@@ -11,7 +11,7 @@ module.exports.index = (req, res) => {
 	);
 }
 
-module.exports.add = (req, res, next) => {
+module.exports.add = (req, res) => {
 	var tasks = tasksModel(req.db);
 	tasks.add(req.body).then(
 		newTask => res.status(200).send(newTask),
