@@ -76,12 +76,19 @@ allCards.map(function(elem, index, array) {
         var dif = nowPoint.pageX-startPoint.x;
 
         if(Math.abs(dif) > 200){
+            event.preventDefault();
+            event.stopPropagation();
             if(dif < 0) {
                 var but = document.querySelector('.delButton');
                 document.querySelector('.main').removeChild(but);
                 insertAfter(but, elem);
                 but.setAttribute('style', 'display: inline');
+                //пока такой очень грубый способ перемещения
                 elem.setAttribute('style', 'margin-left: -50px');
+            } else {
+                var but = document.querySelector('.delButton');
+                but.setAttribute('style', 'display: none');
+                elem.setAttribute('style', 'margin-left: 0px');
             }
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
         }
@@ -93,41 +100,51 @@ allCards.map(function(elem, index, array) {
         var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
         var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
         console.log(endTime.getTime()-startTime.getTime());
-        if ((xAbs > 10 || yAbs < 10) && (endTime.getTime()-startTime.getTime())>200) {
-
+        //swipes
+        if ((xAbs > 10 || yAbs > 10) && (endTime.getTime()-startTime.getTime())>200) {
+            //по горизонтали
             if (xAbs > yAbs) {
+                event.preventDefault();
+                event.stopPropagation();
                 if (startPoint.x < nowPoint.pageX) {
-                    event.preventDefault();
-                    event.stopPropagation();
                     //addDelete(elem);
+                } else {
+                    //event.preventDefault();
+                    //event.stopPropagation();
                 }
+                //вертикаль
             } else {
             }
         }  else {
-            if ((endTime.getTime()-startTime.getTime())<200) {
+            //tap
+            if ((endTime.getTime() - startTime.getTime()) < 200) {
                 event.preventDefault();
                 event.stopPropagation();
-            newRemark.setAttribute('style', 'display: none;');
-            var myclick = event.targetTouches[0];
-            var card = elem;
-            var main = document.querySelector('.main');
-            card.setAttribute('style', 'display:none;');
-            var redo = document.querySelector('.redo');
-            main.removeChild(redo);
-            redo.setAttribute('style', 'display:block;');
-            redo.querySelector('.redo_text').innerHTML = card.innerHTML;
-            insertAfter(redo, card);
+                var styleCurrentCard = elem.getAttribute('style') || '';
+                if (styleCurrentCard.match(/margin-left: -50px/)) {
+                    return;
+                }
+                newRemark.setAttribute('style', 'display: none;');
+                var myclick = event.targetTouches[0];
+                var card = elem;
+                var main = document.querySelector('.main');
+                card.setAttribute('style', 'display:none;');
+                var redo = document.querySelector('.redo');
+                main.removeChild(redo);
+                redo.setAttribute('style', 'display:block;');
+                redo.querySelector('.redo_text').innerHTML = card.innerHTML;
+                insertAfter(redo, card);
                 //отмена
-            document.querySelector('.redo_cancel').addEventListener('click', function (event) {
-                event.preventDefault();
-                document.querySelector('.redo').setAttribute('style', 'display: none;');
-                card.setAttribute('style', 'display:block;');
-            });
+                document.querySelector('.redo_cancel').addEventListener('click', function (event) {
+                    event.preventDefault();
+                    document.querySelector('.redo').setAttribute('style', 'display: none;');
+                    card.setAttribute('style', 'display:block;');
+                });
                 //отправка изменения
-            document.querySelector('.redo_send').addEventListener('click', function (event) {
-                event.preventDefault();
-                var text = document.querySelector('textarea.redo_text').value;
-                console.log(text);
+                document.querySelector('.redo_send').addEventListener('click', function (event) {
+                    event.preventDefault();
+                    var text = document.querySelector('textarea.redo_text').value;
+                    console.log(text);
                 var xhr = new XMLHttpRequest();
                 xhr.open('PUT', '/remarks/' + index, true);
                 xhr.onreadystatechange = function () { // (3)
@@ -145,6 +162,9 @@ allCards.map(function(elem, index, array) {
                     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhr.send('text=' + encodeURIComponent(text));
                 });
-            }}
+            } else {
+                //long tap
+            }
+        }
     }, false);
 });
