@@ -7,13 +7,12 @@ const bodyParser = require('body-parser');
 var morgan = require('morgan');
 
 var dir = path.join(__dirname, 'Public');
-
-app.use(express.static(dir));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
-app.set('port', (process.env.PORT || 8080));
+app.use(express.static(dir));
 
+app.set('port', (process.env.PORT || 8080));
 
 require('./routes.js')(app);
 

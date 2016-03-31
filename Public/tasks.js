@@ -1,7 +1,5 @@
 'use strict';
 
-var touch = {};
-
 function xhrRequest(method, url, async, data, callback) {
     console.log('in xhrRequest');
     const xhr = new XMLHttpRequest();
@@ -152,11 +150,36 @@ function touchStartHandler(event, callback) {
     }
 }
 
+function swipeStartHandler(event, callback) {
+    console.log('in swipeStartHandler');
+    var touchObj = event.changedTouches[0];
+    var startX = touchObj.pageX;
+    var startY = touchObj.pageY;
+    console.log(startX);
+    console.log(startY);
+    var startTime = new Date().getTime();
+    event.currentTarget.addEventListener('touchend', swipeEndHandler);
 
-function touchEndHandler (event) {
+    function swipeEndHandler(event) {
+        var swipeDirection = '';
+        var touchObj = event.changedTouches[0];
+        var distX = touchObj.pageX - startX;
+        var distY = touchObj.pageY - startY;
+        var totalTime = new Date().getTime() - startTime;
+        var allowedTime = 300;
+        if (totalTime < allowedTime) {
+            if(Math.abs(distX) >= 150 && Math.abs(distY) <= 100) {
+                swipeDirection = distX < 0? 'left' : 'right';
+            } else if (Math.abs(distY) >= 150 && Math.abs(distX) <= 100) {
+                swipeDirection = distY < 0? 'down' : 'up';
+            }
+        }
+        if (callback && swipeDirection) {
+            callback(swipeDirection);
+        }
+    }
 
 }
-
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -167,6 +190,5 @@ function init() {
     console.log('buttonAdd');
     console.log(buttonAdd);
     buttonAdd.addEventListener('touchstart', addTaskEvent);
-
 }
 

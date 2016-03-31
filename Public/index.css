@@ -36,7 +36,7 @@ h1
 
 .task-item
 {
-    border: 2px solid #ffab00;
+    border: 1px solid #ffab00;
     background-color: #e1ff00;
     width: 70%;
     min-height: 40px;
@@ -44,6 +44,7 @@ h1
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    margin: 10px 0;
 }
 
 .task-item span
