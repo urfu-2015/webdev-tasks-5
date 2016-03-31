@@ -28,9 +28,9 @@ function xhrRequest(method, url, async, data, callback) {
     console.log('sent');
 }
 
-function getTasks() {
+function getTasks(callback) {
     console.log('in gettasks');
-    xhrRequest('GET', '/tasks', true, {}, function (error, data) {
+    xhrRequest('GET', '/tasks', true, null, function (error, data) {
         console.log('make xhrrequest in gettasks');
         if (error) {
             console.log(error);
@@ -40,7 +40,9 @@ function getTasks() {
         console.log(data);
         data = JSON.parse(data);
         console.log(data.content);
-        showAllTasks(data.content);
+        if (callback) {
+            callback(data.content);
+        }
     });
 }
 
@@ -51,7 +53,9 @@ function showAllTasks(storage) {
     const container = document.getElementsByClassName('task-container')[0];
     removeChildren(container);
     storage.forEach(function (element) {
-        container.appendChild(createTaskItem(element));
+        if (element) {
+            container.appendChild(createTaskItem(element));
+        }
     });
 
 }
@@ -59,7 +63,9 @@ function showAllTasks(storage) {
 function createTaskItem(task) {
     const div = document.createElement('div');
     div.className = 'task-item';
+    div.id = 'task-item-' + task.id;
     const span = document.createElement('span');
+    span.className = 'task-item__text';
     span.innerHTML = task.text;
     div.appendChild(span);
     const textArea = document.createElement('textarea');
@@ -85,6 +91,7 @@ function removeChildren(node) {
 function addTask () {
     console.log('in addTask');
     const task = {text: 'Task'};
+    // Надо выдавать форму для изменения сразу
     xhrRequest('POST', '/tasks', true, task, function (error, data) {
         if (error) {
             console.log(error);
@@ -111,12 +118,41 @@ function deleteTask (event) {
 }
 
 function changeTask () {
+    console.log('in changeTask');
 
 }
 
 function addTaskEvent (event) {
     console.log('in addTaskEvent');
     touchStartHandler(event, addTask);
+}
+
+function refreshTasksEvent (event) {
+    console.log('in refreshTasksEvent');
+    swipeStartHandler(event, refreshTasks);
+}
+
+function refreshTasks (swipeDirection) {
+    console.log('in refreshtasks');
+    if (swipeDirection !== 'down') {
+        return;
+    }
+    var reloadDiv = document.getElementsByClassName('reload')[0];
+    reloadDiv.className = 'reload';
+    // надо загрузить и сравнить, изменились или нет
+    var oldTasksContainer = document.getElementsByClassName('task-container')[0];
+    getTasks(function (storage) {
+        // надо для каждого элемента из storage посмотреть, есть ли он уже на странице
+        storage.forEach(function (task) {
+            var taskDiv = document.getElementById('task-item-' + task.id);
+            if (!taskDiv) {
+                var newTask = createTaskItem(task);
+                oldTasksContainer.appendChild(newTask);
+            }
+        });
+        reloadDiv.className = 'reload reload_hidden';
+    });
+
 }
 
 function touchStartHandler(event, callback) {
@@ -161,19 +197,21 @@ function swipeStartHandler(event, callback) {
     event.currentTarget.addEventListener('touchend', swipeEndHandler);
 
     function swipeEndHandler(event) {
+        console.log('in swipeEndHandler');
         var swipeDirection = '';
         var touchObj = event.changedTouches[0];
         var distX = touchObj.pageX - startX;
         var distY = touchObj.pageY - startY;
         var totalTime = new Date().getTime() - startTime;
-        var allowedTime = 300;
+        var allowedTime = 1000;
         if (totalTime < allowedTime) {
             if(Math.abs(distX) >= 150 && Math.abs(distY) <= 100) {
                 swipeDirection = distX < 0? 'left' : 'right';
             } else if (Math.abs(distY) >= 150 && Math.abs(distX) <= 100) {
-                swipeDirection = distY < 0? 'down' : 'up';
+                swipeDirection = distY < 0? 'up' : 'down';
             }
         }
+        console.log('swipe direction: ' + swipeDirection);
         if (callback && swipeDirection) {
             callback(swipeDirection);
         }
@@ -184,11 +222,12 @@ function swipeStartHandler(event, callback) {
 document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-    getTasks();
+    getTasks(showAllTasks);
     document.addEventListener('touchstart', touchStartHandler);
     const buttonAdd = document.getElementsByClassName('task-controllers__button-add')[0];
     console.log('buttonAdd');
     console.log(buttonAdd);
     buttonAdd.addEventListener('touchstart', addTaskEvent);
+    document.body.addEventListener('touchstart', refreshTasksEvent);
 }
 

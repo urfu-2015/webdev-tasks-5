@@ -1,13 +1,12 @@
 'use strict';
 
 const storage = [];
-let idCounter = 0;
 
 class Task {
     constructor(props) {
         this.text = props.text;
         this.order = storage.length;
-        this.id = idCounter++;
+        this.id = storage.length;
     }
 
     static getStorage() {
@@ -19,11 +18,11 @@ class Task {
     }
 
     static removeTask(id) {
-
+        delete storage[id];
     }
 
     static changeTask(id) {
-
+        
     }
 
     static find(id) {

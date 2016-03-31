@@ -47,13 +47,18 @@ h1
     margin: 10px 0;
 }
 
-.task-item span
+.task-item__text
 {
     font-weight: 700;
     font-family: serif;
     font-size: 1.3em;
     padding-left: 10px;
     line-height: 1.5em;
+}
+
+.task-item__text_hidden
+{
+    display: none;
 }
 
 .task-item__textarea
@@ -78,7 +83,7 @@ h1
 
 .task-item__delete
 {
-    background: url("../img/trashbox.png") no-repeat;
+    background: url("trashbox.png") no-repeat;
     background-size: contain;
     width: 40px;
     height: 100%;
@@ -93,8 +98,7 @@ h1
 .reload
 {
     display: block;
-    height: 60px;
-    width: 60px;
+    height: 40px;
 }
 
 .reload_hidden
