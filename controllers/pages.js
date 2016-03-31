@@ -11,11 +11,11 @@ exports.getTodos = (req, res) => {
 };
 
 exports.addTodo = (req, res) => {
-    console.log(req.body.content);
-    // посмотреть в каком он виде там, создать объект, сохранить его
-    var task = new Task();
+    console.log('req in addTodo:');
+    console.log(req.body);
+    var task = new Task(req.body);
     task.save();
-    res.status(200).send()
+    res.status(200).send();
 };
 
 exports.deleteTodo = (req, res) => {
