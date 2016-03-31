@@ -18,19 +18,17 @@ function request(method, url, data, callback) {
     };
 }
 
-function getTaskForm(num) {
-	var form = document.createElement('form');
-	form.setAttribute("action","/addTask");
-	form.setAttribute("method","POST");
-    var input = getNewInput('task-creater__input task-num_', num);
-	form.appendChild(input);
-	form.className = 'task-creater'
-	form.appendChild(getNewSubmit());
-    return form;
+function createTaskForm(num) {
+	var taskDiv = getDivInList(num);
+    var input = getNewInput('list__task__input__num_', num);
+    taskDiv.innerHTML = '';
+	taskDiv.appendChild(input);
+	taskDiv.appendChild(getSaveButton());
+    focusOnInput(num);
 }
 
 function focusOnInput(num) {
-    document.getElementsByClassName('task-num_' + num)[0].focus();
+    document.getElementsByClassName('list__task__input__num_' + num)[0].focus();
 }
 
 function getNewInput(className, num) {
@@ -42,20 +40,25 @@ function getNewInput(className, num) {
         var oldText = document.getElementsByClassName('list__task__todo__num_' + num)[0].innerHTML;
         input.value = oldText;
     }
+    input.addEventListener('touchend', function(event) {
+        if (isTap) {
+            event.target.focus();
+        }
+    })
 	return input;
 }
 
-function getNewSubmit() {
-	var submit = document.createElement('input');
-	submit.setAttribute("type", "submit");
-	submit.setAttribute("value", "save");
-	submit.className = 'task-creater__submit';
-	return submit;
+function getSaveButton() {
+	var saveButton = document.createElement('button');
+	saveButton.className = 'list__task__submit';
+    saveButton.innerHTML = 'Save';
+	return saveButton;
 }
 
-function saveTask() {
-    var input = document.getElementsByClassName('task-creater__input')[0];
-    if (input.className === 'task-creater__input task-num_-1') {
+function saveTask(num) {
+    console.log(num);
+    var input = document.getElementsByClassName('list__task__input__num_' + num)[0];
+    if (num === '-1') {
         addTask(input);
     }
     else {
@@ -65,38 +68,43 @@ function saveTask() {
 
 function createAddButton() {
     var addButton = document.createElement('button');
-    addButton.className = 'task-creater__add';
+    addButton.className = 'list__task__add';
     addButton.innerHTML = 'Add task';
-    createNewTaskDiv(addButton);
+    var taskDiv = getDivInList(-1);
+    taskDiv.innerHTML = '';
+    taskDiv.appendChild(addButton);
 }
 
 function createDeleteButton(num) {
-    var div = document.getElementsByClassName('list__task__num_' + num)[0];
+    var taskDiv = getDivInList(num);
     var delDiv = document.createElement('div');
     delDiv.className = "delete__num_" + num;
-    div.appendChild(delDiv);
+    taskDiv.appendChild(delDiv);
+    delDiv.addEventListener('touchend', deleteButtonToucheEnd);
 }
 
-function createNewTaskDiv(child) {
-    var div = document.getElementsByClassName('form-place')[0];
-    div.innerHTML = '';
-    div.appendChild(child);
+function deleteButtonToucheEnd(event) {
+    if (isTap(event)) {
+        var parent = event.target.parentNode;
+        console.log(parent);
+        deleteTask(parent);
+    }
 }
 
-function createTaskDiv(num, child) {
-    var div = document.getElementsByClassName('list__task__num_' + num)[0];
-    div.innerHTML = '';
-    div.appendChild(child);
+function getDivInList(num) {
+    return document.getElementsByClassName('list__task__num_' + num)[0];
 }
 
-function displayNewTask(task) {
+function displayTask(task) {
     var list = document.getElementsByClassName('list')[0];
+    var oldTask = getDivInList(task.orderNum);
     var newTask = getTaskDiv(task);
-    list.appendChild(newTask);
-}
-
-function displayUpdatedTask(task) {
-    createTaskDiv(task.orderNum, getTaskDiv(task));
+    if (oldTask) {
+        list.replaceChild(newTask, oldTask);
+    } else {
+        console.log(list.lastChild)
+        list.insertBefore(newTask, getDivInList(-1));
+    }
 }
 
 function getTaskDiv(task) {
@@ -124,7 +132,7 @@ function addTask(input) {
         }
         console.log(task);
         if (task.todo) {
-            displayNewTask(task);
+            displayTask(task);
         }
         createAddButton();
     })
@@ -145,15 +153,14 @@ function updateTask(input) {
             window.location.href = '/';
             return;
         }
-        displayUpdatedTask(task);
+        displayTask(task);
     })
 }
 
-function deleteTask(input) {
-    var num = getNumFromClassName(input.className);
+function deleteTask(div) {
+    var num = getNumFromClassName(div.className);
     var task = {
         orderNum: num,
-        todo: input.value
     };
     request('POST', '/deleteTask', task, function (err, task) {
         if (err) {
@@ -195,28 +202,32 @@ document.addEventListener('touchmove', function(event) {
     }
 }, false)
 
+
+function isTap(event) {
+    var x = event.changedTouches[0].pageX;
+    var y = event.changedTouches[0].pageY; 
+    return (x === start.x && y == start.y);
+}
 document.addEventListener('touchend', function (event) {
     if (event.changedTouches.length > 1) {
         return;
     }
     var pdelay = new Date();
     console.log(event.changedTouches[0].target.className);
-    var target = event.changedTouches[0].target;
-    var x = event.changedTouches[0].pageX;
-    var y = event.changedTouches[0].pageY; 
-    if (x === start.x && y == start.y) {
+    var target = event.changedTouches[0].target
+    var targetClass = target.className;
+    if (isTap(event)) {
         if (pdelay.getTime() - ldelay.getTime() > 800) {
         console.log('dolgooo');
         /*Перенос действия*/
-        } else if (target.className === 'task-creater__add') {
-            createNewTaskDiv(getTaskForm(-1));
-            focusOnInput(-1);
-        } else if (target.className === 'task-creater__submit') {
-            saveTask();
-        } else if (new RegExp('list__task__todo').test(target.className)) {
-            var num = getNumFromClassName(target.className);
-            createTaskDiv(num, getTaskForm(num));
-            focusOnInput(num);
+        } else if (targetClass === 'list__task__add') {
+            createTaskForm(-1);
+        } else if (targetClass === 'list__task__submit') {
+            var num = getNumFromClassName(target.parentNode.className);
+            saveTask(num);
+        } else if (new RegExp('list__task__todo').test(targetClass)) {
+            var num = getNumFromClassName(targetClass);
+            createTaskForm(num);
         }
 
     }
