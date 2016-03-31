@@ -63,15 +63,15 @@ var nowPoint;
 var startTime;
 allCards.map(function(elem, index, array) {
     elem.addEventListener('touchstart', function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        //event.preventDefault();
+        //event.stopPropagation();
         startPoint.x = event.changedTouches[0].pageX;
         startPoint.y = event.changedTouches[0].pageY;
         startTime = new Date();
     }, false);
     elem.addEventListener('touchmove', function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+        //event.preventDefault();
+        //event.stopPropagation();
         nowPoint = event.changedTouches[0];
         var dif = nowPoint.pageX-startPoint.x;
 
@@ -86,20 +86,27 @@ allCards.map(function(elem, index, array) {
             startPoint={x:nowPoint.pageX,y:nowPoint.pageY};
         }
     }, false);
+
     elem.addEventListener('touchend', function (event) {
-        event.preventDefault();
-        event.stopPropagation();
         var endTime = new Date();
         nowPoint = event.changedTouches[0];
         var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
         var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-        if ((xAbs > 20 || yAbs > 20) && (endTime.getTime()-startTime.getTime())<200) {
+        console.log(endTime.getTime()-startTime.getTime());
+        if ((xAbs > 10 || yAbs < 10) && (endTime.getTime()-startTime.getTime())>200) {
+
             if (xAbs > yAbs) {
-                if (finalPoint.pageX < initialPoint.pageX) {
-                    addDelete(elem);
+                if (startPoint.x < nowPoint.pageX) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    //addDelete(elem);
                 }
+            } else {
             }
         }  else {
+            if ((endTime.getTime()-startTime.getTime())<200) {
+                event.preventDefault();
+                event.stopPropagation();
             newRemark.setAttribute('style', 'display: none;');
             var myclick = event.targetTouches[0];
             var card = elem;
@@ -138,6 +145,6 @@ allCards.map(function(elem, index, array) {
                     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                     xhr.send('text=' + encodeURIComponent(text));
                 });
-            }
+            }}
     }, false);
 });
