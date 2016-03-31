@@ -20,7 +20,11 @@ module.exports.add = (req, res, next) => {
 }
 
 module.exports.delete = (req, res) => {
-
+	var tasks = tasksModel(req.db);
+	tasks.deletet(req.body).then(
+		deleted => res.status(200).send(deleted),
+		error => res.status(400)
+	)
 }
 
 module.exports.update = (req, res) => {

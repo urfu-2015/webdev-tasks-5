@@ -11,7 +11,9 @@
     <div class="list">
     {{#if tasks.length}}
         {{#each tasks}}
-            <div class="list__task_num_{{orderNum}}">{{ todo }}</div>
+            <div class="list__task__num_{{orderNum}}">
+                <div class="list__task__todo__num_{{orderNum}}">{{ todo }}</div>
+            </div>
         {{/each}}
     {{^}}
         <p>Create your first task!</p>

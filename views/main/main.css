@@ -30,17 +30,30 @@ body
 	justify-content: space-around;
 }
 
-[class^="list__task"] {
-	text-align: center;
-	vertical-align: middle;
-	line-height: 100px;
-	font-size: 40px;
-	text-align: center;
-	overflow: hidden;
-	height: 100px;
+[class^="list__task__num"] {
+	height: 128px;
 	margin: 10px 0;
 	width: 100%;
 	background: #fff;
+	display: flex;
+}
+
+[class^="list__task__todo__num"] {
+	text-align: center;
+	vertical-align: middle;
+	line-height: 128px;
+	font-size: 50px;
+	text-align: center;
+	overflow: hidden;
+	height: 128px;
+	flex-grow: 3;
+	background: #fff;
+}
+
+[class^="delete"] {
+	width: 128px;
+	height: 100%;
+	background: url(./delete.png);
 }
 
 a {
@@ -56,6 +69,10 @@ a {
 	font-size : 50px;
 	color : #696869;
 	padding : 10px 20px;
+}
+
+.list p {
+	font-size: 50px;
 }
 
 form {
