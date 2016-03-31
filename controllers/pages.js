@@ -24,7 +24,7 @@ exports.deleteTodo = (req, res) => {
 };
 
 exports.changeTodo = (req, res) => {
-    Task.changeTask();
+    Task.changeTask(req.body.id);
     res.status(200).send();
 };
 
