@@ -4,7 +4,6 @@ const fs = require('fs');
 
 function readNotes() {
     const data = fs.readFileSync('./models/notes.txt', 'utf-8');
-    //console.log(data);
     try {
         return JSON.parse(data);
     } catch (err) {
@@ -12,7 +11,7 @@ function readNotes() {
     }
 }
 
-const notes = [];
+var notes = [];
 
 function write() {
     fs.writeFile('./models/notes.txt', JSON.stringify(notes), (err) => {
@@ -51,11 +50,42 @@ class Note {
     static findAll() {
         return notes;
     }
+
+    static updateList(names) {
+        var result = [];
+        var clientNames = [];
+        var note;
+        names.forEach((name) => {
+            note = Note.find(name);
+            if (note) {
+                clientNames.push(note);
+            }
+        });
+
+        var i = 0;
+        var j = 0;
+        while (j < notes.length) {
+            if (notes[j] === clientNames[i]) {
+                result.push(notes[j]);
+                i += 1;
+                j += 1;
+            } else if (i < clientNames.length && notes.indexOf(clientNames[i])) {
+                result.push(clientNames[i]);
+                i += 1;
+            } else if (clientNames.indexOf(notes[j]) < 0) {
+                result.push(notes[j]);
+                j += 1;
+            } else {
+                j += 1;
+            }
+        }
+        notes = result;
+        return notes;
+    }
 }
 
 readNotes().forEach((note) => {
     notes.push(new Note(note));
 });
-console.log(notes);
 
 module.exports = Note;

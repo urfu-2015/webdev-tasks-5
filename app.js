@@ -24,7 +24,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use((req, res, next) => {
-    //console.log(req);
     req.commonData = {
         meta: {
             description: 'TODOхи',

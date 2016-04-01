@@ -16,7 +16,6 @@ exports.create = (req, res) => {
     const data = {
         name: req.body.name
     };
-    console.log('create', data);
     const note = new Note(data);
     note.save();
     res.send(data);
@@ -24,16 +23,25 @@ exports.create = (req, res) => {
 
 exports.change = (req, res) => {
     const note = Note.find(req.body.name);
-    console.log('change', note, 'to', req.body.changeNote);
     note.change(req.body.changeNote);
     res.send(note); // ?
 };
 
 exports.deleteNote = (req, res) => {
     const note = Note.find(req.body.name);
-    console.log('delete', note);
     note.deleteNote();
-    res.send(note); // ?
+    res.send(note);
+};
+
+exports.changeChain = (req, res) => {
+    var names = [];
+    for (var name in req.body) {
+        if (req.body.hasOwnProperty(name)) {
+            names.push(req.body[name]);
+        }
+    }
+    var notes = Note.updateList(names);
+    res.send(notes);
 };
 
 exports.error404 = (req, res) => {

@@ -5,6 +5,11 @@ var del = document.querySelector('.delete');
 var formAdd = document.querySelector('.add');
 var reload = document.querySelector('.reload');
 var countMove = 0;
+var names = [];
+var order = 0;
+var currentOrder;
+var interval;
+var stack = [];
 
 var target;
 var lastEvent;
@@ -12,6 +17,9 @@ var lastEvent;
 var formSave;
 var noteSave;
 var delItem;
+
+var direction = 'x';
+var oldShadow;
 
 function xhrRequest(method, puth, hundler, body) {
     var xhr = new XMLHttpRequest();
@@ -35,6 +43,9 @@ function xhrRequest(method, puth, hundler, body) {
 function createNote(text) {
     var item = document.createElement('div');
     item.setAttribute('class', 'container__item');
+    item.style.order = order;
+    order += 1;
+    names.push(item);
 
     var p = document.createElement('p');
     p.setAttribute('class', 'container__item__text');
@@ -106,16 +117,31 @@ function createDel() {
     del.style.height = target.offsetHeight + 'px';
 }
 
-function swipe(xAbs, yAbs) {
+function createNotfound() {
+    var p = document.createElement('p');
+    p.innerHTML = "Notes not found";
+    p.setAttribute('class', 'container__notfound');
+
+    container.appendChild(p);
+}
+
+function resetNotfound() {
+    if (names.length === 0) {
+        container.removeChild(container.childNodes[0]);
+    }
+}
+
+function swipe(xAbs, yAbs, event) {
     if (xAbs > yAbs) {
         //Свайп влево
-        if (finalPoint.pageX < initialPoint.pageX && finalPoint.target.closest('.container__item')){
+        if (finalPoint.pageX < initialPoint.pageX && finalPoint.target.closest('.container__item')
+            && direction === 'x') {
             target = finalPoint.target.closest('.container__item');
             target.style.transform = 'translateX(-' + 20 + '%)';
             createDel();
         }
     } else {
-        if (finalPoint.pageY > initialPoint.pageY && finalPoint.target.closest('header')){
+        if (finalPoint.pageY > initialPoint.pageY && finalPoint.pageY < document.documentElement.clientHeight) {
             //Свайп вниз
             event.preventDefault();
             document.body.style.marginTop = 0;
@@ -125,19 +151,89 @@ function swipe(xAbs, yAbs) {
                     document.body.style.marginTop = -40 + 'px';
                 }, 500);
 
-                var items = document.querySelectorAll('.container__item');
-
-                var i = 0;
-                for (i; i < items.length; i++) {
-                    container.removeChild(items[i]);
-                }
-
-                response.forEach(function (note) {
-                    createNote(note.name);
-                });
+                render(response);
             });
         }
     }
+}
+
+function replace() {
+    if (target.closest('.container__item') && !formSave) {
+        direction = 'y';
+        target.closest('.container__item').style.transform = 'scale(1.1)';
+        currentOrder = target.closest('.container__item').style.order - 0;
+        stack.push(target.closest('.container__item'));
+    }
+}
+
+function initOrder() {
+    var items = container.childNodes;
+    for (var i = 0; i < items.length - 1; i += 2) {
+        names.push(items[i].nextElementSibling);
+        items[i].nextElementSibling.style.order = order;
+        order += 1;
+    }
+    interval = items[1].offsetTop - items[3].offsetTop;
+}
+
+function render(resNames) {
+    //массив объектов с полем name
+    resetNotfound()
+    order = 0;
+    names.forEach(function (name) {
+        container.removeChild(name);
+    });
+    names = [];
+
+    if (resNames.length === 0) {
+        createNotfound();
+    }
+
+    resNames.forEach(function (name) {
+        createNote(name.name);
+    })
+}
+
+function condition(touch, step) {
+    if (stack.indexOf(names[currentOrder + step]) > - 1) {
+        return touch.pageY < stack[stack.length - 2].offsetTop + stack[stack.length - 2].offsetHeight / 2 &&
+            touch.pageY > stack[stack.length - 2].offsetTop;
+    }
+    return touch.pageY < names[currentOrder + step].offsetTop + names[currentOrder + step].offsetHeight / 2 &&
+        touch.pageY > names[currentOrder + step].offsetTop;
+}
+
+function stepOfShift(step) {
+    var item = target.closest('.container__item');
+    if (stack.indexOf(names[currentOrder + step]) > -1) {
+        names[currentOrder + step].style.transform = "translateY(" + 0 + "px)";
+        names[currentOrder] = stack.pop();
+        names[currentOrder + step] = item;
+    } else {
+        stack.push(names[currentOrder + step]);
+        names[currentOrder + step] = item;
+        names[currentOrder] = stack[stack.length - 1];
+        names[currentOrder].style.transform = "translateY(" + (step * interval) + "px)";
+    }
+    currentOrder += step;
+}
+
+function shift(touch) {
+    if (currentOrder > 0) {
+        if (condition(touch, -1)) {
+            stepOfShift(-1);
+        }
+    }
+    if (currentOrder < names.length - 1) {
+        if (condition(touch, 1)) {
+            stepOfShift(1);
+        }
+    }
+}
+
+function removeName(target) {
+    var index = names.indexOf(target);
+    names.splice(index, 1);
 }
 
 formAdd.addEventListener('submit', function (event) {
@@ -150,6 +246,7 @@ formAdd.addEventListener('submit', function (event) {
     var body = 'name=' + encodeURIComponent(note);
 
     xhrRequest('POST', '/add-note', function (response) {
+        resetNotfound();
         createNote(response.name);
         document.querySelector('#input_text').value = '';
     }, body);
@@ -164,6 +261,7 @@ del.addEventListener('touchstart', function (event) {
     xhrRequest('DELETE', 'delete-note', function() {
         container.removeChild(target);
         resetDel();
+        removeName(target);
     }, body);
 
     event.stopPropagation();
@@ -179,12 +277,13 @@ var finalPoint;
 var lastX;
 var lastY;
 
+var longTouch;
+
 
 document.addEventListener('touchstart', function (event) {
     if (event.targetTouches.length === 1) {
         initialPoint = event.changedTouches[0];
         var touch = event.targetTouches[0];
-
 
         if (!touch.target.closest('.save') && formSave) {
             resetFormSave();
@@ -201,8 +300,12 @@ document.addEventListener('touchstart', function (event) {
 
         target = touch.target;
 
+        event.preventDefault();
+
+        longTouch = setTimeout(replace, 300);
+
         touchOffsetX = touch.pageX;
-        //touchOffsetY = touch.pageY;
+        touchOffsetY = touch.pageY;
 
         lastEvent = 'touchstart';
     }
@@ -215,7 +318,6 @@ container.addEventListener('touchmove', function (event) {
     }
 
     if (event.targetTouches.length == 1 && countMove > 5) {
-
         var touch = event.targetTouches[0];
         var touchTarget = touch.target;
 
@@ -226,21 +328,23 @@ container.addEventListener('touchmove', function (event) {
         }
         event.preventDefault();
 
-        item.style.transform = "translateX(" + (touch.pageX - touchOffsetX) + "px)";
+        if (direction === 'x') {
+            item.style.transform = "translateX(" + (touch.pageX - touchOffsetX) + "px)";
+            event.stopPropagation();
+        } else {
+            item.style.transform = "translateY(" + (touch.pageY - touchOffsetY) + "px) " + "scale(1.1)";
+            shift(touch);
+        }
 
         lastEvent = 'touchmove';
-        event.stopPropagation();
     }
 
+    clearTimeout(longTouch);
     countMove += 1;
 }, false);
 
 container.addEventListener('touchend', function (event) {
     if (event.changedTouches.length == 1 && lastEvent === 'touchstart') {
-        //
-        //if (!target.closest('.save') && formSave) {
-        //    resetFormSave();
-        //}
 
         if (target.className !== 'container__item' &&
             target.className !== 'container__item__text') {
@@ -257,17 +361,19 @@ container.addEventListener('touchend', function (event) {
             text = target;
         }
 
-        createFormSave(note, text.innerText);
-        text.style.display = 'none';
+        if (direction == 'x') {
+            createFormSave(note, text.innerText);
+            text.style.display = 'none';
+        }
 
         event.stopPropagation();
         countMove = 0;
     }
-
 }, false);
 
 document.addEventListener('touchend', function (event) {
     finalPoint = event.changedTouches[0];
+    clearTimeout(longTouch);
 
     resetTransform();
 
@@ -276,9 +382,43 @@ document.addEventListener('touchend', function (event) {
     }
     resetDel();
 
+    if (direction == 'y') {
+        var item = target.closest('.container__item');
+        stack.forEach(function (elem) {
+            if (elem.style.order > item.style.order) {
+                elem.style.order -= 1;
+                item.style.order = item.style.order - 0 + 1;
+            } else if (elem.style.order < item.style.order) {
+                elem.style.order = elem.style.order - 0 + 1;
+                item.style.order -= 1;
+            }
+            elem.style.transform = "translateY(" + 0 + "px)";
+        });
+        stack = [];
+        direction = 'x';
+
+        var body = '';
+        var i = 0;
+        names.forEach(function (name) {
+            if (i === 0) {
+                body += 'name_' + i + "=" + encodeURIComponent(name.childNodes[0].innerHTML);
+            } else {
+                body += '&name_' + i + "=" + encodeURIComponent(name.childNodes[0].innerHTML);
+            }
+
+            i ++;
+        });
+        xhrRequest('PUT', '/change-chain', function (response) {
+            render(response);
+        }, body);
+        return;
+    }
+
     var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
     var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
     if (xAbs > 50 || yAbs > 50) {
-        swipe(xAbs, yAbs);
+        swipe(xAbs, yAbs, event);
     }
 }, false);
+
+initOrder();

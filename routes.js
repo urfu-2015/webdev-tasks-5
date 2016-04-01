@@ -11,6 +11,8 @@ module.exports = function (app) {
 
     app.put('/change-note', page.change);
 
+    app.put('/change-chain', page.changeChain);
+
     app.delete('/delete-note', page.deleteNote);
 
     app.all('*', page.error404);
