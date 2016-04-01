@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="{{ meta.charset }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    {{#if isDev}}
+        <link rel="stylesheet" href="/main.css">
+    {{else}}
+        <link rel="stylesheet" href="//lakate-todohi.surge.sh/main.css">
+    {{/if}}
+</head>
+<body>
+
+    <div class="update-progress"></div>
+    {{>header/header }}
+
+    <div class="notes-wrapper">
+        {{#if notes.length}}
+            <ul class="notes">
+                {{#each notes}}
+                    {{>note/note }}
+                {{/each}}
+            </ul>
+        {{^}}
+            <p>Notes not found!</p>
+        {{/if}}
+    </div>
+
+    {{>create/create }}
+
+    {{#if isDev}}
+        <script src="/main.js"></script>
+    {{else}}
+        <script src="//lakate-todohi.surge.sh/main.js"></script>
+    {{/if}}
+</body>
+</html>
