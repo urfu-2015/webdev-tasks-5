@@ -35,8 +35,6 @@
     "lint:js": "eslint --fix .",
     "lint:css": "stylelint **/*.css",
     "lint": "npm run lint:css & npm run lint:js",
-    "precommit": "npm run test & npm run lint",
-    "prepush": "npm run test & npm run lint",
     "deploy:static": "surge -p ./public -d lakate-todohi.surge.sh",
     "deploy:dynamic": "git push heroku master",
     "deploy": "npm-run-all deploy:*"
