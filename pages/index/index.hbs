@@ -102,8 +102,8 @@
                                 if (
                                     evt.currentTarget === prevEvent._currentTarget &&
                                     prevEvent.type === 'touchmove' &&
-                                    prevTouch.pageX - currTouch.pageX > 0
-                                    && evt.currentTarget.children.length === 1
+                                    prevTouch.pageX - currTouch.pageX > 0 &&
+                                    evt.currentTarget.children.length === 1
                                 ) {
                                     var taskDeletionBtn = document.createElement('div');
                                     taskDeletionBtn.className += 'task-list-item-del';
@@ -135,6 +135,21 @@
                                     taskSubmitBtn.className += 'task-list-item-text-submit-btn';
                                     var taskSubmitBtnImg = document.createElement('img');
                                     taskSubmitBtnImg.src = 'images/ok.png'
+                                    taskSubmitBtnImg.className += 'task-list-item-text-submit-btn-img';
+                                    taskSubmitBtn.addEventListener('touchstart', function () {
+                                        xhr.open('POST', '/tasks');
+                                        xhr.setRequestHeader('Content-Type', 'application/json');
+                                        xhr.send(JSON.stringify({
+                                            id: task.getAttribute('taskid'),
+                                            text: task.children[0].value
+                                        }));
+                                        unTargetHandler();
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.status === 201) {
+                                                taskTextField.innerText = taskTextArea.value;
+                                            }
+                                        };
+                                    });
                                     taskSubmitBtn.appendChild(taskSubmitBtnImg);
                                     task.appendChild(taskSubmitBtn);
                                     var unTargetHandler = function () {
@@ -153,7 +168,6 @@
                                     evt.currentTarget === prevEvent._currentTarget
                                 ) {
                                     evt.stopPropagation();
-                                    return;
                                 }
                                 prevEvent = evt;
                                 prevEvent._currentTarget = evt.currentTarget;
