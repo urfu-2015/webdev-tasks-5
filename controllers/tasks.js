@@ -5,7 +5,7 @@ module.exports.index = (req, res) => {
 	tasks.getAll().then(
 		allTasks => {
 			data = {tasks: allTasks};
-			res.render('main/main',  Object.assign(data, req.commonData))
+			res.render('main/main',  Object.assign(data, req.commonData));
 		},
 		error => res.status(400)
 	);

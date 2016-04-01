@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
     context: path.join(__dirname, 'views'),
     entry: {
-        main: './main/main.js',
+        main: './main/main.js'
     },
     devtool: 'source-map',
     output: {
@@ -21,7 +21,7 @@ module.exports = {
                 loader: ExtractTextPlugin.extract("style-loader", "css-loader")
             },
             {
-                test: /\.png$/,
+                test: /\.jpe?g$|\.gif$|\.png$/i,
                 loader: 'file-loader'
             }
         ]

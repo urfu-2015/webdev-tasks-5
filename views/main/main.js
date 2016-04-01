@@ -1,26 +1,11 @@
 require('./main.css');
+var objCreater = require('./domObjectCreater.js');
+var inputClassName = objCreater.inputClassName;
+var request = require('./serverRequest.js');
 
-var inputClassName = 'list__task__input__num_';
-
-function request(method, url, data, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open(method, url, true);
-    xhr.setRequestHeader('Access', 'application/json;');
-    xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-    xhr.send(JSON.stringify(data));
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState !== 4) {
-            return;
-        }
-        if (xhr.status !== 200) {
-            callback({status: xhr.status, content: xhr.statusText});
-        } else {
-            callback(null, JSON.parse(xhr.responseText));
-            addEventListeners();
-        }
-    };
-}
+window.onload = function () {
+    setTimeout(deleteLoader, 500);
+} ;
 
 addEventListeners();
 
@@ -42,85 +27,95 @@ function addEventListeners() {
 
 function createTaskForm(num) {
 	var taskDiv = getDivInList(num);
-    var input = getNewInput(num);
-    var saveButton = getSaveButton();
-    saveButton.addEventListener('click', saveButtonClick);
+    var input = objCreater.getNewInput(num);
+    var saveButton = objCreater.getSaveButton();
+    saveButton.addEventListener('click', saveTask);
     taskDiv.innerHTML = '';
     taskDiv.appendChild(input);
 	taskDiv.appendChild(saveButton);
-    focusOnInput(num);
+    input.focus();
 }
 
-function focusOnInput(num) {
-    document.getElementsByClassName(inputClassName + num)[0].focus();
-}
-
-function getNewInput(num) {
-	var input = document.createElement('input');
-	input.setAttribute("type", "text");
-	input.setAttribute("name", "todo")
-	input.className = inputClassName + num;
-    if (num !== -1) {
-        var oldText = document
-            .getElementsByClassName('list__task__todo__num_' + num)[0]
-            .innerHTML;
-        input.value = oldText;
-    }
-	return input;
-}
-
-function getSaveButton() {
-	var saveButton = document.createElement('button');
-	saveButton.className = 'list__task__submit';
-    saveButton.innerHTML = 'Save';
-	return saveButton;
-}
-
-function saveTask(num) {
+function saveTask(event) {
+    var num = getNumFromClassName(event.target.parentNode.className);
     var input = document.getElementsByClassName(inputClassName + num)[0];
+    var task = {
+        orderNum: num,
+        todo: input.value
+    };
     if (num === '-1') {
-        addTask(input);
+        addTask(task);
     } else {
-        updateTask(input);
+        updateTask(task);
     }
+}
+
+function addTask(task) {
+    request.addTask(task).then(
+        newTask => {
+            if (task.todo) {
+                displayTask(newTask);
+            }
+            createAddButton();               
+        },
+        err => console.log(err)
+    );
+}
+
+function updateTask(task) {
+    request.updateTask(task).then(
+        resolve => {
+            if (!task.todo) {
+                refresh();
+                return;
+            }
+            displayTask(task);
+        },
+        err => console.log(err)
+    );
+}
+
+function deleteTask(event) {
+    var num = getNumFromClassName(event.target.parentNode.className);
+    var task = {
+        orderNum: num,
+    };
+    request.deleteTask(task).then(
+        resolve => refresh(),
+        err => console.log(err)
+    );
+}
+
+function refresh() {
+    window.location = '/';
+}
+
+function deleteLoader() {
+    var loader = document.getElementsByClassName('header__loader')[0];
+    if (loader) {
+        loader.parentNode.removeChild(loader);
+    }
+}
+
+function addLoader() {
+    var loader = objCreater.getLoader();
+    var header = document.getElementsByClassName('header')[0];
+    header.firstChild = loader;
 }
 
 function createAddButton() {
-    var addButton = getAddButton();
+    var addButton = objCreater.getAddButton();
     addButton.addEventListener('click', addButtonClick);
     var taskDiv = getDivInList(-1);
     taskDiv.innerHTML = '';
     taskDiv.appendChild(addButton);
 }
 
-function getAddButton() {
-    var addButton = document.createElement('button');
-    addButton.className = 'list__task__add';
-    addButton.innerHTML = 'Add task';
-    return addButton;
-}
-
 function createDeleteButton(num) {
     var taskDiv = getDivInList(num);
-    var delDiv = getDeleteButton(num);
-    delDiv.addEventListener('click', deleteButtonClick);
+    var delDiv = objCreater.getDeleteButton(num);
+    delDiv.addEventListener('click', deleteTask);
     taskDiv.appendChild(delDiv);
-}
-
-function getDeleteButton(num) {
-    var delDiv = document.createElement('div');
-    delDiv.className = "delete__num_" + num;
-    return delDiv;
-}
-
-function deleteButtonClick(event) {
-    var parent = event.target.parentNode;
-    deleteTask(parent);
-}
-
-function saveButtonClick(event) {
-    var num = getNumFromClassName(event.target.parentNode.className);
-    saveTask(num);
 }
 
 function addButtonClick(event) {
@@ -157,7 +152,10 @@ function getDivInList(num) {
 function displayTask(task) {
     var list = document.getElementsByClassName('list')[0];
     var oldTask = getDivInList(task.orderNum);
-    var newTask = getTaskDiv(task);
+    var newTask = objCreater.getTaskDiv(task);
+    var todo = newTask.firstChild;
+    todo.addEventListener('touchend', todoTouchEnd);
+    todo.addEventListener('touchmove', todoTouchMove);
     if (oldTask) {
         list.replaceChild(newTask, oldTask);
     } else {
@@ -165,67 +163,8 @@ function displayTask(task) {
     }
 }
 
-function getTaskDiv(task) {
-    var taskDiv = document.createElement('div');
-    taskDiv.className = 'list__task__num_' + task.orderNum;
-    var taskTodo = document.createElement('div');
-    taskTodo.className = 'list__task__todo__num_' + task.orderNum;
-    taskTodo.innerHTML = task.todo;
-    taskDiv.appendChild(taskTodo);
-    return taskDiv;
-}
-
 function getNumFromClassName(className) {
     return className.split('num_').pop();
-}
-
-function addTask(input) {
-    var task = {
-        todo: input.value
-    };
-    request('POST', '/addTask', task, function (err, task) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        if (task.todo) {
-            displayTask(task);
-        }
-        createAddButton();
-    })
-}
-
-function updateTask(input) {
-    var num = getNumFromClassName(input.className);
-    var task = {
-        orderNum: num,
-        todo: input.value
-    };
-    request('POST', '/updateTask', task, function (err, task) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        if (!task.todo) {
-            window.location.href = '/';
-            return;
-        }
-        displayTask(task);
-    })
-}
-
-function deleteTask(div) {
-    var num = getNumFromClassName(div.className);
-    var task = {
-        orderNum: num,
-    };
-    request('POST', '/deleteTask', task, function (err, task) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        window.location.href = '/';
-    })
 }
 
 var ldelay;
@@ -239,6 +178,12 @@ document.addEventListener('touchstart', function(event) {
     start.x = event.changedTouches[0].pageX;
     start.y = event.changedTouches[0].pageY;
 }, false);
+
+document.addEventListener('touchend' , function(event) {
+    if (isDownSwipe(event)) {
+        refresh();
+    }
+}, false) 
 
 function isTap(event) {
     if (event.changedTouches.length > 1) {
@@ -266,3 +211,13 @@ function isRightSwipe(event) {
     var y = event.touches[0].pageY;
     return (x - start.x > 300 && Math.abs(start.y - y) < 50);
 }
+
+function isDownSwipe(event) {
+    if (event.changedTouches.length > 1) {
+        return false;
+    }
+    var x = event.changedTouches[0].pageX;
+    var y = event.changedTouches[0].pageY;
+    return (Math.abs(x - start.x) < 50 && y - start.y > 300);
+}
+

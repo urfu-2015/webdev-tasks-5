@@ -54,6 +54,4 @@ app.use(function(err, req, res, next) {
   });
 });
 
-hbs.registerPartials(path.join(__dirname, 'blocks'));
-
 module.exports = app;

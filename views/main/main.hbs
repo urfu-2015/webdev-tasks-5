@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    {{> header/header }}
+    <div class="header">
+        <div class="header__loader"></div>
+        <div class="header__title">ToDo</div>
+    </div>
     <div class="list">
     {{#if tasks.length}}
         {{#each tasks}}
@@ -22,7 +25,6 @@
                 <button class="list__task__add">Add task</button>
         </div>
     </div>
-    {{> footer/footer }}
     <script src="main.js"></script>
 </body>
 </html>
