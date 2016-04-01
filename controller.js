@@ -9,25 +9,32 @@ module.exports.list = (req, res) => {
 };
 
 module.exports.create = (req, res) => {
-    var data = {
-        text: req.body.message,
-        createdAt: Date.now()
-    };
-    const note = new Task(data);
-    note.save();
+    if (req.body.message != '') {
+        var data = {
+            text: req.body.message,
+            createdAt: Date.now()
+        };
+        const note = new Task(data);
+        note.save();
+    }
     const tasks = Task.findAll();
     data = {tasks};
     res.render('index', Object.assign(data, req.commonData));
 };
 
 module.exports.update = (req, res) => {
-    Task.update(req.body.oldText, req.body.newText);
-    res.redirect('/');
+    if (req.body.newText != '') {
+        Task.update(req.body.oldText, req.body.newText);
+    }
+    const tasks = Task.findAll();
+    var data = {tasks};
+    res.render('index', Object.assign(data, req.commonData));
 };
 
 module.exports.delete = (req, res) => {
-    Task.deleteTaskById(req.body.id);
+    Task.deleteTask(req.body.text);
     const tasks = Task.findAll();
     var data = {tasks};
     res.redirect('/');
+    //res.render('index', Object.assign(data, req.commonData));
 };

@@ -11,12 +11,8 @@
     {{#if tasks.length}}
         <ul class="todo-list">
             {{#each tasks}}
-                <li>
+                <li class="todo-list__element">
                     <span class="todo-list__task">{{text}}</span>
-                    <form method="post" action="/deletion" class="todo-list__deletion">
-                        <input type="hidden" name="id" value={{id}}>
-                        <input type="submit" value="Удалить" class="todo-list__deletion-button">
-                    </form>
                 </li>
             {{/each}}
         </ul>
@@ -27,6 +23,6 @@
         <input type="text" name="message">
         <input type="submit" value="Добавить">
     </form>
-    <script src="/index.js"></script>
+    <script src="/index.js" class="script"></script>
 </body>
 </html>

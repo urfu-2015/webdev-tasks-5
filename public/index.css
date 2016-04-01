@@ -2,6 +2,7 @@ body
 {
     text-align: center;
 }
+
 .todo-list
 {
     list-style-type: none;
@@ -10,14 +11,23 @@ body
     align-items: center;
 }
 
-li
+.todo-list__element
 {
     flex-direction: row;
+    justify-content: space-around;
     width: 100%;
+    transform: translateX(0);
+    height: 30px;
 }
 
 .todo-list__deletion
 {
     display: flex;
     justify-content: flex-end;
+    width: auto;
+}
+
+.loader
+{
+    width: 50px;
 }

@@ -5,7 +5,6 @@ var idCounter = 0;
 
 class Task {
     constructor(props) {
-        this.id = props.id;
         this.text = props.text;
         this.createdAt = props.createdAt;
         this.editingMode = false;
@@ -29,9 +28,9 @@ class Task {
         }
     }
 
-    static deleteTaskById(id) {
+    static deleteTask(text) {
         for (var i = 0; i < memoryStorage.length; i++) {
-            if (memoryStorage[i].id == id) {
+            if (memoryStorage[i].text == text) {
                 memoryStorage.splice(i, 1);
                 break;
             }
