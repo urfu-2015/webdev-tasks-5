@@ -1,0 +1,15 @@
+.main-header
+{
+    padding: 10px;
+    text-align: center;
+    background-color: #33cccf;
+    font-size: 20px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.main-header-text__logo,
+.main-header-text__description
+{
+    margin: 0;
+}
