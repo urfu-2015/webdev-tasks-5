@@ -43,9 +43,9 @@ module.exports.updateTask = function (task) {
     });
 }
 
-module.exports.deleteTask = function (task) {
+module.exports.removeTask = function (task) {
     return new Promise((resolve, reject) => {
-        request('POST', '/deleteTask', task, function (err, task) {
+        request('POST', '/removeTask', task, function (err, task) {
             if (err) {
                 reject(err);
             }

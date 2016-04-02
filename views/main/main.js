@@ -1,16 +1,16 @@
 require('./main.css');
 var objCreater = require('./domObjectCreater.js');
-var inputClassName = objCreater.inputClassName;
+var classes = objCreater.className;
 var request = require('./serverRequest.js');
 
 window.onload = function () {
-    setTimeout(deleteLoader, 500);
+    setTimeout(removeLoader, 500);
 } ;
 
 addEventListeners();
 
 function addEventListeners() {
-    var addButton = document.getElementsByClassName('list__task__add')[0];
+    var addButton = document.getElementsByClassName(classes.add)[0];
     if (addButton) {
         addButton.addEventListener('click', addButtonClick);
     }
@@ -38,7 +38,7 @@ function createTaskForm(num) {
 
 function saveTask(event) {
     var num = getNumFromClassName(event.target.parentNode.className);
-    var input = document.getElementsByClassName(inputClassName + num)[0];
+    var input = document.getElementsByClassName(classes.input + num)[0];
     var task = {
         orderNum: num,
         todo: input.value
@@ -75,12 +75,12 @@ function updateTask(task) {
     );
 }
 
-function deleteTask(event) {
+function removeTask(event) {
     var num = getNumFromClassName(event.target.parentNode.className);
     var task = {
         orderNum: num,
     };
-    request.deleteTask(task).then(
+    request.removeTask(task).then(
         resolve => refresh(),
         err => console.log(err)
     );
@@ -90,8 +90,8 @@ function refresh() {
     window.location = '/';
 }
 
-function deleteLoader() {
-    var loader = document.getElementsByClassName('header__loader')[0];
+function removeLoader() {
+    var loader = document.getElementsByClassName(classes.loader)[0];
     if (loader) {
         loader.parentNode.removeChild(loader);
     }
@@ -99,7 +99,7 @@ function deleteLoader() {
 
 function addLoader() {
     var loader = objCreater.getLoader();
-    var header = document.getElementsByClassName('header')[0];
+    var header = document.getElementsByClassName(classes.header)[0];
     header.firstChild = loader;
 }
 
@@ -111,10 +111,11 @@ function createAddButton() {
     taskDiv.appendChild(addButton);
 }
 
-function createDeleteButton(num) {
+function createRemoveButton(num) {
     var taskDiv = getDivInList(num);
-    var delDiv = objCreater.getDeleteButton(num);
-    delDiv.addEventListener('click', deleteTask);
+    var delDiv = objCreater.getRemoveButton(num);
+    console.log(taskDiv, delDiv);
+    delDiv.addEventListener('click', removeTask);
     taskDiv.appendChild(delDiv);
 }
 
@@ -134,19 +135,19 @@ function todoTouchMove(event) {
     var targetClass = event.target.className;
     var num = getNumFromClassName(targetClass);
     if (isLeftSwipe(event)) {
-        if(!document.getElementsByClassName('delete__num_' + num).length) {
-            createDeleteButton(num);
+        if(!document.getElementsByClassName(classes.remove + num).length) {
+            createRemoveButton(num);
         }
     } else if (isRightSwipe(event)) {
-        var deleteButton = document.getElementsByClassName('delete__num_' + num)[0];
-        if (deleteButton) {
-            deleteButton.parentNode.removeChild(deleteButton);
+        var removeButton = document.getElementsByClassName(classes.remove + num)[0];
+        if (removeButton) {
+            removeButton.parentNode.removeChild(removeButton);
         }
     }
 }
 
 function getDivInList(num) {
-    return document.getElementsByClassName('list__task__num_' + num)[0];
+    return document.getElementsByClassName(classes.taskDiv + num)[0];
 }
 
 function displayTask(task) {
@@ -220,4 +221,3 @@ function isDownSwipe(event) {
     var y = event.changedTouches[0].pageY;
     return (Math.abs(x - start.x) < 50 && y - start.y > 300);
 }
-

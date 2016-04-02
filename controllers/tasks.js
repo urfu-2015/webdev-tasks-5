@@ -19,9 +19,9 @@ module.exports.add = (req, res) => {
 	)
 }
 
-module.exports.delete = (req, res) => {
+module.exports.remove= (req, res) => {
 	var tasks = tasksModel(req.db);
-	tasks.deletet(req.body).then(
+	tasks.remove(req.body).then(
 		deleted => res.status(200).send(deleted),
 		error => res.status(400)
 	)

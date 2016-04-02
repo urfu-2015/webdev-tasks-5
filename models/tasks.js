@@ -22,7 +22,7 @@ function add(task) {
 
 function update(task) {
 	if(task.todo.length === 0) {
-		return deletet(task);
+		return remove(task);
 	}
 	console.log(task);
 	var num = Number(task.orderNum);
@@ -39,7 +39,7 @@ function update(task) {
 	);
 }
 
-function deletet(task) {
+function remove(task) {
 	var num = Number(task.orderNum);
 	return tasksCollection.deleteMany(
 		{orderNum: num}
@@ -60,7 +60,7 @@ function deletet(task) {
 const operations = {
 	getAll: () => getAll(),
     add: newTask => add(newTask),
-    deletet: task => deletet(task),
+    remove: task => remove(task),
     update: task => update(task)
 };
 
