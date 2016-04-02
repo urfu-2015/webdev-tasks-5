@@ -17,17 +17,17 @@ h1
     border: 1px solid gray;
     margin: 0 auto;
     margin-bottom: 50px;
-    text-align: center;
     position: relative;
 }
 .task-list-item-text
 {
-    text-align: center;
-    height: 60px;
+    vertical-align: middle;
+    line-height: 150px;
     float: left;
     position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
+    white-space: nowrap;
+    overflow-x: hidden;
+    width: 80%;
 }
 .task-list-item-text-area
 {
@@ -44,6 +44,18 @@ h1
     margin-right: 0;
     float: right;
 }
+
+.task__addition-btn
+{
+    height: 150px;
+    width: 50%;
+    border: 1px solid gray;
+    margin: 0 auto;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 150px; 
+}
+
 .task-list-item-del
 {
     width: 18%;

@@ -5,15 +5,19 @@ exports.getAll = (req, res) => {
 };
 
 exports.postOne = (req, res) => {
-
+    var id = tasks[tasks.length - 1] ? tasks[tasks.length - 1].id + 1 : 0;
+    tasks.push({
+        id,
+        text: req.body.text
+    });
+    res.status(201).json({id});
 };
 
 exports.patchOne = (req, res) => {
-    var task = req.body;
     for (var i = 0; i < tasks.length; i++) {
-        if (tasks[i].id === req.params.id) {
+        if (tasks[i].id === parseInt(req.params.id)) {
             tasks[i].text = req.body.text;
-            res.status(200).send();
+            res.status(200).json({id:tasks[i].id});
             break;
         }
     }
@@ -21,7 +25,7 @@ exports.patchOne = (req, res) => {
 
 exports.deleteOne = (req, res) => {
     for (var i = 0; i < tasks.length; i++) {
-        if (tasks[i].id === req.params.id) {
+        if (tasks[i].id === parseInt(req.params.id)) {
             tasks.splice(i, 1);
             res.status(200).send();
             break;

@@ -2,10 +2,13 @@
 function createButton(options) {
     var button = document.createElement('div');
     button.className = options.class;
-    var buttonImg = document.createElement('img');
-    buttonImg.src = options.image.src;
-    buttonImg.className = options.image.class;
-    button.appendChild(buttonImg);
+    if (options.image) {
+        var buttonImg = document.createElement('img');
+        buttonImg.src = options.image.src;
+        buttonImg.className = options.image.class;
+        button.appendChild(buttonImg);
+    }
+    options.text ? button.textContent = options.text : null;
     return button;
 }
 function createTask(taskData) {
@@ -67,8 +70,17 @@ function createTask(taskData) {
             });
             touchHandler.makeTouchable(taskSubmitBtn);
             touchHandler.setEventListener('tap', taskSubmitBtn, function (evt) {
+                if (task.getAttribute('taskid')) {
+                    var method = 'PATCH';
+                    var path = '/tasks/' + task.getAttribute('taskid');
+                    var successCode = 200;
+                } else {
+                    var method = 'POST';
+                    var path = '/tasks';
+                    var successCode = 201;
+                }
                 var xhr = new XMLHttpRequest();
-                xhr.open('PATCH', '/tasks/' + task.getAttribute('taskid'));
+                xhr.open(method, path);
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(JSON.stringify({
                     text: taskTextArea.value
@@ -78,7 +90,8 @@ function createTask(taskData) {
                     if (xhr.readyState !== 4) {
                         return;
                     }
-                    if (xhr.status === 200) {
+                    if (xhr.status === successCode) {
+                        task.setAttribute('taskid', JSON.parse(xhr.responseText).id);
                         taskTextField.textContent = taskTextArea.value;
                         task.style.opacity = '1';
                     }
@@ -108,12 +121,22 @@ function getTasks() {
             console.log(xhr.status + ': ' + xhr.statusText);
         } else {
             var tasksData = JSON.parse(xhr.responseText).tasks;
+            var taskList = document.querySelector('.task-list');
             tasksData.forEach((taskData) => {
                 var task = createTask(taskData);
-                var taskList = document.querySelector('.task-list');
-                taskList.appendChild(task);            
+                taskList.insertBefore(task, taskList.children[0]);            
             });
         }
     }
 }
 getTasks();
+var taskList = document.querySelector('.task-list');
+var taskAdditionBtn = createButton({
+    class: 'task__addition-btn',
+    text: 'Добавить'
+});
+touchHandler.makeTouchable(taskAdditionBtn);
+touchHandler.setEventListener('tap', taskAdditionBtn, function (evt) {
+    taskList.insertBefore(createTask({id:'', text:''}), taskList.children[0]);
+});
+taskList.appendChild(taskAdditionBtn);
