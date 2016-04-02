@@ -216,7 +216,7 @@ modules.define(
                                 }
                                 startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
                             }
-                            if (Math.abs(offset.y) > 200) {
+                            if (Math.abs(offset.y) > 350) {
                                 if (offset.y > 0) {
                                     console.log('Down swipe on touchmove');
                                     console.log(event);
