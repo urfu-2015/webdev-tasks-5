@@ -16,7 +16,16 @@
         {
             block: 'todo',
             elem: 'add-form'
+        },
+        {
+            block: 'todo',
+            elem: 'text'
+        },
+        {
+            block: 'todo',
+            elem: 'refresh'
         }
+
     ],
     shouldDeps: []
 })

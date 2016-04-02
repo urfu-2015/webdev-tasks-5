@@ -1,7 +1,6 @@
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/todo.styl:begin */
 .todo {
-  display: -ms-flexbox;
-  display: flex;
+  max-width: 500px;
   width: 100%;
   -moz-box-sizing: border-box;
        box-sizing: border-box;
@@ -13,20 +12,17 @@
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/todo.styl:end */
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__item/todo__item.styl:begin */
 .todo__item {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-flow: row wrap;
-      flex-flow: row wrap;
-  -ms-flex-align: center;
-      align-items: center;
-  -ms-flex-pack: center;
-      justify-content: center;
+  z-index: 1;
+  height: 100%;
   width: 100%;
+  display: block;
+  margin: 0 auto;
+  min-height: 100px;
   background-color: #eaeaea;
 }
 .todo__item.animate-left {
-  -webkit-transform: translate(-70px);
-          transform: translate(-70px);
+  -webkit-transform: translate(-100px);
+          transform: translate(-100px);
   transition-property: -webkit-transform;
   transition-property: transform;
   transition-duration: 0.4s;
@@ -45,42 +41,22 @@
 .todo__edit-form {
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-flow: row wrap;
-      flex-flow: row wrap;
+  margin: 0 auto;
   -ms-flex-align: center;
       align-items: center;
   -ms-flex-pack: center;
       justify-content: center;
-  width: 100%;
-  margin: 10px 30px 10px 30px;
+  height: 100px;
+  background-color: #eaeaea;
 }
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__edit-form/todo__edit-form.styl:end */
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__trashbox/todo__trashbox.styl:begin */
 .todo__trashbox {
-  display: none;
-  -ms-flex-flow: row wrap;
-      flex-flow: row wrap;
-  -ms-flex-align: center;
-      align-items: center;
-  -ms-flex-pack: center;
-      justify-content: center;
-  width: 10%;
-}
-.todo__trashbox.animate-left {
-  -webkit-transform: translate(-100px);
-          transform: translate(-100px);
-  transition-property: -webkit-transform;
-  transition-property: transform;
-  transition-duration: 0.4s;
-  transition-timing-function: linear;
-}
-.todo__trashbox.animate-right {
-  -webkit-transform: translate(0);
-          transform: translate(0);
-  transition-property: -webkit-transform;
-  transition-property: transform;
-  transition-duration: 0.4s;
-  transition-timing-function: linear;
+  float: right;
+  z-index: -1;
+  position: relative;
+  width: 100px;
+  height: 100px;
 }
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__trashbox/todo__trashbox.styl:end */
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__add-form/todo__add-form.styl:begin */
@@ -97,17 +73,56 @@
   margin: 10px 30px 10px 30px;
 }
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__add-form/todo__add-form.styl:end */
+/* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__text/todo__text.styl:begin */
+.todo__text {
+  display: -ms-flexbox;
+  display: flex;
+  margin: 0 auto;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
+  height: 100px;
+}
+/* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__text/todo__text.styl:end */
+/* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__refresh/todo__refresh.styl:begin */
+.todo__refresh {
+  display: -ms-flexbox;
+  display: flex;
+  margin: 0 auto;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
+  height: 50px;
+  width: 50px;
+}
+.todo__refresh.animate {
+  -webkit-animation: spin 4s linear infinite;
+          animation: spin 4s linear infinite;
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+/* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo/__refresh/todo__refresh.styl:end */
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo-app/todo-app.styl:begin */
 .todo-app {
   display: -ms-flexbox;
   display: flex;
-  -ms-flex-flow: row wrap;
-      flex-flow: row wrap;
-  width: 600px;
-  margin-right: auto;
-  margin-left: auto;
-  padding: 0;
+  -ms-flex-direction: column;
+      flex-direction: column;
   -ms-flex-align: center;
       align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
 }
 /* /Users/danmir/Google Диск/Матмех (gd)/CRI-2015/webdev-tasks-5/desktop.blocks/todo-app/todo-app.styl:end */

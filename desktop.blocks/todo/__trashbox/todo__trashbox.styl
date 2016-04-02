@@ -1,18 +1,6 @@
 .todo__trashbox
-    display: none
-    flex-flow: row wrap
-    align-items: center
-    justify-content: center
-    width: 10%
-
-.todo__trashbox.animate-left
-    transform: translate(-100px);
-    transition-property: transform;
-    transition-duration: 0.4s;
-    transition-timing-function: linear;
-
-.todo__trashbox.animate-right
-    transform: translate(0);
-    transition-property: transform ;
-    transition-duration: 0.4s;
-    transition-timing-function: linear;
+    float: right
+    z-index: -1
+    position: relative
+    width: 100px
+    height: 100px

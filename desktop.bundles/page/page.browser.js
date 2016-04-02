@@ -3419,7 +3419,7 @@ modules.define('todo', ['todo__item', 'todo__trashbox'], function(provide, todoI
         for (var todo in data) {
             let todoItemHtml = todoItem.renderHtml(todo, data[todo].text);
             let todoTrashBoxHtml = todoTrashBox.renderHtml(todo);
-            todoList.push(`<div id="todo-${todo}" class="todo">${todoItemHtml}${todoTrashBoxHtml}</div>`);
+            todoList.push(`<div id="todo-${todo}" class="todo">${todoTrashBoxHtml}${todoItemHtml}</div>`);
             // todoList.push(todoItem.renderHtml(todo, data[todo].text));
             //console.log(todoItem.renderHtml(todo, data[todo].text));
         }
@@ -3437,11 +3437,11 @@ modules.define('todo', ['todo__item', 'todo__trashbox'], function(provide, todoI
 /* begin: ../../desktop.blocks/todo/__item/todo__item.browser.js */
 /* global modules:false */
 
-modules.define('todo__item', function(provide) {
+modules.define('todo__item', ['todo__text'], function(provide, todoText) {
     // Отрисовка по данным
     // id text
     var renderHtml = function (id, text) {
-        return `<article id="todo__item-${id}" class="todo todo__item">${text}</article>`
+        return `<article id="todo__item-${id}" class="todo__item">${todoText.renderHtml(id, text)}</article>`
     };
     provide({renderHtml});
 });
@@ -3453,7 +3453,7 @@ modules.define('todo__item', function(provide) {
 modules.define('todo__edit-form', function(provide) {
     // Шаблон формы
     var renderTodoEditFormHtml = function (id, value) {
-        return `<form class="todo todo__edit-form" onsubmit="return false"><input id="edit-form-text-${id}" type="text" value="${value}"><input id="edit-form-but-${id}" type="submit" value="Изменить"></form>`
+        return `<form class="todo__edit-form" onsubmit="return false"><input id="edit-form-text-${id}" type="text" value="${value}"><input id="edit-form-but-${id}" type="submit" value="Изменить"></form>`
     };
     provide({renderTodoEditFormHtml});
 });
@@ -3466,7 +3466,7 @@ modules.define('todo__trashbox', function(provide) {
     // Отрисовка по данным
     // id text
     var renderHtml = function (id) {
-        return `<img id="todo__trashbox-${id}" src="trashbox.png" class="todo todo__trashbox">`
+        return `<img id="todo__trashbox-${id}" src="trashbox.png" class="todo__trashbox">`
     };
     provide({renderHtml});
 });
@@ -3484,13 +3484,35 @@ modules.define('todo__add-form', function(provide) {
 });
 
 /* end: ../../desktop.blocks/todo/__add-form/todo__add-form.browser.js */
+/* begin: ../../desktop.blocks/todo/__text/todo__text.browser.js */
+/* global modules:false */
+
+modules.define('todo__text', function(provide) {
+    var renderHtml = function (id, text) {
+        return `<p id="todo__text-${id}" class="todo__text">${text}</p>`
+    };
+    provide({renderHtml});
+});
+
+/* end: ../../desktop.blocks/todo/__text/todo__text.browser.js */
+/* begin: ../../desktop.blocks/todo/__refresh/todo__refresh.browser.js */
+/* global modules:false */
+
+modules.define('todo__refresh', function(provide) {
+    var renderHtml = function () {
+        return '<img class="todo__refresh" id="todo__refresh" src="refresh.png">'
+    };
+    provide({renderHtml});
+});
+
+/* end: ../../desktop.blocks/todo/__refresh/todo__refresh.browser.js */
 /* begin: ../../desktop.blocks/todo-app/todo-app.browser.js */
 /* global modules:false */
 
 modules.define(
     'todo-app', // имя блока
-    ['i-bem__dom', 'todo', 'todo__edit-form', 'todo__add-form'], // подключение зависимости
-    function (provide, BEMDOM, todo, todoEditForm, todoAddForm) { // функция, в которую передаются имена используемых модулей
+    ['i-bem__dom', 'todo', 'todo__edit-form', 'todo__add-form', 'todo__refresh'], // подключение зависимости
+    function (provide, BEMDOM, todo, todoEditForm, todoAddForm, todoRefresh) { // функция, в которую передаются имена используемых модулей
         provide(BEMDOM.decl('todo-app', { // декларация блока
             onSetMod: { // конструктор для описания реакции на события
                 'js': {
@@ -3503,13 +3525,16 @@ modules.define(
 
                         var apiWorker = {
                             getTodoAll: () => {
-                                return fetch('http://localhost:5000/api/todos/')
+                                return fetch('/api/todos/', {
+                                    credentials: 'same-origin'
+                                })
                                     .then(function (response) {
                                         return response.json();
                                     })
                             },
                             addTodo: (text) => {
-                                return fetch('http://localhost:5000/api/todos', {
+                                return fetch('/api/todos', {
+                                    credentials: 'same-origin',
                                     method: 'post',
                                     headers: {
                                         "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
@@ -3521,13 +3546,16 @@ modules.define(
                                     })
                             },
                             getTodo: (noteId) => {
-                                return fetch(`http://localhost:5000/api/todos/${noteId}`)
+                                return fetch(`/api/todos/${noteId}`, {
+                                    credentials: 'same-origin'
+                                })
                                     .then(function (response) {
                                         return response.json();
                                     })
                             },
                             editTodo: (noteId, newText) => {
-                                return fetch(`http://localhost:5000/api/todos/${noteId}`, {
+                                return fetch(`/api/todos/${noteId}`, {
+                                    credentials: 'same-origin',
                                     method: 'put',
                                     headers: {
                                         "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
@@ -3540,7 +3568,8 @@ modules.define(
                                     })
                             },
                             deleteTodo: (noteId) => {
-                                return fetch(`http://localhost:5000/api/todos/${noteId}`, {
+                                return fetch(`/api/todos/${noteId}`, {
+                                    credentials: 'same-origin',
                                     method: 'delete'
                                 })
                                     .then(function (response) {
@@ -3587,7 +3616,7 @@ modules.define(
                                 var tap = event.targetTouches[0];
                                 console.log(tap);
                                 // Редактирование
-                                if (tap.target.className === 'todo todo__item') {
+                                if (tap.target.className === 'todo__text') {
                                     let todoItemId = tap.target.id.slice(-1);
                                     let todoItemValue = tap.target.innerHTML;
                                     tap.target.innerHTML = todoEditForm.renderTodoEditFormHtml(todoItemId, todoItemValue);
@@ -3608,9 +3637,10 @@ modules.define(
                             if (event.targetTouches.length == 1) {
                                 var tap = event.targetTouches[0];
                                 console.log(tap);
-                                if (tap.target.className === 'todo todo__trashbox') {
+                                if (tap.target.className === 'todo') {
+                                    console.log('del');
                                     let todoItemId = tap.target.id.slice(-1);
-                                    document.getElementById(`todo__trashbox-${todoItemId}`).addEventListener('click', (event) => {
+                                    document.getElementById(`todo-${todoItemId}`).addEventListener('click', (event) => {
                                         apiWorker.deleteTodo(todoItemId)
                                             .then((resp) => {
                                                 console.log(resp);
@@ -3622,26 +3652,47 @@ modules.define(
                         }
                         function leftSwipeHandler (event) {
                             var leftSwipe = event.changedTouches[0];
-                            if (leftSwipe.target.className === 'todo todo__item') {
-                                let todoItemId = leftSwipe.target.id.slice(-1);
-                                let targetStylesBackup = leftSwipe.target.classList;
+                            let todoItemId = leftSwipe.target.id.slice(-1);
+                            // Либо попали по тексту, либо по месту с корзиной
+                            if (leftSwipe.target.className === 'todo__text') {
                                 leftSwipe.target.classList.add('animate-left');
-                                setTimeout(() => {
-                                    document.getElementById(`todo__trashbox-${todoItemId}`).style.display = 'flex';
-                                }, 400);
+                                document.getElementById(`todo__item-${todoItemId}`).classList.add('animate-left');
+                            } else if (leftSwipe.target.className === 'todo__item') {
+                                leftSwipe.target.classList.add('animate-left');
+                                document.getElementById(`todo__text-${todoItemId}`).classList.add('animate-left');
                             }
                         }
                         function rightSwipeHandler (event) {
                             var rightSwipe = event.changedTouches[0];
-                            if (rightSwipe.target.className === 'todo todo__item animate-left') {
-                                let todoItemId = rightSwipe.target.id.slice(-1);
-                                document.getElementById(`todo__trashbox-${todoItemId}`).style.display = 'none';
+                            let todoItemId = rightSwipe.target.id.slice(-1);
+                            if (rightSwipe.target.className === 'todo__text animate-left') {
                                 rightSwipe.target.classList.add('animate-right');
+                                document.getElementById(`todo__item-${todoItemId}`).classList.add('animate-right');
                                 setTimeout(() => {
                                     rightSwipe.target.classList.remove('animate-left');
                                     rightSwipe.target.classList.remove('animate-right');
+                                    document.getElementById(`todo__item-${todoItemId}`).classList.remove('animate-left');
+                                    document.getElementById(`todo__item-${todoItemId}`).classList.remove('animate-right');
+                                }, 400);
+                            } else if (rightSwipe.target.className === 'todo__item animate-left') {
+                                rightSwipe.target.classList.add('animate-right');
+                                document.getElementById(`todo__text-${todoItemId}`).classList.add('animate-right');
+                                setTimeout(() => {
+                                    rightSwipe.target.classList.remove('animate-left');
+                                    rightSwipe.target.classList.remove('animate-right');
+                                    document.getElementById(`todo__text-${todoItemId}`).classList.remove('animate-left');
+                                    document.getElementById(`todo__text-${todoItemId}`).classList.remove('animate-right');
                                 }, 400);
                             }
+                        }
+                        function downSwipeHandler (event) {
+                            let refreshNode = createNodeFromHtml(todoRefresh.renderHtml());
+                            todoAppNode.insertBefore(refreshNode, todoAppNode.children[0]);
+                            document.getElementById(`todo__refresh`).classList.add('animate');
+                            renderTodoAll()
+                                .then(() => {
+                                    todoAppNode.removeChild(document.getElementById(`todo__refresh`));
+                                });
                         }
                         document.addEventListener('touchstart', function (event) {
                             // event.preventDefault();
@@ -3658,6 +3709,7 @@ modules.define(
                             var offset = {};
                             nowPoint = event.changedTouches[0];
                             offset.x = nowPoint.pageX - startPoint.x;
+                            offset.y = nowPoint.pageY - startPoint.y;
                             if (Math.abs(offset.x) > 150) {
                                 if (offset.x < 0) {
                                     // Показать корзину
@@ -3672,6 +3724,13 @@ modules.define(
                                     rightSwipeHandler(event);
                                 }
                                 startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
+                            }
+                            if (Math.abs(offset.y) > 200) {
+                                if (offset.y > 0) {
+                                    console.log('Down swipe on touchmove');
+                                    console.log(event);
+                                    downSwipeHandler();
+                                }
                             }
                         }, false);
                         document.addEventListener('touchend', function (event) {
@@ -3694,18 +3753,15 @@ modules.define(
                                 }
                                 else {
                                     if (nowPoint.pageY < startPoint.y) {
-                                        console.log('Up swipe');
+                                        console.log('Up swipe on touch end');
                                     }
                                     else {
-                                        console.log('Down swipe');
+                                        console.log('Down swipe on touch end');
+                                        downSwipeHandler();
                                     }
                                 }
                             }
                         }, false);
-                        // apiWorker.addTodo("Note4")
-                        //     .then((resp) => {
-                        //         console.log(resp);
-                        //     });
                     }
                 }
             }

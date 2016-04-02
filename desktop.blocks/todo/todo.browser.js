@@ -7,7 +7,7 @@ modules.define('todo', ['todo__item', 'todo__trashbox'], function(provide, todoI
         for (var todo in data) {
             let todoItemHtml = todoItem.renderHtml(todo, data[todo].text);
             let todoTrashBoxHtml = todoTrashBox.renderHtml(todo);
-            todoList.push(`<div id="todo-${todo}" class="todo">${todoItemHtml}${todoTrashBoxHtml}</div>`);
+            todoList.push(`<div id="todo-${todo}" class="todo">${todoTrashBoxHtml}${todoItemHtml}</div>`);
             // todoList.push(todoItem.renderHtml(todo, data[todo].text));
             //console.log(todoItem.renderHtml(todo, data[todo].text));
         }

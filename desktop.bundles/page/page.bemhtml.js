@@ -35,22 +35,71 @@ function applyc(__$ctx, __$ref) {
             }
         }
         return undefined;
-    } else if (__$t === "tag") {
+    } else if (__$t === "content") {
         var __$t = $$block;
-        if (__$t === "todo") {
-            if ($$elem === "item") {
-                return "div";
+        if (__$t === "page") {
+            if ($$elem === "head" && (__$ctx.__$a0 & 1) === 0) {
+                return [ __$ctx.ctx["x-ua-compatible"] === false ? false : {
+                    tag: "meta",
+                    attrs: {
+                        "http-equiv": "X-UA-Compatible",
+                        content: __$ctx.ctx["x-ua-compatible"] || "IE=edge"
+                    }
+                }, function __$lb__$0() {
+                    var __$r__$1;
+                    var __$l0__$2 = __$ctx.__$a0;
+                    __$ctx.__$a0 = __$ctx.__$a0 | 1;
+                    __$r__$1 = applyc(__$ctx, __$ref);
+                    __$ctx.__$a0 = __$l0__$2;
+                    return __$r__$1;
+                }() ];
             }
-        } else if (__$t === "page") {
+            if (!$$elem && (__$ctx.__$a0 & 2) === 0) {
+                return [ function __$lb__$3() {
+                    var __$r__$4;
+                    var __$l0__$5 = __$ctx.__$a0;
+                    __$ctx.__$a0 = __$ctx.__$a0 | 2;
+                    __$r__$4 = applyc(__$ctx, __$ref);
+                    __$ctx.__$a0 = __$l0__$5;
+                    return __$r__$4;
+                }(), __$ctx.ctx.scripts ];
+            }
+        } else if (__$t === "ua") {
+            if (!$$elem) {
+                return [ "(function(e,c){", 'e[c]=e[c].replace(/(ua_js_)no/g,"$1yes");', '})(document.documentElement,"className");' ];
+            }
+        }
+        return __$ctx.ctx.content;
+    } else if (__$t === "attrs") {
+        var __$t = $$block;
+        if (__$t === "page") {
             var __$t = $$elem;
             if (__$t === "js") {
-                return "script";
+                if (__$ctx.ctx.url) {
+                    return {
+                        src: __$ctx.ctx.url
+                    };
+                }
+            } else if (__$t === "favicon") {
+                return {
+                    rel: "shortcut icon",
+                    href: __$ctx.ctx.url
+                };
             } else if (__$t === "css") {
                 if (__$ctx.ctx.url) {
-                    return "link";
+                    return {
+                        rel: "stylesheet",
+                        href: __$ctx.ctx.url
+                    };
                 }
-                return "style";
-            } else if (__$t === "head") {
+            }
+        }
+        return undefined;
+    } else if (__$t === "tag") {
+        var __$t = $$block;
+        if (__$t === "page") {
+            var __$t = $$elem;
+            if (__$t === "head") {
                 return "head";
             } else if (__$t === "favicon") {
                 return "link";
@@ -62,34 +111,22 @@ function applyc(__$ctx, __$ref) {
             if (!$$elem) {
                 return "body";
             }
+            var __$t = $$elem;
+            if (__$t === "js") {
+                return "script";
+            } else if (__$t === "css") {
+                if (__$ctx.ctx.url) {
+                    return "link";
+                }
+                return "style";
+            }
+        } else if (__$t === "todo") {
+            if ($$elem === "item") {
+                return "div";
+            }
         } else if (__$t === "ua") {
             if (!$$elem) {
                 return "script";
-            }
-        }
-        return undefined;
-    } else if (__$t === "attrs") {
-        var __$t = $$block;
-        if (__$t === "page") {
-            var __$t = $$elem;
-            if (__$t === "js") {
-                if (__$ctx.ctx.url) {
-                    return {
-                        src: __$ctx.ctx.url
-                    };
-                }
-            } else if (__$t === "css") {
-                if (__$ctx.ctx.url) {
-                    return {
-                        rel: "stylesheet",
-                        href: __$ctx.ctx.url
-                    };
-                }
-            } else if (__$t === "favicon") {
-                return {
-                    rel: "shortcut icon",
-                    href: __$ctx.ctx.url
-                };
             }
         }
         return undefined;
@@ -99,8 +136,6 @@ function applyc(__$ctx, __$ref) {
             var __$t = $$elem;
             if (__$t === "js") {
                 return false;
-            } else if (__$t === "css") {
-                return false;
             } else if (__$t === "head") {
                 return false;
             } else if (__$t === "favicon") {
@@ -108,6 +143,8 @@ function applyc(__$ctx, __$ref) {
             } else if (__$t === "link") {
                 return false;
             } else if (__$t === "meta") {
+                return false;
+            } else if (__$t === "css") {
                 return false;
             }
         } else if (__$t === "ua") {
@@ -119,63 +156,28 @@ function applyc(__$ctx, __$ref) {
     } else if (__$t === "default") {
         var __$t = $$block;
         if (__$t === "page") {
+            if (!$$elem && !__$ctx._defPageApplied && (__$ctx.__$a0 & 4) === 0) {
+                var __$r = __$b31(__$ctx, __$ref);
+                if (__$r !== __$ref) return __$r;
+            }
             var __$t = $$elem;
             if (__$t === "css") {
                 var __$t = !__$ctx.ctx._ieCommented;
                 if (__$t) {
                     var __$t = __$ctx.ctx.hasOwnProperty("ie");
                     if (__$t) {
-                        if (__$ctx.ctx.ie === true && (__$ctx.__$a0 & 1) === 0) {
-                            var __$r = __$b27(__$ctx, __$ref);
+                        if (__$ctx.ctx.ie === true && (__$ctx.__$a0 & 8) === 0) {
+                            var __$r = __$b32(__$ctx, __$ref);
                             if (__$r !== __$ref) return __$r;
                         }
-                        var __$r = __$b28(__$ctx, __$ref);
+                        var __$r = __$b33(__$ctx, __$ref);
                         if (__$r !== __$ref) return __$r;
                     }
                 }
             }
-            if (!$$elem && !__$ctx._defPageApplied && (__$ctx.__$a0 & 8) === 0) {
-                var __$r = __$b29(__$ctx, __$ref);
-                if (__$r !== __$ref) return __$r;
-            }
         }
-        var __$r = __$b30(__$ctx, __$ref);
+        var __$r = __$b34(__$ctx, __$ref);
         if (__$r !== __$ref) return __$r;
-    } else if (__$t === "content") {
-        var __$t = $$block;
-        if (__$t === "page") {
-            if ($$elem === "head" && (__$ctx.__$a0 & 2) === 0) {
-                return [ __$ctx.ctx["x-ua-compatible"] === false ? false : {
-                    tag: "meta",
-                    attrs: {
-                        "http-equiv": "X-UA-Compatible",
-                        content: __$ctx.ctx["x-ua-compatible"] || "IE=edge"
-                    }
-                }, function __$lb__$16() {
-                    var __$r__$17;
-                    var __$l0__$18 = __$ctx.__$a0;
-                    __$ctx.__$a0 = __$ctx.__$a0 | 2;
-                    __$r__$17 = applyc(__$ctx, __$ref);
-                    __$ctx.__$a0 = __$l0__$18;
-                    return __$r__$17;
-                }() ];
-            }
-            if (!$$elem && (__$ctx.__$a0 & 4) === 0) {
-                return [ function __$lb__$19() {
-                    var __$r__$20;
-                    var __$l0__$21 = __$ctx.__$a0;
-                    __$ctx.__$a0 = __$ctx.__$a0 | 4;
-                    __$r__$20 = applyc(__$ctx, __$ref);
-                    __$ctx.__$a0 = __$l0__$21;
-                    return __$r__$20;
-                }(), __$ctx.ctx.scripts ];
-            }
-        } else if (__$t === "ua") {
-            if (!$$elem) {
-                return [ "(function(e,c){", 'e[c]=e[c].replace(/(ua_js_)no/g,"$1yes");', '})(document.documentElement,"className");' ];
-            }
-        }
-        return __$ctx.ctx.content;
     } else if (__$t === "mix") {
         return undefined;
     } else if (__$t === "cls") {
@@ -376,9 +378,9 @@ function applyc(__$ctx, __$ref) {
     fn(exports, this);
 }, {
     recordExtensions: function(ctx) {
+        ctx["__$a0"] = 0;
         ctx["_mode"] = undefined;
         ctx["ctx"] = undefined;
-        ctx["__$a0"] = 0;
         ctx["_ieCommented"] = undefined;
         ctx["_str"] = undefined;
         ctx["block"] = undefined;
@@ -395,55 +397,14 @@ function applyc(__$ctx, __$ref) {
     }
 });
 
-function __$b27(__$ctx, __$ref) {
-    var url__$0 = __$ctx.ctx.url;
-    var __$r__$2;
-    var __$l0__$3 = $$mode;
-    $$mode = "";
-    var __$l1__$4 = __$ctx.ctx;
-    __$ctx.ctx = [ 6, 7, 8, 9 ].map(function(v) {
-        return {
-            elem: "css",
-            url: url__$0 + ".ie" + v + ".css",
-            ie: "IE " + v
-        };
-    });
-    var __$r__$6;
-    var __$l2__$7 = __$ctx.__$a0;
-    __$ctx.__$a0 = __$ctx.__$a0 | 1;
-    __$r__$6 = applyc(__$ctx, __$ref);
-    __$ctx.__$a0 = __$l2__$7;
-    __$r__$2 = __$r__$6;
-    $$mode = __$l0__$3;
-    __$ctx.ctx = __$l1__$4;
-    return;
-}
-
-function __$b28(__$ctx, __$ref) {
-    var ie__$8 = __$ctx.ctx.ie, hideRule__$9 = !ie__$8 ? [ "gt IE 9", "<!-->", "<!--" ] : ie__$8 === "!IE" ? [ ie__$8, "<!-->", "<!--" ] : [ ie__$8, "", "" ];
-    var __$r__$11;
-    var __$l0__$12 = $$mode;
-    $$mode = "";
-    var __$l3__$13 = __$ctx.ctx;
-    var __$l1__$14 = __$l3__$13._ieCommented;
-    __$l3__$13._ieCommented = true;
-    var __$l2__$15 = __$ctx.ctx;
-    __$ctx.ctx = [ "<!--[if " + hideRule__$9[0] + "]>" + hideRule__$9[1], __$ctx.ctx, hideRule__$9[2] + "<![endif]-->" ];
-    __$r__$11 = applyc(__$ctx, __$ref);
-    $$mode = __$l0__$12;
-    __$l3__$13._ieCommented = __$l1__$14;
-    __$ctx.ctx = __$l2__$15;
-    return;
-}
-
-function __$b29(__$ctx, __$ref) {
+function __$b31(__$ctx, __$ref) {
     __$ctx._defPageApplied = true;
-    var ctx__$22 = __$ctx.ctx;
-    var __$r__$24;
-    var __$l0__$25 = $$mode;
+    var ctx__$6 = __$ctx.ctx;
+    var __$r__$8;
+    var __$l0__$9 = $$mode;
     $$mode = "";
-    var __$l1__$26 = __$ctx.ctx;
-    __$ctx.ctx = [ ctx__$22.doctype || "<!DOCTYPE html>", {
+    var __$l1__$10 = __$ctx.ctx;
+    __$ctx.ctx = [ ctx__$6.doctype || "<!DOCTYPE html>", {
         tag: "html",
         cls: "ua_js_no",
         content: [ {
@@ -455,28 +416,69 @@ function __$b29(__$ctx, __$ref) {
                 }
             }, {
                 tag: "title",
-                content: ctx__$22.title
+                content: ctx__$6.title
             }, {
                 block: "ua"
-            }, ctx__$22.head, ctx__$22.styles, ctx__$22.favicon ? {
+            }, ctx__$6.head, ctx__$6.styles, ctx__$6.favicon ? {
                 elem: "favicon",
-                url: ctx__$22.favicon
+                url: ctx__$6.favicon
             } : "" ]
-        }, ctx__$22 ]
+        }, ctx__$6 ]
     } ];
-    var __$r__$28;
-    var __$l2__$29 = __$ctx.__$a0;
-    __$ctx.__$a0 = __$ctx.__$a0 | 8;
-    __$r__$28 = applyc(__$ctx, __$ref);
-    __$ctx.__$a0 = __$l2__$29;
-    __$r__$24 = __$r__$28;
-    $$mode = __$l0__$25;
-    __$ctx.ctx = __$l1__$26;
+    var __$r__$12;
+    var __$l2__$13 = __$ctx.__$a0;
+    __$ctx.__$a0 = __$ctx.__$a0 | 4;
+    __$r__$12 = applyc(__$ctx, __$ref);
+    __$ctx.__$a0 = __$l2__$13;
+    __$r__$8 = __$r__$12;
+    $$mode = __$l0__$9;
+    __$ctx.ctx = __$l1__$10;
     __$ctx._defPageApplied = false;
     return;
 }
 
-function __$b30(__$ctx, __$ref) {
+function __$b32(__$ctx, __$ref) {
+    var url__$14 = __$ctx.ctx.url;
+    var __$r__$16;
+    var __$l0__$17 = $$mode;
+    $$mode = "";
+    var __$l1__$18 = __$ctx.ctx;
+    __$ctx.ctx = [ 6, 7, 8, 9 ].map(function(v) {
+        return {
+            elem: "css",
+            url: url__$14 + ".ie" + v + ".css",
+            ie: "IE " + v
+        };
+    });
+    var __$r__$20;
+    var __$l2__$21 = __$ctx.__$a0;
+    __$ctx.__$a0 = __$ctx.__$a0 | 8;
+    __$r__$20 = applyc(__$ctx, __$ref);
+    __$ctx.__$a0 = __$l2__$21;
+    __$r__$16 = __$r__$20;
+    $$mode = __$l0__$17;
+    __$ctx.ctx = __$l1__$18;
+    return;
+}
+
+function __$b33(__$ctx, __$ref) {
+    var ie__$22 = __$ctx.ctx.ie, hideRule__$23 = !ie__$22 ? [ "gt IE 9", "<!-->", "<!--" ] : ie__$22 === "!IE" ? [ ie__$22, "<!-->", "<!--" ] : [ ie__$22, "", "" ];
+    var __$r__$25;
+    var __$l0__$26 = $$mode;
+    $$mode = "";
+    var __$l3__$27 = __$ctx.ctx;
+    var __$l1__$28 = __$l3__$27._ieCommented;
+    __$l3__$27._ieCommented = true;
+    var __$l2__$29 = __$ctx.ctx;
+    __$ctx.ctx = [ "<!--[if " + hideRule__$23[0] + "]>" + hideRule__$23[1], __$ctx.ctx, hideRule__$23[2] + "<![endif]-->" ];
+    __$r__$25 = applyc(__$ctx, __$ref);
+    $$mode = __$l0__$26;
+    __$l3__$27._ieCommented = __$l1__$28;
+    __$ctx.ctx = __$l2__$29;
+    return;
+}
+
+function __$b34(__$ctx, __$ref) {
     var BEM_INTERNAL__$30 = __$ctx.BEM.INTERNAL, ctx__$31 = __$ctx.ctx, isBEM__$32, tag__$33, res__$34;
     var __$r__$36;
     var __$l0__$37 = __$ctx._str;

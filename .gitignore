@@ -3,3 +3,10 @@
 node_modules
 public/
 npm-debug.log
+libs/
+
+#bem
+.bem/cache/
+.enb/tmp/
+#*bundles*/page/*
+#!*bundles*/page/*.bemdecl.js
