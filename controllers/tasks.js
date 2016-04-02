@@ -4,13 +4,27 @@ exports.getAll = (req, res) => {
     res.status(200).json({tasks});
 };
 
-exports.post = (req, res) => {
-    var task = req.body;
-    tasks.forEach((_task) => {
-        if (_task.id === task.id) {
-            _task.text = task.text;
-            res.status(201).json({tasks});
-        }
-    });
+exports.postOne = (req, res) => {
+
 };
 
+exports.patchOne = (req, res) => {
+    var task = req.body;
+    for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === req.params.id) {
+            tasks[i].text = req.body.text;
+            res.status(200).send();
+            break;
+        }
+    }
+};
+
+exports.deleteOne = (req, res) => {
+    for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === req.params.id) {
+            tasks.splice(i, 1);
+            res.status(200).send();
+            break;
+        }
+    }
+};

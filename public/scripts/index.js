@@ -1,4 +1,4 @@
-var body = document.querySelector("body");
+
 function createButton(options) {
     var button = document.createElement('div');
     button.className = options.class;
@@ -12,31 +12,51 @@ function createTask(taskData) {
     var task = document.createElement('div');
     task.className += 'task-list-item';
     task.setAttribute('taskid', taskData.id);
+    var taskTextField = document.createElement('div');
+    taskTextField.className += 'task-list-item-text';
+    taskTextField.textContent = taskData.text;
+    task.appendChild(taskTextField);
     touchHandler.makeTouchable(task);
     touchHandler.setEventListener('swipe', task, function (evt) {
         if (
-            evt.currentTarget.children.length === 1
+            task.children.length === 1
         ) {
             var taskDeletionBtn = createButton({
                 class: 'task-list-item-del',
                 image: {src: 'images/delete.png'}
             });
+            touchHandler.makeTouchable(taskDeletionBtn);
+            touchHandler.setEventListener('tap', taskDeletionBtn, function (evt) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('DELETE', '/tasks/' + task.getAttribute('taskid'));
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send();
+                task.style.opacity = '0.3';
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState !== 4) {
+                        return;
+                    }
+                    if (xhr.status === 200) {
+                        var taskList = document.querySelector('.task-list');
+                        taskList.removeChild(task);
+                    }
+                };
+            });
             task.appendChild(taskDeletionBtn);
             var untargetHandler = function () {
                 task.removeChild(taskDeletionBtn);
-                body.removeEventListener("touchstart", untargetHandler); 
             };
-            body.addEventListener('touchstart', untargetHandler, false);
+            touchHandler.setEventListener('touchleave', task, untargetHandler);
         }
     });
     touchHandler.setEventListener('tap', task, function (evt) {
         if (
-            evt.currentTarget.children.length === 1
+            task.children.length === 1
         ) {
             var taskTextArea = document.createElement('textarea');
             taskTextArea.className += 'task-list-item-text-area';
             var taskTextField = task.children[0];
-            taskTextArea.innerText = taskTextField.innerText;
+            taskTextArea.textContent = taskTextField.textContent;
             task.replaceChild(taskTextArea, taskTextField);
             var taskSubmitBtn = createButton({
                 class: 'task-list-item-text-submit-btn',
@@ -45,34 +65,33 @@ function createTask(taskData) {
                     class: 'task-list-item-text-submit-btn-img'
                 }
             });
-            var untargetHandler = function () {
-                task.removeChild(taskSubmitBtn);
-                task.replaceChild(taskTextField, taskTextArea);
-                body.removeEventListener("touchstart", untargetHandler); 
-            };
-            taskSubmitBtn.addEventListener('touchstart', function () {
+            touchHandler.makeTouchable(taskSubmitBtn);
+            touchHandler.setEventListener('tap', taskSubmitBtn, function (evt) {
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/tasks');
+                xhr.open('PATCH', '/tasks/' + task.getAttribute('taskid'));
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(JSON.stringify({
-                    id: task.getAttribute('taskid'),
-                    text: task.children[0].value
+                    text: taskTextArea.value
                 }));
-                untargetHandler();
+                task.style.opacity = '0.3';
                 xhr.onreadystatechange = function() {
-                    if (xhr.status === 201) {
-                        taskTextField.innerText = taskTextArea.value;
+                    if (xhr.readyState !== 4) {
+                        return;
+                    }
+                    if (xhr.status === 200) {
+                        taskTextField.textContent = taskTextArea.value;
+                        task.style.opacity = '1';
                     }
                 };
             });
             task.appendChild(taskSubmitBtn);
-            body.addEventListener('touchstart', untargetHandler, false);
+            touchHandler.makeTouchable(taskTextArea);
+            touchHandler.setEventListener('touchleave', taskTextArea, function (evt) {
+                task.removeChild(taskSubmitBtn);
+                task.replaceChild(taskTextField, taskTextArea);
+            });
         }
     }, false);
-    var taskTextField = document.createElement('div');
-    taskTextField.className += 'task-list-item-text';
-    taskTextField.innerText = taskData.text;
-    task.appendChild(taskTextField);
     return task;
 }
 
@@ -89,7 +108,6 @@ function getTasks() {
             console.log(xhr.status + ': ' + xhr.statusText);
         } else {
             var tasksData = JSON.parse(xhr.responseText).tasks;
-            var body = document.querySelector('body');
             tasksData.forEach((taskData) => {
                 var task = createTask(taskData);
                 var taskList = document.querySelector('.task-list');
