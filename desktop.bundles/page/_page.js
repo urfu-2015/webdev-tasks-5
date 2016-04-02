@@ -3973,13 +3973,76 @@ modules.define('todo__refresh', function(provide) {
 });
 
 /* end: ../../desktop.blocks/todo/__refresh/todo__refresh.browser.js */
+/* begin: ../../desktop.blocks/api/api.browser.js */
+/* global modules:false */
+
+modules.define('api', function(provide) {
+    // Worker для работы с api
+    var apiWorker = {
+        getTodoAll: () => {
+            return fetch('/api/todos/', {
+                credentials: 'same-origin'
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+        },
+        addTodo: (text) => {
+            return fetch('/api/todos', {
+                credentials: 'same-origin',
+                method: 'post',
+                headers: {
+                    "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                },
+                body: `text=${text}`
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+        },
+        getTodo: (noteId) => {
+            return fetch(`/api/todos/${noteId}`, {
+                credentials: 'same-origin'
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+        },
+        editTodo: (noteId, newText) => {
+            return fetch(`/api/todos/${noteId}`, {
+                credentials: 'same-origin',
+                method: 'put',
+                headers: {
+                    "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                },
+                mode: 'cors',
+                body: `text=${newText}`
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+        },
+        deleteTodo: (noteId) => {
+            return fetch(`/api/todos/${noteId}`, {
+                credentials: 'same-origin',
+                method: 'delete'
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+        }
+    };
+    provide(apiWorker);
+});
+
+/* end: ../../desktop.blocks/api/api.browser.js */
 /* begin: ../../desktop.blocks/todo-app/todo-app.browser.js */
 /* global modules:false */
 
 modules.define(
     'todo-app', // имя блока
-    ['i-bem__dom', 'todo', 'todo__edit-form', 'todo__add-form', 'todo__refresh'], // подключение зависимости
-    function (provide, BEMDOM, todo, todoEditForm, todoAddForm, todoRefresh) { // функция, в которую передаются имена используемых модулей
+    ['i-bem__dom', 'todo', 'todo__edit-form', 'todo__add-form', 'todo__refresh', 'api'], // подключение зависимости
+    function (provide, BEMDOM, todo, todoEditForm, todoAddForm, todoRefresh, apiWorker) { // функция, в которую передаются имена используемых модулей
         provide(BEMDOM.decl('todo-app', { // декларация блока
             onSetMod: { // конструктор для описания реакции на события
                 'js': {
@@ -3990,60 +4053,60 @@ modules.define(
                             return div.firstChild;
                         }
 
-                        var apiWorker = {
-                            getTodoAll: () => {
-                                return fetch('/api/todos/', {
-                                    credentials: 'same-origin'
-                                })
-                                    .then(function (response) {
-                                        return response.json();
-                                    })
-                            },
-                            addTodo: (text) => {
-                                return fetch('/api/todos', {
-                                    credentials: 'same-origin',
-                                    method: 'post',
-                                    headers: {
-                                        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-                                    },
-                                    body: `text=${text}`
-                                })
-                                    .then(function (response) {
-                                        return response.json();
-                                    })
-                            },
-                            getTodo: (noteId) => {
-                                return fetch(`/api/todos/${noteId}`, {
-                                    credentials: 'same-origin'
-                                })
-                                    .then(function (response) {
-                                        return response.json();
-                                    })
-                            },
-                            editTodo: (noteId, newText) => {
-                                return fetch(`/api/todos/${noteId}`, {
-                                    credentials: 'same-origin',
-                                    method: 'put',
-                                    headers: {
-                                        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-                                    },
-                                    mode: 'cors',
-                                    body: `text=${newText}`
-                                })
-                                    .then(function (response) {
-                                        return response.json();
-                                    })
-                            },
-                            deleteTodo: (noteId) => {
-                                return fetch(`/api/todos/${noteId}`, {
-                                    credentials: 'same-origin',
-                                    method: 'delete'
-                                })
-                                    .then(function (response) {
-                                        return response.json();
-                                    })
-                            }
-                        };
+                        // var apiWorker = {
+                        //     getTodoAll: () => {
+                        //         return fetch('/api/todos/', {
+                        //             credentials: 'same-origin'
+                        //         })
+                        //             .then(function (response) {
+                        //                 return response.json();
+                        //             })
+                        //     },
+                        //     addTodo: (text) => {
+                        //         return fetch('/api/todos', {
+                        //             credentials: 'same-origin',
+                        //             method: 'post',
+                        //             headers: {
+                        //                 "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                        //             },
+                        //             body: `text=${text}`
+                        //         })
+                        //             .then(function (response) {
+                        //                 return response.json();
+                        //             })
+                        //     },
+                        //     getTodo: (noteId) => {
+                        //         return fetch(`/api/todos/${noteId}`, {
+                        //             credentials: 'same-origin'
+                        //         })
+                        //             .then(function (response) {
+                        //                 return response.json();
+                        //             })
+                        //     },
+                        //     editTodo: (noteId, newText) => {
+                        //         return fetch(`/api/todos/${noteId}`, {
+                        //             credentials: 'same-origin',
+                        //             method: 'put',
+                        //             headers: {
+                        //                 "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+                        //             },
+                        //             mode: 'cors',
+                        //             body: `text=${newText}`
+                        //         })
+                        //             .then(function (response) {
+                        //                 return response.json();
+                        //             })
+                        //     },
+                        //     deleteTodo: (noteId) => {
+                        //         return fetch(`/api/todos/${noteId}`, {
+                        //             credentials: 'same-origin',
+                        //             method: 'delete'
+                        //         })
+                        //             .then(function (response) {
+                        //                 return response.json();
+                        //             })
+                        //     }
+                        // };
                         var todoAppNode = document.getElementsByClassName("todo-app")[0];
                         function renderTodoAll () {
                             return apiWorker.getTodoAll()
@@ -4192,7 +4255,7 @@ modules.define(
                                 }
                                 startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
                             }
-                            if (Math.abs(offset.y) > 200) {
+                            if (Math.abs(offset.y) > 350) {
                                 if (offset.y > 0) {
                                     console.log('Down swipe on touchmove');
                                     console.log(event);

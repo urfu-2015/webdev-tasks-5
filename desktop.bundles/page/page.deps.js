@@ -97,6 +97,9 @@ exports.deps = [
         "elem": "refresh"
     },
     {
+        "block": "api"
+    },
+    {
         "block": "page"
     },
     {

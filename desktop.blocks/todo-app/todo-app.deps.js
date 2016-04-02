@@ -24,8 +24,10 @@
         {
             block: 'todo',
             elem: 'refresh'
+        },
+        {
+            block: 'api'
         }
-
     ],
     shouldDeps: []
 })
