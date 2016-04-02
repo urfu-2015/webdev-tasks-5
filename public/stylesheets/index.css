@@ -10,7 +10,7 @@ h1
     text-align: center;
     font-size: 70px;
 }
-.task-list-item
+.task
 {
     width: 70%;
     height: 150px;
@@ -19,7 +19,7 @@ h1
     margin-bottom: 50px;
     position: relative;
 }
-.task-list-item-text
+.task__text
 {
     vertical-align: middle;
     line-height: 150px;
@@ -29,14 +29,14 @@ h1
     overflow-x: hidden;
     width: 80%;
 }
-.task-list-item-text-area
+.task__text-area
 {
     width: 80%;
     height: 100%;
     float: left;
     font-size: 60px;
 }
-.task-list-item-text-submit-btn
+.task__submit-btn
 {
     width: 18%;
     height: 150px;
@@ -56,7 +56,7 @@ h1
     line-height: 150px; 
 }
 
-.task-list-item-del
+.task__deletion-btn
 {
     width: 18%;
     height: 150px;

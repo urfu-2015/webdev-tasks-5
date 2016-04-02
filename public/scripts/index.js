@@ -13,10 +13,10 @@ function createButton(options) {
 }
 function createTask(taskData) {
     var task = document.createElement('div');
-    task.className += 'task-list-item';
+    task.className += 'task';
     task.setAttribute('taskid', taskData.id);
     var taskTextField = document.createElement('div');
-    taskTextField.className += 'task-list-item-text';
+    taskTextField.className += 'task__text';
     taskTextField.textContent = taskData.text;
     task.appendChild(taskTextField);
     touchHandler.makeTouchable(task);
@@ -25,7 +25,7 @@ function createTask(taskData) {
             task.children.length === 1
         ) {
             var taskDeletionBtn = createButton({
-                class: 'task-list-item-del',
+                class: 'task__deletion-btn',
                 image: {src: 'images/delete.png'}
             });
             touchHandler.makeTouchable(taskDeletionBtn);
@@ -46,10 +46,9 @@ function createTask(taskData) {
                 };
             });
             task.appendChild(taskDeletionBtn);
-            var untargetHandler = function () {
+            touchHandler.setEventListener('touchleave', task, function () {
                 task.removeChild(taskDeletionBtn);
-            };
-            touchHandler.setEventListener('touchleave', task, untargetHandler);
+            });
         }
     });
     touchHandler.setEventListener('tap', task, function (evt) {
@@ -57,15 +56,15 @@ function createTask(taskData) {
             task.children.length === 1
         ) {
             var taskTextArea = document.createElement('textarea');
-            taskTextArea.className += 'task-list-item-text-area';
+            taskTextArea.className += 'task__text-area';
             var taskTextField = task.children[0];
             taskTextArea.textContent = taskTextField.textContent;
             task.replaceChild(taskTextArea, taskTextField);
             var taskSubmitBtn = createButton({
-                class: 'task-list-item-text-submit-btn',
+                class: 'task__submit-btn',
                 image: {
                     src: 'images/ok.png',
-                    class: 'task-list-item-text-submit-btn-img'
+                    class: 'task__submit-btn-img'
                 }
             });
             touchHandler.makeTouchable(taskSubmitBtn);
@@ -93,7 +92,7 @@ function createTask(taskData) {
                     if (xhr.status === successCode) {
                         task.setAttribute('taskid', JSON.parse(xhr.responseText).id);
                         taskTextField.textContent = taskTextArea.value;
-                        task.style.opacity = '1';
+                        task.style.opacity = '';
                     }
                 };
             });
