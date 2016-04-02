@@ -1,0 +1,58 @@
+
+body
+{
+    width: 100%;
+    height: 100%;
+    font-size: 60px;
+}
+h1
+{
+    text-align: center;
+    font-size: 70px;
+}
+.task-list-item
+{
+    width: 70%;
+    height: 150px;
+    border: 1px solid gray;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    text-align: center;
+    position: relative;
+}
+.task-list-item-text
+{
+    text-align: center;
+    height: 60px;
+    float: left;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+.task-list-item-text-area
+{
+    width: 80%;
+    height: 100%;
+    float: left;
+    font-size: 60px;
+}
+.task-list-item-text-submit-btn
+{
+    width: 18%;
+    height: 150px;
+    border: 1px solid gray;
+    margin-right: 0;
+    float: right;
+}
+.task-list-item-del
+{
+    width: 18%;
+    height: 150px;
+    margin-right: 0;
+    float: right;
+}
+img
+{
+    width: 100%;
+    height: 100%;
+}
