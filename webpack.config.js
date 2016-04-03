@@ -5,7 +5,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-    context: path.join(__dirname, 'bundles'),
+    context: path.join(__dirname, 'server/bundles'),
     entry: {
         main: './main/main.js'
     },
@@ -25,6 +25,11 @@ module.exports = {
             {
                 test: /\.png$/,
                 loader: 'file-loader'
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel',
+                exclude: /node_modules/
             }
         ]
     },

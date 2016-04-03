@@ -1,5 +1,13 @@
 require('./main.css');
 
+import React from 'react';
+import ReactDom from 'react-dom';
+import {createStore} from 'redux';
+
+import {todoApp} from '../../../client/reducers';
+
+const store = createStore(todoApp);
+
 document.addEventListener('DOMContentLoaded', initialState);
 
 document.addEventListener('touchstart', event => {

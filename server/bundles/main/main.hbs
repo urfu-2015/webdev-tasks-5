@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page.title }}</title>
     <meta name="description" content="{{ meta.description }}">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     {{#if isDev}}
         <link rel="stylesheet" href="/main.css">
     {{else}}
@@ -13,22 +14,7 @@
 </head>
 <body>
 
-    <div class="update-progress"></div>
-    {{>header/header }}
-
-    <div class="notes-wrapper">
-        {{#if notes.length}}
-            <ul class="notes">
-                {{#each notes}}
-                    {{>note/note }}
-                {{/each}}
-            </ul>
-        {{^}}
-            <p>Notes not found!</p>
-        {{/if}}
-    </div>
-
-    {{>create/create }}
+    <div class="update-progress update-progress_visible"></div>
 
     {{#if isDev}}
         <script src="/main.js"></script>
