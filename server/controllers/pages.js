@@ -6,10 +6,12 @@ var todos = [
 ];
 var responseMessage = 'ok';
 exports.index = (req, res) => {
-    res.render('index.html');
+    res.render('index.hbs', {});
 };
 exports.listTodo = (req, res) => {
-    res.send(todos);
+    res.json({
+        todos : todos
+    });
 };
 exports.listDelete = (req, res) => {
     todos.splice(parseInt(req.body.name), 1);
