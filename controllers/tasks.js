@@ -10,23 +10,20 @@ exports.list = (req, res) => {
 };
 
 exports.add = (req, res) => {
-    var text = req.body.text;
-    var newTask = new Task(text).save();
+    var newTask = new Task(req.body.text).save();
     res.sendStatus(200);
 };
 
 exports.remove = (req, res) => {
-    var id = req.body.id;
-    Task.remove(id);
-    res.sendStatus(200);
+    var isRemoved = Task.remove(req.body.id);
+    isRemoved ? res.sendStatus(200) : res.status(500).send('Incorrect id');
 };
 
 exports.edit = (req, res) => {
-    var id = req.body.id;
     var newText = req.body.text;
-    Task.edit(id, newText);
+    Task.edit(req.body.id, newText);
     var data = {
         text: newText
     };
-    res.send(data, 200);
+    res.status(200).send(data);
 };

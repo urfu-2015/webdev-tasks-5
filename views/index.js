@@ -3,12 +3,11 @@ refresh();
 document.addEventListener('touchstart', setTouchStartEvent, false);
 document.addEventListener('touchend', setTouchEndEvent, false);
 
-var addButton = document.getElementsByClassName('butn-to-add')[0];
+var addButton = document.querySelector('.butn-to-add');
 addButton.addEventListener('click', function (event) {
-    event.preventDefault();
-    var newText = document.getElementsByClassName('text-to-add')[0].value;
-    addTask(newText);
-});  
+    var newText = document.querySelector('.text-to-add').value;
+    newText ? addTask(newText) : alert('Нельзя добавить пустое задание');
+});
 
 function refresh() {
     var xhr = new XMLHttpRequest();
@@ -16,16 +15,16 @@ function refresh() {
     xhr.send();
     xhr.onreadystatechange = function () {
         if (xhr.status === 200 && xhr.readyState === 4) {
-            var refreshBlock = document.getElementsByClassName('pull-and-refresh')[0];
+            var refreshBlock = document.querySelector('.pull-and-refresh');
             refreshBlock.style.display = 'none';
-            var taskContainer = document.getElementsByClassName('tasks-container')[0];
+            var taskContainer = document.querySelector('.tasks-container');
             taskContainer.innerHTML = xhr.responseText;
         }
     }
 }
 
 function addTask(text) {
-    document.getElementsByClassName('text-to-add')[0].value = '';
+    document.querySelector('.text-to-add').value = '';
     var xhr = new XMLHttpRequest();
     var params = 'text=' + encodeURIComponent(text);
     xhr.open('POST', '/', true);
@@ -69,7 +68,6 @@ var startX,
     startT;
 
 function setTouchStartEvent(event) {
-    event.preventDefault();
     startX = event.changedTouches[0].pageX;
     startY = event.changedTouches[0].pageY;
     startT = new Date().getTime();
@@ -83,7 +81,6 @@ function setTouchStartEvent(event) {
 }
 
 function setTouchEndEvent(event) {
-    event.preventDefault();
     var deltaX = event.changedTouches[0].pageX - startX,
         deltaY = event.changedTouches[0].pageY - startY,
         deltaT = new Date().getTime() - startT,
@@ -112,53 +109,60 @@ function setTouchEndEvent(event) {
 }
 
 function pullAndRefreshEvent() {
-    var parElement = document.getElementsByClassName('pull-and-refresh')[0];
+    var parElement = document.querySelector('.pull-and-refresh');
     parElement.style.display = 'block';
-    setTimeout(refresh, 1000);
+    setTimeout(refresh, 2000);
 }
 
 function swipeToLeft(element) {
     if (element.className.indexOf('task') != -1) {
         var id = element.id.split('_')[1];
-        var task = document.getElementById('task_' + id);
-        var deleteDiv = document.createElement('div');
-        deleteDiv.className = 'task__delete';
-        deleteDiv.id = 'delete_' + id;
-        deleteDiv.innerHTML = '<i class="fa fa-trash"></i>';
-        task.appendChild(deleteDiv);
-        task.className = task.className + ' task_swipedToLeft';
+        if (!hasDeleteDiv(id)) {
+            var task = document.querySelector('#task_' + id);
+            var deleteDiv = document.createElement('div');
+            deleteDiv.className = 'task__delete';
+            deleteDiv.id = 'delete_' + id;
+            deleteDiv.innerHTML = '<i class="fa fa-trash"></i>';
+            task.appendChild(deleteDiv);
+        }        
     }
+}
+
+function hasDeleteDiv(id) {
+    var deleteDiv = document.querySelector('#delete_' + id);
+    var res = deleteDiv ? true: false;
+    return res;
 }
 
 function swipeToRight(element) {
     if (element.className.indexOf('task') != -1) {
         var id = element.id.split('_')[1];
-        var task = document.getElementById('task_' + id);
-        task.removeChild(document.getElementById('delete_' + id));
+        var task = document.querySelector('#task_' + id);
+        var node = document.querySelector('#delete_' + id);
+        task.removeChild(node);
         task.className = 'task';
     }
 }
 
 function touchToEdit(element) {
     var id = element.id.split('_')[1];
-    if (element.id.indexOf('task') != -1
-        || element.id.indexOf('text') != -1) {        
-        var task = document.getElementById('task_' + id);
-        var oldText = document.getElementById('text_' + id).innerHTML;
+    var isCorrectObj = element.id.indexOf('task') != -1 || element.id.indexOf('text') != -1;
+    if (isCorrectObj && !checkFormExists()) {
+        var task = document.querySelector('#task_' + id);        
+        var oldText = document.querySelector('#text_' + id).innerHTML;
         task.innerHTML = '';
         task.appendChild(createEditForm(id, oldText));
-        //editEvent(id);
-    }
-    if (element.id.indexOf('edit-submit') != -1) {
-        var inputText = document.getElementById('edit-text_' + id);
-        editTask(id, inputText.value);
+        editEvent(id);
     }
 }
 
+function checkFormExists() {
+    var result = document.querySelector('.task__edit-form') ? true : false;
+    return result;
+}
+
 function createEditForm(id, oldText) {
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/';
+    var form = document.createElement('div');
     form.className = 'task__edit-form';
     form.id = 'edit-form_' + id;
 
@@ -180,10 +184,9 @@ function createEditForm(id, oldText) {
 }
 
 function editEvent(id) {
-    var inputSubmit = document.getElementById('edit-submit_' + id);
-    var inputText = document.getElementById('edit-text_' + id);
+    var inputSubmit = document.querySelector('#edit-submit_' + id);
+    var inputText = document.querySelector('#edit-text_' + id);
     inputSubmit.addEventListener('click', function (event) {
-        event.preventDefault();
         editTask(id, inputText.value);
     });
 }

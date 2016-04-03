@@ -7,6 +7,7 @@ class Task {
     constructor(text) {
         this.id = currentId;
         this.text = text;
+        this.isRemoved = false;
     }
 
     save() {
@@ -15,13 +16,14 @@ class Task {
     }
 
     static remove(id) {
-        storage = storage.filter(task => {
-            return task.id != id;
-        })
-    }
+        var res = checkId(id) ? removeById(id) : false;
+        return res;
+    }   
 
     static findAll() {
-        return storage;
+        return storage.filter(task => {
+            return !task.isRemoved;
+        });
     }
 
     static edit(id, newText) {
@@ -29,8 +31,24 @@ class Task {
     }
 }
 
+function checkId(id) {
+    return storage.some(task => {
+        return task.id == id;
+    });
+}
+
+function removeById(id) {
+    storage = storage.filter(task => {
+        if (task.id == id) {
+            task.isRemoved = true;
+        }
+        return true;
+    });
+    return true;
+}
+
 require('../tasks.json').todoList.forEach(task => {
-    var newTask = new Task(task.task).save();
+    var newTask = new Task(task.text).save();
 });
 
 module.exports = Task;

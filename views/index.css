@@ -1,11 +1,21 @@
+*
+{
+    font-family: 'Bad Script', cursive;
+}
+body
+{    
+    background: url('back.jpg');
+}
 .pull-and-refresh
 {
-    margin: auto;
+    text-align: center;
 }
 .header-text
 {
     font-size: 25px;
     text-align: center;
+    font-weight: bold;
+    text-decoration: underline;
 }
 .tasks-container
 {
@@ -21,8 +31,8 @@
     flex-direction: row;
     justify-content: center;
     align-items: stretch;
-    font-size: 15px;
-    width: 60%;
+    font-size: 20px;
+    width: 80%;
 }
 .task__text
 {
@@ -42,7 +52,7 @@
     color: #FFFFFF;
     width: 10%;
     text-align: center;
-    font-size: 20px;
+    font-size: 23px;
     border-radius: 10px;
 }
 .task__edit-form
@@ -59,26 +69,23 @@
 .task__edit-text,
 .text-to-add
 {
-    font-size: 15px;
+    font-size: 20px;
     width: 95%;
 }
 .task__edit-submit,
 .butn-to-add
 {
     margin-top: 10px;
-    font-size: 15px;
+    font-size: 20px;
     border-radius: 10px;
     padding: 5px;
+    width: 50%;
+    background-color: #fff;
 }
 .add-container
 {
-    margin-top: 10px;
-    width: 55%;
+    width: 72%;
     padding: 10px;
-   /* display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;*/
     text-align: center;
     margin: auto;
     background-color: #E25D4B;
@@ -87,4 +94,18 @@
 .text-to-add
 {
     margin-bottom: 10px;
+}
+.freedomMessage
+{
+    font-size: 25px;
+    text-align: center;
+}
+.dance
+{
+    font-size: 30px;
+    color: #f00;
+}
+.dancingKitty
+{
+    max-width: 70%;
 }
