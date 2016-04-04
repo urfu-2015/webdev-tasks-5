@@ -47,7 +47,6 @@ function getTasks(callback) {
 }
 
 function showAllTasks(storage) {
-    // Есть контейнер, надо из него удалить все которые были и добавить новые
     console.log('in showAlltasks');
     console.log(storage);
     const container = document.getElementsByClassName('task-container')[0];
@@ -61,6 +60,8 @@ function showAllTasks(storage) {
 }
 
 function createTaskItem(task) {
+    console.log('task in taskItem:');
+    console.log(task);
     const div = document.createElement('div');
     div.className = 'task-item';
     div.id = 'task-item-' + task.id;
@@ -78,6 +79,8 @@ function createTaskItem(task) {
     const divDelete = document.createElement('div');
     divDelete.className = 'task-item__delete task-item__delete_hidden';
     div.appendChild(divDelete);
+    div.addEventListener('touchstart', changeTaskEvent);
+    div.addEventListener('touchstart', showDeleteButtonEvent);
     return div;
 }
 
@@ -88,61 +91,165 @@ function removeChildren(node) {
     }
 }
 
-function addTask () {
+function addTask() {
     console.log('in addTask');
-    const task = {text: 'Task'};
-    // Надо выдавать форму для изменения сразу
+    const taskTextarea = document.getElementsByClassName('task-form__textarea')[0];
+    const task = { text: taskTextarea.value };
     xhrRequest('POST', '/tasks', true, task, function (error, data) {
         if (error) {
             console.log(error);
             return;
         }
+        const addTaskForm = document.getElementsByClassName('task-form')[0];
+        addTaskForm.className = 'task-form task-form_hidden';
         const taskDiv = createTaskItem(task);
         var container = document.getElementsByClassName('task-container')[0];
         container.appendChild(taskDiv);
+        const buttonAdd = document.getElementsByClassName('task-controllers__button-add')[0];
+        buttonAdd.addEventListener('touchstart', addTaskEvent);
     });
 }
 
-function deleteTask (event) {
+function showAddTaskForm() {
+    let addTaskForm = document.getElementsByClassName('task-form')[0];
+    addTaskForm.className = 'task-form';
+    const buttonAdd = document.getElementsByClassName('task-controllers__button-add')[0];
+    buttonAdd.removeEventListener('touchstart', addTaskEvent);
+}
+
+function changeTask(event) {
+    console.log('in changeTaskForm');
+    var task = event.currentTarget;
+    if (task.className != 'task-item') {
+        return;
+    }
+    console.log(task);
+    task.className = 'task-item task-item_change';
+    var textarea = document.querySelector('#' + task.id + ' .task-item__textarea');
+    console.log(textarea);
+    textarea.className = 'task-item__textarea';
+    var text = document.querySelector('#' + task.id + ' .task-item__text');
+    text.className = '.task-item__text task-item__text_hidden';
+    textarea.value = text.innerHTML;
+    var button = document.querySelector('#' + task.id + ' .task-item__button');
+    button.className = 'task-item__button';
+    task.removeEventListener('touchstart', changeTaskEvent);
+    task.removeEventListener('touchstart', showDeleteButtonEvent);
+    button.addEventListener('touchstart', function (event) {
+        touchStartHandler(event, function () {
+            xhrRequest('PATCH', '/tasks', true, {text: textarea.value, id: task.id},
+            function (error, data) {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                task.remove();
+                data = JSON.parse(data);
+                var newTask = createTaskItem(data);
+                var container = document.getElementsByClassName('task-container')[0];
+                var tasks = document.getElementsByClassName('task-item');
+                container.insertBefore(newTask, container.children[data.order]);
+            });
+        });
+    });
+
+}
+
+function deleteTask(event) {
+    console.log('in deleteTask');
     var item = event.currentTarget;
     console.log(event.currentTarget);
-
-    // знаем на какой нажали, надо найти его id
-    xhrRequest('DELETE', '/tasks', {id: id}, function (error, data) {
+    if (item.className != 'task-item__delete') {
+        return;
+    }
+    var task = item.parentNode;
+    console.log('task: ');
+    console.log(task);
+    xhrRequest('DELETE', '/tasks', true, { id: task.id }, function (error) {
         if (error) {
             console.log(error);
             return;
         }
-
-    })
+        task.remove();
+    });
 }
 
-function changeTask () {
-    console.log('in changeTask');
-
-}
-
-function addTaskEvent (event) {
+function addTaskEvent(event) {
     console.log('in addTaskEvent');
+    touchStartHandler(event, showAddTaskForm);
+}
+
+function saveNewTaskEvent(event) {
+    console.log('in saveNewTaskEvent');
     touchStartHandler(event, addTask);
 }
 
-function refreshTasksEvent (event) {
+function changeTaskEvent(event)  {
+    touchStartHandler(event, changeTask);
+}
+
+function refreshTasksEvent(event) {
     console.log('in refreshTasksEvent');
     swipeStartHandler(event, refreshTasks);
 }
 
-function refreshTasks (swipeDirection) {
+function showDeleteButtonEvent(event) {
+    console.log('in showDeleteButtonEvent');
+    swipeStartHandler(event, showDeleteButton);
+}
+
+function hideDeleteButtonEvent(event) {
+    swipeStartHandler(event, hideDeleteButton);
+}
+
+function deleteTaskEvent(event) {
+    touchStartHandler(event, deleteTask);
+}
+
+function showDeleteButton(swipeDirection, event) {
+    console.log('in showDeleteButton');
+    console.log(swipeDirection);
+    console.log(event);
+    const task = event.currentTarget;
+    if (task.className != 'task-item') {
+        return;
+    }
+    if (swipeDirection !== 'left') {
+        return;
+    }
+    task.className = 'task-item task-item_show-delete';
+    var deleteButton = document.querySelector('#' + task.id + ' .task-item__delete');
+    deleteButton.className = 'task-item__delete';
+    task.removeEventListener('touchstart', showDeleteButtonEvent);
+    task.addEventListener('touchstart', hideDeleteButtonEvent);
+    deleteButton.addEventListener('touchstart', deleteTaskEvent);
+}
+
+function hideDeleteButton(swipeDirection, event) {
+    console.log('in hideDeleteButton');
+    const task = event.currentTarget;
+    if (task.className != 'task-item task-item_show-delete') {
+        return;
+    }
+    if (swipeDirection != 'right') {
+        return;
+    }
+    var deleteButton = document.querySelector('#' + task.id + ' .task-item__delete');
+    deleteButton.className = 'task-item__delete task-item__delete_hidden';
+    task.removeEventListener('touchstart', hideDeleteButtonEvent);
+    task.addEventListener('touchstart', showDeleteButtonEvent);
+    task.className = 'task-item';
+}
+
+function refreshTasks(swipeDirection) {
     console.log('in refreshtasks');
     if (swipeDirection !== 'down') {
         return;
     }
     var reloadDiv = document.getElementsByClassName('reload')[0];
     reloadDiv.className = 'reload';
-    // надо загрузить и сравнить, изменились или нет
     var oldTasksContainer = document.getElementsByClassName('task-container')[0];
     getTasks(function (storage) {
-        // надо для каждого элемента из storage посмотреть, есть ли он уже на странице
         storage.forEach(function (task) {
             var taskDiv = document.getElementById('task-item-' + task.id);
             if (!taskDiv) {
@@ -178,7 +285,7 @@ function touchStartHandler(event, callback) {
         Math.abs(startX - touchObj.pageX) < 10 && Math.abs(startY - touchObj.pageY) < 10) {
             console.log('it was touch');
             console.log(callback);
-            if(callback) {
+            if (callback) {
                 callback(event);
             }
         }
@@ -205,15 +312,15 @@ function swipeStartHandler(event, callback) {
         var totalTime = new Date().getTime() - startTime;
         var allowedTime = 1000;
         if (totalTime < allowedTime) {
-            if(Math.abs(distX) >= 150 && Math.abs(distY) <= 100) {
-                swipeDirection = distX < 0? 'left' : 'right';
+            if (Math.abs(distX) >= 150 && Math.abs(distY) <= 100) {
+                swipeDirection = distX < 0 ? 'left' : 'right';
             } else if (Math.abs(distY) >= 150 && Math.abs(distX) <= 100) {
-                swipeDirection = distY < 0? 'up' : 'down';
+                swipeDirection = distY < 0 ? 'up' : 'down';
             }
         }
         console.log('swipe direction: ' + swipeDirection);
         if (callback && swipeDirection) {
-            callback(swipeDirection);
+            callback(swipeDirection, event);
         }
     }
 
@@ -228,6 +335,8 @@ function init() {
     console.log('buttonAdd');
     console.log(buttonAdd);
     buttonAdd.addEventListener('touchstart', addTaskEvent);
+    const buttonSave = document.getElementsByClassName('task-form__button-save')[0];
+    buttonSave.addEventListener('touchstart', saveNewTaskEvent);
     document.body.addEventListener('touchstart', refreshTasksEvent);
 }
 

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const Task = require('../models/Task.js');
 
@@ -20,12 +20,12 @@ exports.addTodo = (req, res) => {
 
 exports.deleteTodo = (req, res) => {
     Task.removeTask(req.body.id);
-    res.status(200).send()
-};
-
-exports.changeTodo = (req, res) => {
-    Task.changeTask(req.body.id);
     res.status(200).send();
 };
 
-exports.error404 = (req, res) => res.sendStatus(404);
+exports.changeTodo = (req, res) => {
+    console.log('req in changeTodo: ');
+    console.log(req.body);
+    var task = Task.changeTask(req.body.id, req.body.text);
+    res.status(200).send(task);
+};
