@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 function readNotes() {
-    const data = fs.readFileSync('./models/notes.txt', 'utf-8');
+    const data = fs.readFileSync('./server/models/notes.txt', 'utf-8');
     try {
         return JSON.parse(data);
     } catch (err) {
@@ -14,7 +14,7 @@ function readNotes() {
 var notes = [];
 
 function write() {
-    fs.writeFile('./models/notes.txt', JSON.stringify(notes), (err) => {
+    fs.writeFile('./server/models/notes.txt', JSON.stringify(notes), (err) => {
         if (err) {
             console.log(err);
         }

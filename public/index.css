@@ -27,6 +27,8 @@ body {
     align-items: center;
     -webkit-justify-content: space-between;
     justify-content: space-between;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
 }
 .container__item {
     color: #000;

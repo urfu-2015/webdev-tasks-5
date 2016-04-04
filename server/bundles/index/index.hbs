@@ -18,16 +18,7 @@
 <header>
     <h2>TODOхи</h2>
 </header>
-<div class="container">
-    {{#if notes.length}}
-        {{#each notes}}
-            <div class="container__item"><p class="container__item__text">{{ name }}</p></div>
-        {{/each}}
-    {{^}}
-        <p class="container_notfound">Notes not found!</p>
-    {{/if}}
-
-</div>
+<section class="wrapper"></section>
 <div class="delete"></div>
 <form method="post" action="/add-note" class="add">
     <input id="input_text" type="text" placeholder="Введите текст задачи" class="add__text">

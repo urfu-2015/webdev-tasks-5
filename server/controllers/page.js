@@ -24,7 +24,7 @@ exports.create = (req, res) => {
 exports.change = (req, res) => {
     const note = Note.find(req.body.name);
     note.change(req.body.changeNote);
-    res.send(note); // ?
+    res.send(note);
 };
 
 exports.deleteNote = (req, res) => {
@@ -40,7 +40,9 @@ exports.changeChain = (req, res) => {
             names.push(req.body[name]);
         }
     }
-    var notes = Note.updateList(names);
+    var notes = Note.updateList(names).map(name => {
+        return name.name;
+    });
     res.send(notes);
 };
 
