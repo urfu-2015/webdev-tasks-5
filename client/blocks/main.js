@@ -7,14 +7,32 @@ export default ({store}) => {
 
     const {notes} = store.getState();
 
+    console.log(notes);
+    var id = -1;
+    var order = -1;
+
+    function getID() {
+        id += 1;
+        return id;
+    }
+
+    function getOrder() {
+        order += 1;
+        return order;
+    }
+
     if (notes.length === 0) {
-        return (<p>Notes not found!</p>);
+        return (
+            <div className="container">
+                <p className="container_notfound">Notes not found!</p>
+            </div>
+        );
     } else {
         return (
         <div className="container">
             {notes.map(note => (
-                <div key={notes.indexOf(note)}
-                     style={{order: notes.indexOf(note)}}
+                <div key={getID()}
+                     style={{order: getOrder()}}
                      className="container__item">
                     <Item store={store} name={note} />
                 </div>

@@ -20822,11 +20822,29 @@
 	    var notes = _store$getState.notes;
 
 
+	    console.log(notes);
+	    var id = -1;
+	    var order = -1;
+
+	    function getID() {
+	        id += 1;
+	        return id;
+	    }
+
+	    function getOrder() {
+	        order += 1;
+	        return order;
+	    }
+
 	    if (notes.length === 0) {
 	        return _react2.default.createElement(
-	            'p',
-	            null,
-	            'Notes not found!'
+	            'div',
+	            { className: 'container' },
+	            _react2.default.createElement(
+	                'p',
+	                { className: 'container_notfound' },
+	                'Notes not found!'
+	            )
 	        );
 	    } else {
 	        return _react2.default.createElement(
@@ -20835,8 +20853,8 @@
 	            notes.map(function (note) {
 	                return _react2.default.createElement(
 	                    'div',
-	                    { key: notes.indexOf(note),
-	                        style: { order: notes.indexOf(note) },
+	                    { key: getID(),
+	                        style: { order: getOrder() },
 	                        className: 'container__item' },
 	                    _react2.default.createElement(_item2.default, { store: store, name: note })
 	                );
