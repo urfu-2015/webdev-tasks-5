@@ -35,45 +35,10 @@ class Task {
 
 }
 
-storage.push(
-    new Task(
-        {
-            text: 'Сделать пятое задание'
-        }
-    )
-);
-
-
-storage.push(
-    new Task(
-    {
-        text: 'Погладить котиков'
-    }
-));
-
-
-storage.push(
-    new Task(
-    {
-        text: 'Выпить чаю'
-    }
-)
-);
-
-
-storage.push(
-    new Task(
-    {
-        text: 'Лечь спать'
-    }
-));
-
-
-storage.push(
-    new Task(
-    {
-        text: 'Проснуться вовремя'
-    }
-));
+new Task({text: 'Сделать пятое задание'}).save();
+new Task({text: 'Погладить котиков'}).save();
+new Task({text: 'Выпить чаю'}).save();
+new Task({text: 'Лечь спать'}).save();
+new Task({text: 'Проснуться вовремя'}).save();
 
 module.exports = Task;
