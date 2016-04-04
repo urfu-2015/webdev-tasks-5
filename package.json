@@ -1,0 +1,22 @@
+{
+  "name": "todo",
+  "description": "todo list",
+  "author": "Nikit0s",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "4.13.4",
+    "hbs": "4.0.0"
+  },
+  "devDependencies": {
+    "mocha": "2.4.5"
+  },
+  "engines": {
+    "node": "4.4.0"
+  }
+}
