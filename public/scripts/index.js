@@ -1,32 +1,34 @@
 
-function createButton(options) {
-    var button = document.createElement('div');
-    button.className = options.class;
+function createBlock(options) {
+    var block = document.createElement('div');
+    block.className = options.class;
     if (options.image) {
-        var buttonImg = document.createElement('img');
-        buttonImg.src = options.image.src;
-        buttonImg.className = options.image.class;
-        button.appendChild(buttonImg);
+        var blockImg = document.createElement('img');
+        blockImg.src = options.image.src;
+        blockImg.className = options.image.class;
+        block.appendChild(blockImg);
     }
-    options.text ? button.textContent = options.text : null;
-    return button;
+    options.text ? block.textContent = options.text : null;
+    return block;
 }
 function createTask(taskData) {
-    var task = document.createElement('div');
-    task.className += 'task';
+    var task = createBlock({class: 'task'})
     task.setAttribute('taskid', taskData.id);
-    var taskTextField = document.createElement('div');
-    taskTextField.className += 'task__text';
-    taskTextField.textContent = taskData.text;
+    var taskTextField = createBlock({class: 'task__text task__text_shiftable', text: taskData.text})
     task.appendChild(taskTextField);
-    touchHandler.makeTouchable(task);
-    touchHandler.setEventListener('swipe', task, function (evt) {
+    touchHandler.makeTouchable(taskTextField);
+    touchHandler.setEventListener('swipe', taskTextField, function (evt) {
         if (
-            task.children.length === 1
+            task.children.length === 1 &&
+            evt.direction === 'left'
         ) {
-            var taskDeletionBtn = createButton({
-                class: 'task__deletion-btn',
-                image: {src: 'images/delete.png'}
+            taskTextField.className += ' task__text_shifted';
+            var taskDeletionBtn = createBlock({
+                class: 'task__btn task__btn_shown',
+                image: {
+                    src: 'images/delete.png',
+                    class: 'task__btn-image'
+                }
             });
             touchHandler.makeTouchable(taskDeletionBtn);
             touchHandler.setEventListener('tap', taskDeletionBtn, function (evt) {
@@ -46,25 +48,32 @@ function createTask(taskData) {
                 };
             });
             task.appendChild(taskDeletionBtn);
-            touchHandler.setEventListener('touchleave', task, function () {
-                task.removeChild(taskDeletionBtn);
+            touchHandler.setEventListener('touchleave', taskTextField, function () {
+                taskTextField.classList.remove('task__text_shifted');
+                taskDeletionBtn.classList.remove('task__btn_shown');
+                setTimeout(() => {task.removeChild(taskDeletionBtn);}, 300);
             });
         }
     });
-    touchHandler.setEventListener('tap', task, function (evt) {
+    touchHandler.setEventListener('tap', taskTextField, function (evt) {
         if (
             task.children.length === 1
         ) {
             var taskTextArea = document.createElement('textarea');
-            taskTextArea.className += 'task__text-area';
+            taskTextArea.className += ' task__text-area task__text_shiftable';
             var taskTextField = task.children[0];
             taskTextArea.textContent = taskTextField.textContent;
-            task.replaceChild(taskTextArea, taskTextField);
-            var taskSubmitBtn = createButton({
-                class: 'task__submit-btn',
+            taskTextArea.className += ' task__text_shifted';
+            taskTextField.className += ' task__text_shifted';
+            setTimeout(() => {
+                task.replaceChild(taskTextArea, taskTextField);
+                taskTextArea.focus();
+            }, 300);
+            var taskSubmitBtn = createBlock({
+                class: 'task__btn task__btn_shown',
                 image: {
                     src: 'images/ok.png',
-                    class: 'task__submit-btn-img'
+                    class: 'task__btn-image'
                 }
             });
             touchHandler.makeTouchable(taskSubmitBtn);
@@ -99,8 +108,13 @@ function createTask(taskData) {
             task.appendChild(taskSubmitBtn);
             touchHandler.makeTouchable(taskTextArea);
             touchHandler.setEventListener('touchleave', taskTextArea, function (evt) {
-                task.removeChild(taskSubmitBtn);
-                task.replaceChild(taskTextField, taskTextArea);
+                setTimeout(() => {
+                    task.removeChild(taskSubmitBtn);
+                    task.replaceChild(taskTextField, taskTextArea);
+                }, 300);
+                taskTextField.classList.remove('task__text_shifted');
+                taskTextArea.classList.remove('task__text_shifted');
+                taskSubmitBtn.classList.remove('task__btn_shown');
             });
         }
     }, false);
@@ -128,14 +142,28 @@ function getTasks() {
         }
     }
 }
-getTasks();
 var taskList = document.querySelector('.task-list');
-var taskAdditionBtn = createButton({
-    class: 'task__addition-btn',
+var taskAdditionBtn = createBlock({
+    class: 'addition-btn',
     text: 'Добавить'
 });
 touchHandler.makeTouchable(taskAdditionBtn);
 touchHandler.setEventListener('tap', taskAdditionBtn, function (evt) {
     taskList.insertBefore(createTask({id:'', text:''}), taskList.children[0]);
 });
+getTasks();
 taskList.appendChild(taskAdditionBtn);
+var body = document.querySelector('body');
+touchHandler.makeTouchable(body);
+var refreshSign = createBlock({class: 'refresh-sign', image: {src: 'images/refresh.gif', class: 'refresh-sign__image'}});
+body.insertBefore(refreshSign, body.children[0]);
+touchHandler.setEventListener('scroll', body, function (evt) {
+    if (
+        body.scrollTop === 0 &&
+        evt.direction === 'down' &&
+        !refreshSign.classList.contains('refresh-sign_shown')
+    ) {
+        refreshSign.className += ' refresh-sign_shown';
+        refreshSign.children[0].className += ' refresh-sign__image_shown';
+    }
+});

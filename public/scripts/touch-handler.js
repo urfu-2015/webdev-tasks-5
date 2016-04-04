@@ -4,29 +4,27 @@ var touchHandler = {
         var body = document.querySelector("body");
         if (document.prevEvent === undefined) {
             document.prevEvent = null;
-            body.addEventListener("touchstart", function (evt) {
-                if (evt !== document.prevEvent) {
-                    document.prevEvent = evt;
-                    document.prevEvent._currentTarget = evt.currentTarget; 
-                }
+            document.addEventListener("touchstart", function (evt) {
+                document.prevEvent = evt;
+            }, false);
+            document.addEventListener("touchmove", function (evt) {
+                document.prevEvent = evt;
+            }, false);
+            document.addEventListener("touchend", function (evt) {
+                document.prevEvent = evt;
             }, false);
         }
         element.addEventListener("touchstart", function (evt) {
-            if (evt !== document.prevEvent) {
-                document.prevEvent = evt;
-                document.prevEvent._currentTarget = evt.currentTarget; 
-            }
+            element.prevEvent = evt;
         });
     },
     setEventListener: function (eventName, element, cb) {
         if (eventName === 'tap') {
             element.addEventListener("touchend", function (evt) {
-                if (document.prevEvent.type === 'touchstart') {
+                if (element.prevEvent.type === 'touchstart') {
                     cb(evt);
                 }
-                document.prevEvent = evt;
-                document.prevEvent._currentTarget = evt.currentTarget;
-                evt.stopPropagation();
+                element.prevEvent = evt;
             }, false);
             return;
         }
@@ -34,27 +32,52 @@ var touchHandler = {
             element.addEventListener("touchmove", function (evt) {
                 var currTouch = evt.touches[0];
                 var prevTouch = document.prevEvent.touches[0];
+                var diffX = prevTouch.pageX - currTouch.pageX;
+                var diffY = currTouch.pageY - prevTouch.pageY;
+                var touchesDiff = Math.sqrt(diffX*diffX + diffY*diffY);
+                var sine = Math.abs(diffX) / touchesDiff;
                 if (
-                    evt.currentTarget === document.prevEvent._currentTarget &&
-                    document.prevEvent.type === 'touchmove' &&
-                    prevTouch.pageX - currTouch.pageX > 0
+                    element.prevEvent === document.prevEvent &&
+                    element.prevEvent.type === 'touchmove' &&
+                    sine > 0.5
                 ) {
+                    evt.direction = diffX > 0 ? 'left' : 'right';
                     cb(evt);
                 }
-                document.prevEvent = evt;
-                document.prevEvent._currentTarget = evt.currentTarget;
+                element.prevEvent = evt;
+            }, false);
+            return;
+        }
+        if (eventName === 'scroll') {
+            element.addEventListener("touchmove", function (evt) {
+                var currTouch = evt.touches[0];
+                var prevTouch = document.prevEvent.touches[0];
+                var diffX = prevTouch.pageX - currTouch.pageX;
+                var diffY = currTouch.pageY - prevTouch.pageY;
+                var touchesDiff = Math.sqrt(diffX * diffX + diffY * diffY);
+                var sine = Math.abs(diffX) / touchesDiff;
+                if (
+                    element.prevEvent === document.prevEvent &&
+                    element.prevEvent.type === 'touchmove' &&
+                    sine <= 0.5
+                ) {
+                    evt.direction = diffY > 0 ? 'down' : 'up';
+                    cb(evt);
+                }
+                element.prevEvent = evt;
             }, false);
             return;
         }
         if (eventName === 'touchleave') {
-            var body = document.querySelector("body");
             var _cb = function (evt) {
-                if (document.prevEvent._currentTarget !== element) {
+                if (
+                    document.prevEvent !== element.prevEvent
+                ) {
                     cb();
-                    body.removeEventListener("touchstart", _cb);   
+                    document.removeEventListener("touchstart", _cb);   
                 }
             };
-            body.addEventListener('touchstart', _cb, false);
+            document.addEventListener('touchstart', _cb, false);
             return;
         }
     }
