@@ -15,17 +15,17 @@ exports.addTodo = (req, res) => {
     console.log(req.body);
     var task = new Task(req.body);
     task.save();
-    res.status(200).send();
+    res.sendStatus(200);
 };
 
 exports.deleteTodo = (req, res) => {
-    Task.removeTask(req.body.id);
-    res.status(200).send();
+    Task.removeTask(req.params.id);
+    res.sendStatus(200);
 };
 
 exports.changeTodo = (req, res) => {
     console.log('req in changeTodo: ');
     console.log(req.body);
-    var task = Task.changeTask(req.body.id, req.body.text);
+    var task = Task.changeTask(req.params.id, req.body.text);
     res.status(200).send(task);
 };

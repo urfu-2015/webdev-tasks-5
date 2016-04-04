@@ -137,18 +137,16 @@ function changeTask(event) {
     task.removeEventListener('touchstart', showDeleteButtonEvent);
     button.addEventListener('touchstart', function (event) {
         touchStartHandler(event, function () {
-            xhrRequest('PATCH', '/tasks', true, {text: textarea.value, id: task.id},
+            xhrRequest('PATCH', '/tasks/' + task.id, true, {text: textarea.value},
             function (error, data) {
                 if (error) {
                     console.log(error);
                     return;
                 }
-                task.remove();
                 data = JSON.parse(data);
                 var newTask = createTaskItem(data);
                 var container = document.getElementsByClassName('task-container')[0];
-                var tasks = document.getElementsByClassName('task-item');
-                container.insertBefore(newTask, container.children[data.order]);
+                container.replaceChild(newTask, task);
             });
         });
     });
@@ -165,7 +163,7 @@ function deleteTask(event) {
     var task = item.parentNode;
     console.log('task: ');
     console.log(task);
-    xhrRequest('DELETE', '/tasks', true, { id: task.id }, function (error) {
+    xhrRequest('DELETE', '/tasks/' + task.id, true, null, function (error) {
         if (error) {
             console.log(error);
             return;
