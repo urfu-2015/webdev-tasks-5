@@ -11,7 +11,7 @@ const viewsDir = path.join(__dirname, 'server/bundles');
 const dir = path.join(__dirname, 'Public');
 
 app.set('views', viewsDir);
-app.set('view engine', hbs);
+app.set('view engine', 'hbs');
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({

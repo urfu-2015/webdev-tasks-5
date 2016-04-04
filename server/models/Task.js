@@ -24,7 +24,6 @@ class Task {
 
     static changeTask(taskId, changedText) {
         var id = taskId.replace(/\D/g, "");
-        console.log('id: ' + id);
         storage[id].text = changedText;
         return storage[id];
     }
