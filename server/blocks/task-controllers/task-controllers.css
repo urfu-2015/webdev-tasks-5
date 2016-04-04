@@ -1,0 +1,51 @@
+
+.task-controllers
+{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.task-controllers__button-add
+{
+    height: 40px;
+    width: 30%;
+    font-size: 1.3em;
+}
+
+.task-form
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #e2e500;
+    border: 1px solid #e3d400;
+    width: 90%;
+    min-height: 60px;
+}
+
+.task-form__textarea
+{
+    margin-top: 5px;
+    width: 85%;
+    min-height: 80px;
+    min-width: 300px;
+
+}
+
+.task-form__button-save
+{
+    margin: 2px 0 2px 30%;
+    background: #34ff4f;
+    font-weight: 700;
+}
+
+.button
+{
+    background: #34ff4f;
+    font-weight: 700;
+    font-family: sans-serif;
+    border: 1px;
+    border-radius: 5px;
+}

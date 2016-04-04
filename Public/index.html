@@ -15,7 +15,11 @@
         <main>
             <section class="task-container"></section>
             <section class="task-controllers">
-                <button class="task-controllers__button-add">Добавить</button>
+                <form class="task-form task-form_hidden" name="task-add-form">
+                    <textarea class="task-form__textarea" placeholder="Введите текст заметки"></textarea>
+                    <button class="button task-form__button-save">Сохранить</button>
+                </form>
+                <button class="button task-controllers__button-add">Добавить</button>
             </section>
         </main>
     </body>
