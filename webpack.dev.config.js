@@ -6,11 +6,11 @@ const autoprefixer = require('autoprefixer');
 module.exports = {
     context: path.join(__dirname, 'server/bundles'),
     entry: {
-        index: './index/index.js'
+        main: './main/main.js'
     },
     devtool: 'source-map',
     output: {
-        path: path.join(__dirname, 'public'),
+        path: path.join(__dirname, 'public2'),
         filename: '[name].js',
         sourceMapFilename: '[name].map',
         publicPath: '/'

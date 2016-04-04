@@ -5,7 +5,7 @@
   "requirePaddingNewLinesAfterBlocks": false,
   "excludeFiles": [
     "**/node_modules/**",
-    "public/**"
+    "public2/**"
   ],
   "esnext": true,
   "disallowImplicitTypeConversion": [

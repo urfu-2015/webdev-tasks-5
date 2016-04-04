@@ -3,12 +3,13 @@ import Header from './header';
 import Notes from './notes';
 import addNote from './addNote';
 
-export default (store) => {
+export default ({store}) => {
     const {notes, selectedNoteId} = store.getState();
     return (
         <div>
             <Header />
-
+            <Notes notes={notes} store={store} />
+            <addNote />
         </div>
     );
-}
+};
