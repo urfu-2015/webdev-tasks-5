@@ -1,0 +1,11 @@
+@import "../../blocks/header/header.css";
+@import "../../blocks/notes/notes.css";
+@import "../../blocks/task-controllers/task-controllers.css";
+
+main
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
