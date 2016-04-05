@@ -8,7 +8,7 @@ const morgan = require('morgan');
 const hbs = require('hbs');
 const argv = require('minimist')(process.argv.slice(2));
 const viewsDir = path.join(__dirname, 'server/bundles');
-const dir = path.join(__dirname, 'public2');
+const dir = path.join(__dirname, 'Public');
 
 app.set('views', viewsDir);
 app.set('view engine', 'hbs');

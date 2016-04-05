@@ -5,6 +5,8 @@ const Task = require('../models/Task.js');
 var storage = Task.getStorage();
 
 exports.getTodos = (req, res) => {
+    console.log('try get todos');
+    console.log(req.body);
     res.status(200).send({
         content: storage
     });
