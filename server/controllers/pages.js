@@ -7,7 +7,7 @@ let notes = [
 ];
 
 exports.index = (req, res) => {
-    res.render('index');
+    res.render('main/index');
 };
 
 exports.getNotes = (req, res) => {

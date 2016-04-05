@@ -14,7 +14,11 @@ var loadNotes = function () {
         } else {
             var data = JSON.parse(xhr.responseText);
             notes = data.notes;
+
+            //Рисуем
             showNotes(data.notes);
+
+            //Весим обработчики
             addHandlers();
         }
     }
@@ -52,30 +56,37 @@ var showNotes = function(notes) {
 };
 
 var doActionNode = function (method, text, newText) {
+    if (!text) {
+        loadNotes();
+        return;
+    }
     var xhr = new XMLHttpRequest();
     var json;
-    var url;
-    if (method === 'change') {
-        json = JSON.stringify({
-            oldText: text,
-            newText: newText
-        });
-        url = '/changeNote';
+    switch (method) {
+        case 'change':
+            json = JSON.stringify({
+                oldText: text,
+                newText: newText
+            });
+            method = 'POST';
+            break;
+        case 'add':
+            json = JSON.stringify({
+                text: text
+            });
+            method = 'PUT';
+            break;
+        case 'remove':
+            makeUnDeletable();
+            json = JSON.stringify({
+                text: text
+            });
+            method = 'DELETE';
+            break;
+        default:
+            return;
     }
-    if (method === 'add') {
-        json = JSON.stringify({
-            text: text
-        });
-        url = '/addNote';
-    }
-    if (method === 'remove') {
-        makeUnDeletable();
-        json = JSON.stringify({
-            text: text
-        });
-        url = '/removeNote';
-    }
-    xhr.open('POST', url, 'true');
+    xhr.open(method, '/notes', 'true');
     xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
     xhr.send(json);
 
@@ -144,8 +155,6 @@ var addHandlers = function () {
             var finish = new Date();
             if (finish.getTime() - start.getTime() < 200) {
                 if (isIn(initialNode, noteNodes)) {
-                    // Чистим от старой формы
-                    removeForm();
                     // Создаем  новую
                     makeForm(initialNode, 'change');
                 }
@@ -183,24 +192,10 @@ var makeDeletable = function (node) {
     noteNodes = document.querySelectorAll('.note');
 };
 
-var removeForm = function () {
-    var form = document.querySelector('form');
-    if (!form) {
-        return;
-    }
-    var node;
-    var btnADD = document.querySelector('.button-add');
-    if (btnADD) {
-        node = createElement('div', ['note'], form.childNodes[0].value, form.parentNode)
-    } else {
-        form.parentNode.appendChild(addButton);
-    }
-    form.parentNode.removeChild(form);
-    // Обновляем массивчик с нетронутыми записями
-    noteNodes = document.querySelectorAll('.note');
-};
-
 var makeForm = function (node, method) {
+    // Зачитска
+    removeForm();
+
     noteText = node.textContent.trim();
     var form = createElement('form', ['change-form'], false, node.parentNode);
     form.action = '/changeNote';
@@ -226,6 +221,23 @@ var makeForm = function (node, method) {
             doActionNode('add', textarea.value);
         }
     }, false);
+    // Обновляем массивчик с нетронутыми записями
+    noteNodes = document.querySelectorAll('.note');
+};
+
+var removeForm = function () {
+    var form = document.querySelector('form');
+    if (!form) {
+        return;
+    }
+    var node;
+    var btnADD = document.querySelector('.button-add');
+    if (btnADD) {
+        node = createElement('div', ['note'], form.childNodes[0].value, form.parentNode)
+    } else {
+        form.parentNode.appendChild(addButton);
+    }
+    form.parentNode.removeChild(form);
     // Обновляем массивчик с нетронутыми записями
     noteNodes = document.querySelectorAll('.note');
 };
