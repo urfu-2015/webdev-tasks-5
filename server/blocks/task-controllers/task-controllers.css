@@ -23,6 +23,12 @@
     border: 1px solid #e3d400;
     width: 90%;
     min-height: 60px;
+    margin-bottom: 10px;
+}
+
+.task-form_hidden
+{
+    display: none;
 }
 
 .task-form__textarea
@@ -49,3 +55,4 @@
     border: 1px;
     border-radius: 5px;
 }
+
