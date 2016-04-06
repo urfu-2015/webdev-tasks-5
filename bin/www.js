@@ -4,7 +4,7 @@ var http = require('http');
 const config = require('config');
 const serverConfig = config.get('server');
 
-var port = 3000;
+var port = process.env.PORT || serverConfig.port || '3000';
 app.set('port', port);
 
 var server = http.createServer(app);
