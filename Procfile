@@ -1,1 +1,0 @@
-web: npm i && EXPRESS_BEM_MAKER=enb node app.js
