@@ -14,7 +14,7 @@ const TodoItem = ({text, todo_id}) => (
         <div className="todo-list__item_text">
             {text}
         </div>
-        <input className="todo-list__item_input  todo-form__input" defaultValue={text}
+        <input className="todo-list__item_input" defaultValue={text}
                onBlur={updateTodo}/>
         <img src="/images/trash.png" className="todo-list__item_trash" onTouchStart={delTodoTap}/>
     </section>
@@ -60,7 +60,7 @@ function updateTodo(event) {
     fetch('/api/v1/todo/' + parentElement.id, {
         method: 'PUT',
         body: formData
-    });
+    }).then(window.update);
     var todo_div = parentElement.querySelector('.todo-list__item_text');
     todo_input.style = 'display:none';
     todo_div.style = 'display:block';
@@ -84,7 +84,7 @@ function delTodoTap(event) {
 
         fetch('/api/v1/todo/' + parentElement.id, {
             method: 'DELETE'
-        });
+        }).then(window.update);
     }
 }
 
@@ -93,7 +93,7 @@ function onSubmitTodoForm(event) {
     fetch('/api/v1/todo/', {
         method: 'POST',
         body: new FormData(event.target)
-    });
+    }).then(window.update);
     return false;
 }
 
@@ -104,23 +104,30 @@ const TodoForm = (todos) => (
     </form>
 );
 
-function updateTouchStart() {
-    event.preventDefault();
+function updateTouchStart(event) {
+    //event.preventDefault();
     initialUpdatePoint = event.changedTouches[0];
 }
 
-function updateTouchEnd() {
-    event.preventDefault();
+function updateTouchEnd(event) {
+
     //event.stopPropagation();
     finalUpdatePoint = event.changedTouches[0];
     var xAbs = Math.abs(initialUpdatePoint.pageX - finalUpdatePoint.pageX);
     var yAbs = Math.abs(initialUpdatePoint.pageY - finalUpdatePoint.pageY);
     var element = event.currentTarget;
-    console.log(element);
     if (xAbs > 20 || yAbs > 20) {
         if (xAbs < yAbs) {
-            if (finalPoint.pageY > initialPoint.pageY) {
-                update('d');
+            event.preventDefault();
+            if (finalUpdatePoint.pageY > initialUpdatePoint.pageY) {
+                var preload_img = event.currentTarget.querySelector('.preload');
+                preload_img.style = 'display: block';
+                setTimeout(
+                    function () {
+                        window.update();
+                        preload_img.style = 'display: none';
+                    }
+                    , 2000);
             }
         }
     }
@@ -128,6 +135,7 @@ function updateTouchEnd() {
 
 export default ({todos}) => (
     <div onTouchStart={updateTouchStart} onTouchEnd={updateTouchEnd}>
+        <img src="/images/loading.gif" className="preload"/>
         <div className="todo-list">
             {todos.map(todo => (
 

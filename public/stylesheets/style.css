@@ -32,6 +32,7 @@
 
 }
 
+.todo-list__item_input,
 .todo-form__input {
     box-sizing: border-box;
     width: 100%;
@@ -58,4 +59,11 @@
     -webkit-appearance: none;
     -webkit-border-radius: 0;
     line-height: 38px;
+}
+
+.preload {
+    width: 200px;
+    height: auto;
+    margin: 0 auto;
+    display: none;
 }
