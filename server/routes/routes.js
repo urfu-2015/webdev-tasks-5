@@ -1,5 +1,7 @@
-var express = require('express');
-var index = require('../controllers/index');
+'use strict';
+
+const express = require('express');
+const index = require('../controllers/index');
 
 module.exports = function (app) {
     app.get('/', index.index);

@@ -1,15 +1,17 @@
-var listTodo = [
-    'TODO #1',
-    'TODO #2',
-    'TODO #3',
-    'TODO #4'
-];
+'use strict';
+
+const Todo = require('../models/todo.js');
 
 exports.index = function (req, res) {
     res.render('index', { title: 'TODO-хи' });
 };
 
 exports.getList = function (req, res) {
+    var listTodo = Todo.getAll();
+    listTodo = listTodo.map(function (item) {
+        return item.text;
+    });
+
     res.send({
         status: 'OK. List TODO.',
         content: listTodo
@@ -17,21 +19,25 @@ exports.getList = function (req, res) {
 };
 
 exports.itemAdd = function (req, res) {
-    listTodo.unshift(req.body.content);
+    var todo = new Todo(req.body.content);
+    todo.save();
+
     res.send({
         status: 'OK. Item added.'
     });
 };
 
 exports.itemDelete = function (req, res) {
-    listTodo.splice(parseInt(req.body.id), 1);
+    Todo.getById(req.body.id).delete();
+
     res.send({
         status: 'OK. Item deleted.'
     });
 };
 
 exports.itemChange = function (req, res) {
-    listTodo[parseInt(req.body.id)] = req.body.content;
+    Todo.setTextById(req.body.id, req.body.content);
+
     res.send({
         status: 'OK. Item changed.'
     });
