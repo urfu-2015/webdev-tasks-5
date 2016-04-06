@@ -6,6 +6,8 @@ function render(tasks) {
     elem.innerHTML = template({tasks});
     var tasks = document.getElementsByClassName('todo-list__task');
     Array.prototype.forEach.call(tasks, (elem, index, array) => addListenerToSpan(elem));
+    tasks = document.getElementsByClassName('todo-list__element');
+    Array.prototype.forEach.call(tasks, (elem, index, array) => addListenersToLi(elem));
 }
 
 function addListenerToButton(elem, text) {

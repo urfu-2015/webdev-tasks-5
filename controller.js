@@ -5,7 +5,6 @@ const Task = require('./models/task');
 module.exports.list = (req, res) => {
     const tasks = Task.findAll();
     const data = {tasks};
-    console.log(req.get('Referer'));
     if (req.get('Referer')) {
         res.send(Object.assign(data, req.commonData));
     } else {
