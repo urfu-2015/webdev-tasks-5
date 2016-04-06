@@ -5,7 +5,7 @@ const memoryStorage = [];
 class Note {
     constructor(props) {
         this.task = props.task;
-        this.id = props.id || memoryStorage.length;
+        this.id = props.id || Math.round(-0.5 + Math.random() * 1000001);
     }
 
     save() {

@@ -2,13 +2,18 @@ require('./main.css');
 
 import React from 'react';
 import ReactDom from 'react-dom';
-import {createStore} from 'redux';
+import {createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 
 import Content from '../../../client/components/content';
 import {addNote} from '../../../client/actions';
 import {todoApp} from '../../../client/reducers';
 
-const store = createStore(todoApp);
+const createStoreWithMiddleware = applyMiddleware(
+    thunkMiddleware
+)(createStore);
+
+const store = createStoreWithMiddleware(todoApp);
 
 function render() {
     ReactDom.render(
@@ -19,6 +24,11 @@ function render() {
 
 render();
 store.subscribe(render);
+
+// store.subscribe(() => {
+//     console.log(store.getState());
+//     render();
+// });
 
 fetch('/todos')
     .then(function (response) {

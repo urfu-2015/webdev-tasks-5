@@ -26,6 +26,7 @@ exports.delete = (req, res) => {
     let id = req.body.id;
 
     Note.delete(id);
+    console.log(Note.findAll());
 
     res.send({id});
 };
@@ -35,7 +36,6 @@ exports.edit = (req, res) => {
     let newText = req.body.newText;
 
     Note.edit(id, newText);
-    console.log(Note.findAll());
 
     res.send({id, newText});
 };

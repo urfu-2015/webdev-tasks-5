@@ -19,7 +19,15 @@
     display: inline-block;
 }
 
-.new-note__button-add
+.new-note__button-add,
+.new-note-form__button
 {
+    font-size: 20px;
+}
+
+.new-note-form input
+{
+    padding: 5px;
+    margin: 5px;
     font-size: 20px;
 }

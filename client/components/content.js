@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { Component} from 'react';
 import Header from './header';
-import CreateNote from './createNote';
+import AddButton from './addButton';
 import Notes from './notes';
 
 export default ({store}) => {
-    const {notes, selectedNoteId} = store.getState();
+    const {notes, selectedNoteId, swipedNoteId} = store.getState();
 
     return (
         <div>
             <Header />
-            <Notes notes={notes} store={store} />
-            <CreateNote />
+            <Notes notes={notes} swipedNoteId={swipedNoteId} store={store} />
+            <AddButton store={store} />
         </div>
     );
+
 };

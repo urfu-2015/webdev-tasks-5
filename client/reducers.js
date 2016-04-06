@@ -1,6 +1,7 @@
 const initialState = {
     notes: [],
-    selectedNoteId: null
+    selectedNoteId: null,
+    swipedNoteId: null
 }
 
 exports.todoApp = (state = initialState, action) => {
@@ -8,28 +9,46 @@ exports.todoApp = (state = initialState, action) => {
         case 'ADD_NOTE':
             return {
                 notes: state.notes.concat([action.note]),
-                selectedNoteId: state.selectedNoteId
+                selectedNoteId: state.selectedNoteId,
+                swipedNoteId: state.swipedNoteId
             };
-        case 'DEL_NOTE':
+            case 'DEL_NOTE':
             return {
                 notes: state.notes.filter(note => {
-                    return note.id !== action.selectedNoteId;
+                    return note.id !== action.id.id;
                 }),
-                selectedNoteId: null
+                selectedNoteId: state.selectedNoteId,
+                swipedNoteId: state.swipedNoteId
             };
         case 'EDIT_NOTE':
-            return {
+             return {
                 notes: state.notes.map(note => {
                     if (note.id === action.selectedNoteId) {
                         return action.note
                     }
+                    return note;
                 }),
-                selectedNoteId: action.selectedNoteId
-            };
-        case 'SELECT_NOTE':
+                 selectedNoteId: action.selectedNoteId,
+                 swipedNoteId: state.swipedNoteId
+
+             };
+        case 'SWIPE_LEFT':
             return {
                 notes: state.notes,
-                selectedNoteId: action.selectedNoteId
+                selectedNoteId: state.selectedNoteId,
+                swipedNoteId: action.id
+            };
+        case 'SWIPE_RIGHT':
+            return {
+                notes: state.notes,
+                selectedNoteId: state.selectedNoteId,
+                swipedNoteId: null
+            };
+        case 'UPDATE_NOTES':
+            return {
+                notes: action.notes,
+                selectedNoteId: state.selectedNoteId,
+                swipedNoteId: state.swipedNoteId
             };
         default:
             return state;
