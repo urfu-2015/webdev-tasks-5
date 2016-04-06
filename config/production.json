@@ -1,0 +1,6 @@
+{
+  "server":{
+    "host": "wt5-sam.herokuapp.com",
+    "port": 80
+  }
+}

@@ -1,4 +1,4 @@
-const tasks = require('../tasks/tasks.js')
+const tasks = require('../tasks/tasks.js');
 
 exports.index = (req, res) => {
     res.render('index/index', {tasks});
