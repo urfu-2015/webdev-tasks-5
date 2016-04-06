@@ -3,19 +3,17 @@ body
 {
     width: 100%;
     height: 100%;
-    font-size: 60px;
 }
 
 h1
 {
     text-align: center;
-    font-size: 70px;
 }
 
 .task
 {
     width: 70%;
-    height: 150px;
+    height: 50px;
     margin: 0 auto;
     margin-bottom: 50px;
     position: relative;
@@ -25,7 +23,7 @@ h1
 {
     border: 1px solid gray;
     vertical-align: middle;
-    line-height: 150px;
+    line-height: 50px;
     float: left;
     position: absolute;
     white-space: nowrap;
@@ -44,7 +42,7 @@ h1
 
 .task__text_shifted
 {
-    transform: translate(-150px, 0);
+    transform: translate(-50px, 0);
 }
 
 .task__text-area
@@ -59,19 +57,19 @@ h1
 
 .addition-btn
 {
-    height: 150px;
+    height: 50px;
     width: 50%;
     border: 1px solid gray;
     margin: 0 auto;
     text-align: center;
     vertical-align: middle;
-    line-height: 150px;
+    line-height: 50px;
 }
 
 .task__btn
 {
-    width: 150px;
-    height: 150px;
+    width: 50px;
+    height: 50px;
     margin-right: 0;
     float: right;
     position: relative;
@@ -81,7 +79,7 @@ h1
 .refresh-sign
 {
     height: 0;
-    width: 150px;
+    width: 50px;
     margin: 0 auto;
     transition-property: height;
     transition-timing-function: linear;
@@ -89,13 +87,13 @@ h1
 }
 .refresh-sign_shown
 {
-    height: 150px !important;
+    height: 50px !important;
 }
 
 .refresh-sign__image
 {
-    height: 150px;
-    width: 150px;
+    height: 50px;
+    width: 50px;
     transition-property: transform;
     transition-timing-function: linear;
     transform: translate(0, -100%);
