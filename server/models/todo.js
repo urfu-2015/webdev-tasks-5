@@ -1,6 +1,6 @@
 'use strict';
 
-const memoryStorage = [];
+var memoryStorage = [];
 
 class Todo {
     constructor(props) {
@@ -13,27 +13,23 @@ class Todo {
     }
 
     static getAll() {
-        // Сделаем копию, чтобы спокойно реверснуть
-        return JSON.parse(JSON.stringify(memoryStorage)).reverse();
+        return memoryStorage;
     }
 
     static find(id) {
-        /* eslint eqeqeq: 0 */
         return memoryStorage.filter(todo => {
-            return todo.id == id;
+            return todo.id === id;
         })[0];
     }
 
     static del(id) {
-        var delObj = this.find(id);
-        var ind = memoryStorage.indexOf(delObj);
-        memoryStorage.splice(ind, 1);
+        memoryStorage = memoryStorage.filter(todo => {
+            return todo.id !== id;
+        });
     }
 
     static edit(id, newText) {
-        var editObj = this.find(id);
-        var ind = memoryStorage.indexOf(editObj);
-        memoryStorage[ind].text = newText;
+        memoryStorage[memoryStorage.indexOf(this.find(id))].text = newText;
     }
 }
 

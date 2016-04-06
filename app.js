@@ -9,13 +9,16 @@ const hbs = require('hbs');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
-const viewsDir = path.join(__dirname, 'bundles');
+const viewsDir = path.join(__dirname, 'server/bundles');
 const publicDir = path.join(__dirname, 'public');
 
 app.set('views', viewsDir);
 app.set('view engine', 'hbs');
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+}
+
 app.use(express.static(publicDir));
 
 app.set('port', (process.env.PORT || 5000));
@@ -29,7 +32,6 @@ app.use(
     )
 );
 
-/* eslint max-params: [2, 4] */
 app.use((err, req, res, next) => {
     console.error(err);
 
@@ -51,9 +53,9 @@ app.use((req, res, next) => {
     next();
 });
 
-require('./routes')(app);
+require('./server/routes')(app);
 
-hbs.registerPartials(path.join(__dirname, 'blocks'));
+hbs.registerPartials(path.join(__dirname, 'server/blocks'));
 
 app.listen(
     app.get('port'), () => console.log(`Listening on port ${app.get('port')}`)

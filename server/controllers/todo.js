@@ -2,22 +2,17 @@
 
 const Todo = require('../models/todo');
 
+exports.emptyList = (req, res) => {
+    res.render('main/main');
+};
+
 exports.list = (req, res) => {
     const todos = Todo.getAll();
     const data = {
         todos: todos
     };
 
-    res.render('main/main', Object.assign(data, req.commonData));
-};
-
-exports.asyncList = (req, res) => {
-    const todos = Todo.getAll();
-    const data = {
-        todos: todos
-    };
-
-    res.send(data);
+    res.json(data);
 };
 
 exports.add = (req, res) => {
@@ -32,11 +27,11 @@ exports.add = (req, res) => {
         text: todo.text
     };
 
-    res.send(data);
+    res.json(data);
 };
 
 exports.delete = (req, res) => {
-    const delId = req.body.id;
+    const delId = req.body.delId;
 
     Todo.del(delId);
 
@@ -44,7 +39,7 @@ exports.delete = (req, res) => {
         delId: delId
     };
 
-    res.send(data);
+    res.json(data);
 };
 
 exports.edit = (req, res) => {
@@ -55,5 +50,5 @@ exports.edit = (req, res) => {
 
     Todo.edit(data.id, data.editText);
 
-    res.send(data);
+    res.json(data);
 };

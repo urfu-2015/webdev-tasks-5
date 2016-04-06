@@ -1,7 +1,7 @@
 'use strict';
 
 const supertest = require('supertest');
-const app = require('../../app');
+const app = require('../../../app');
 
 describe('GET /nonExistentPage', () => {
     it('should respond with 404', done => {
