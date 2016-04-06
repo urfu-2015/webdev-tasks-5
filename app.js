@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 
-const viewsDir = path.join(__dirname, 'views');
+const viewsDir = path.join(__dirname, '/server/views');
 const publicDir = path.join(__dirname, 'public');
 
 app.set('view engine', 'hbs');
@@ -42,7 +42,7 @@ app.use((req, res, next) => {
     next();
 });
 
-require('./routes.js')(app);
+require('./server/routes.js')(app);
 
 app.listen(app.get('port'),
     () => console.log(`Listening on port ${app.get('port')}`));
