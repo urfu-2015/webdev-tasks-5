@@ -12,9 +12,11 @@ function createBlock(options) {
     return block;
 }
 function createTask(taskData) {
-    var task = createBlock({class: 'task'})
+    var task = createBlock({class: 'task'});
     task.setAttribute('taskid', taskData.id);
-    var taskTextField = createBlock({class: 'task__text task__text_shiftable', text: taskData.text})
+    var taskTextField = createBlock({
+        class: 'task__text task__text_shiftable', text: taskData.text
+    });
     task.appendChild(taskTextField);
     touchHandler.makeTouchable(taskTextField);
     touchHandler.setEventListener('swipe', taskTextField, function (evt) {
@@ -24,12 +26,15 @@ function createTask(taskData) {
         ) {
             taskTextField.className += ' task__text_shifted';
             var taskDeletionBtn = createBlock({
-                class: 'task__btn task__btn_shown',
+                class: 'task__btn',
                 image: {
                     src: 'images/delete.png',
                     class: 'task__btn-image'
                 }
             });
+            setTimeout(() => {
+                taskDeletionBtn.style['z-index'] = '0';
+            }, 300);
             touchHandler.makeTouchable(taskDeletionBtn);
             touchHandler.setEventListener('tap', taskDeletionBtn, function (evt) {
                 var xhr = new XMLHttpRequest();
@@ -37,7 +42,7 @@ function createTask(taskData) {
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send();
                 task.style.opacity = '0.3';
-                xhr.onreadystatechange = function() {
+                xhr.onreadystatechange = function () {
                     if (xhr.readyState !== 4) {
                         return;
                     }
@@ -50,8 +55,10 @@ function createTask(taskData) {
             task.appendChild(taskDeletionBtn);
             touchHandler.setEventListener('touchleave', taskTextField, function () {
                 taskTextField.classList.remove('task__text_shifted');
-                taskDeletionBtn.classList.remove('task__btn_shown');
-                setTimeout(() => {task.removeChild(taskDeletionBtn);}, 300);
+                taskDeletionBtn.style['z-index'] = '-1';
+                setTimeout(() => {
+                    task.removeChild(taskDeletionBtn);
+                }, 300);
             });
         }
     });
@@ -65,10 +72,6 @@ function createTask(taskData) {
             taskTextArea.textContent = taskTextField.textContent;
             taskTextArea.className += ' task__text_shifted';
             taskTextField.className += ' task__text_shifted';
-            setTimeout(() => {
-                task.replaceChild(taskTextArea, taskTextField);
-                taskTextArea.focus();
-            }, 300);
             var taskSubmitBtn = createBlock({
                 class: 'task__btn task__btn_shown',
                 image: {
@@ -76,6 +79,11 @@ function createTask(taskData) {
                     class: 'task__btn-image'
                 }
             });
+            setTimeout(() => {
+                task.replaceChild(taskTextArea, taskTextField);
+                taskTextArea.focus();
+                taskSubmitBtn.style['z-index'] = '0';
+            }, 300);
             touchHandler.makeTouchable(taskSubmitBtn);
             touchHandler.setEventListener('tap', taskSubmitBtn, function (evt) {
                 if (task.getAttribute('taskid')) {
@@ -94,7 +102,7 @@ function createTask(taskData) {
                     text: taskTextArea.value
                 }));
                 task.style.opacity = '0.3';
-                xhr.onreadystatechange = function() {
+                xhr.onreadystatechange = function () {
                     if (xhr.readyState !== 4) {
                         return;
                     }
@@ -108,6 +116,7 @@ function createTask(taskData) {
             task.appendChild(taskSubmitBtn);
             touchHandler.makeTouchable(taskTextArea);
             touchHandler.setEventListener('touchleave', taskTextArea, function (evt) {
+                taskSubmitBtn.style['z-index'] = '-1';
                 setTimeout(() => {
                     task.removeChild(taskSubmitBtn);
                     task.replaceChild(taskTextField, taskTextArea);
@@ -126,21 +135,23 @@ function getTasks() {
     xhr.open('GET', '/tasks');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState !== 4) {
             return;
         }
         if (xhr.status !== 200) {
             console.log(xhr.status + ': ' + xhr.statusText);
         } else {
-            var tasksData = JSON.parse(xhr.responseText).tasks;
+            var resJSON = JSON.parse(xhr.responseText);
+            document.date = new Date(xhr.getResponseHeader('Date'));
+            var tasksData = resJSON.tasks;
             var taskList = document.querySelector('.task-list');
             tasksData.forEach((taskData) => {
                 var task = createTask(taskData);
-                taskList.insertBefore(task, taskList.children[0]);            
+                taskList.insertBefore(task, taskList.children[0]);
             });
         }
-    }
+    };
 }
 var taskList = document.querySelector('.task-list');
 var taskAdditionBtn = createBlock({
@@ -149,13 +160,16 @@ var taskAdditionBtn = createBlock({
 });
 touchHandler.makeTouchable(taskAdditionBtn);
 touchHandler.setEventListener('tap', taskAdditionBtn, function (evt) {
-    taskList.insertBefore(createTask({id:'', text:''}), taskList.children[0]);
+    taskList.insertBefore(createTask({id: '', text: ''}), taskList.children[0]);
 });
 getTasks();
 taskList.appendChild(taskAdditionBtn);
 var body = document.querySelector('body');
 touchHandler.makeTouchable(body);
-var refreshSign = createBlock({class: 'refresh-sign', image: {src: 'images/refresh.gif', class: 'refresh-sign__image'}});
+var refreshSign = createBlock({
+    class: 'refresh-sign',
+    image: {src: 'images/refresh.gif', class: 'refresh-sign__image'}
+});
 body.insertBefore(refreshSign, body.children[0]);
 touchHandler.setEventListener('scroll', body, function (evt) {
     if (
@@ -165,5 +179,35 @@ touchHandler.setEventListener('scroll', body, function (evt) {
     ) {
         refreshSign.className += ' refresh-sign_shown';
         refreshSign.children[0].className += ' refresh-sign__image_shown';
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/tasks');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('If-Modified-Since', document.date.toUTCString());
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState !== 4) {
+                return;
+            }
+            if (xhr.status !== 200) {
+                console.log(xhr.status + ': ' + xhr.statusText);
+            } else {
+                document.date = new Date(xhr.getResponseHeader('Date'));
+                var tasksData = JSON.parse(xhr.responseText).tasks;
+                var taskList = document.querySelector('.task-list');
+                tasksData.forEach((taskData) => {
+                    if (document.querySelector('[taskid="' + taskData.id + '"]')) {
+                        var task = document.querySelector('[taskid="' + taskData.id + '"]');
+                        task.children[0].textContent = taskData.text;
+                    } else {
+                        var task = createTask(taskData);
+                        taskList.insertBefore(task, taskList.children[0]);
+                    }
+                });
+            }
+            setTimeout(() => {
+                refreshSign.classList.remove('refresh-sign_shown');
+                refreshSign.children[0].classList.remove('refresh-sign__image_shown');
+            }, 300);
+        };
     }
 });

@@ -2,7 +2,8 @@
   "name": "webdev-tasks-5",
   "version": "0.0.0",
   "scripts": {
-    "start": "node ./bin/www.js"
+    "start": "node ./bin/www.js",
+    "lint": "jscs ."
   },
   "dependencies": {
     "body-parser": "^1.15.0",
@@ -11,7 +12,9 @@
     "hbs": "^4.0.0",
     "morgan": "^1.7.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jscs": "2.2.1"
+    },
   "engines": {
     "node": "4.4.0"
   }

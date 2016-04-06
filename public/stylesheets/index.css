@@ -78,17 +78,10 @@ h1
     z-index: -1;
 }
 
-.task__btn_shown 
-{
-    transition-property: z-index;
-    transition-timing-function: linear;
-    transition-duration: .3s;
-    z-index: 0 !important;
-}
-
 .refresh-sign
 {
     height: 0;
+    width: 150px;
     margin: 0 auto;
     transition-property: height;
     transition-timing-function: linear;
@@ -97,7 +90,6 @@ h1
 .refresh-sign_shown
 {
     height: 150px !important;
-    width: 150px;
 }
 
 .refresh-sign__image
@@ -107,11 +99,11 @@ h1
     transition-property: transform;
     transition-timing-function: linear;
     transform: translate(0, -100%);
+    transition-duration: .3s;
 }
 
 .refresh-sign__image_shown
 {
-    transition-duration: .3s;
     transform: translate(0, 0) !important;
 }
 
