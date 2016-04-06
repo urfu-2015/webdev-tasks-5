@@ -1,47 +1,36 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var routes = require('./routes/index');
-var todo = require('./routes/todo');
+var mongoose = require('./scripts/mongooseConnect.js');
+
+var todos = require('./routes/todos');
 var TodoModel = require('./models/todo.js');
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'hbs');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/todo', todo);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-console.log(Schema.Types.ObjectId);
+app.use('/', todos);
 
 TodoModel.count({}, function (err, count) {
     if (count === 0) {
-        for (var i = 0; i < 5; i++) {
-            new TodoModel({
-                text: 'some text' + i
-            }).save(function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('add');
-                }
-            });
-        }
+        new TodoModel({
+            text: 'Pull to Create Item',
+            prev: null
+        }).save(function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
     }
 });
 
