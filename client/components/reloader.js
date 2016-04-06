@@ -41,18 +41,3 @@ class Reloader extends Component {
 }
 
 export default Reloader
-
-//export default ({isReloader}) => (
-//    <div className="reloader">
-//        {isReloader ?
-//            <div className='container-reload'>
-//                <div className="container-flex">
-//                    <div className="reload-image">
-//                        <img src="reload.png" className="image-reload" />
-//                    </div>
-//                </div>
-//            </div>:
-//            null
-//        }
-//    </div>
-//);

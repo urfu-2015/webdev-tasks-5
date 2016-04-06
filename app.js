@@ -34,16 +34,4 @@ var io = require('socket.io')(server);
 
 io.sockets.on('connection', socket);
 
-//var io = require('socket.io').listen(app.listen(app.get('port')));
-//var io = require('socket.io').listen(app.get('port'),
-//    () => console.log(`Listening on port ${app.get('port')}`));
-
-//io.on('connection', function (socket) {
-//    socket.on('list-todo', function(data) {
-//        socket.emit('ready-list', {
-//            todos : ['test1', 'test2']
-//        });
-//    });
-//});
-
 module.exports = app;

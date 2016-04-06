@@ -56,38 +56,3 @@ class Page extends Component {
     }
 }
 export default Page
-//export default ({store}) => {
-//
-//    var startPoint={}; // начальная точка тача
-//    var nowPoint; // текущая точка тача
-
-    //document.addEventListener('touchstart', function(event) {
-    //    startPoint.x = event.changedTouches[0].pageX;
-    //    startPoint.y = event.changedTouches[0].pageY;
-    //    console.log("h");
-    //});
-    //document.addEventListener('touchend', function(event) {
-    //    event.stopPropagation();
-    //    var shift = {}; // смещение после тача
-    //    nowPoint = event.changedTouches[0];
-    //
-    //    shift.x = nowPoint.pageX - startPoint.x;
-    //    shift.y = nowPoint.pageY - startPoint.y;
-    //
-    //    if(nowPoint.pageY > startPoint.y + 50) {
-    //        store.dispatch(ReloadTodos());
-    //    }
-    //});
-//    function onClick() {
-//        console.log("j");
-//    }
-//
-//    const {todos, selectedTodo, swipedTodo, reloadTodos} = store.getState();
-//    return (
-//        <div onClick={onClick}>
-//            <Reloader reloadTodos={reloadTodos}/>
-//                <TodoList todos={todos} selectedTodo={selectedTodo} swipedTodo={swipedTodo} store={store} />
-//            <AddButton store={store} />
-//        </div>
-//    );
-//};
