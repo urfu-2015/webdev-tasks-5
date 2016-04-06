@@ -6,7 +6,6 @@ const express = require('express');
 const app = express();
 
 const hbs = require('hbs');
-const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
 const viewsDir = path.join(__dirname, 'server/bundles');
@@ -16,6 +15,7 @@ app.set('views', viewsDir);
 app.set('view engine', 'hbs');
 
 if (process.env.NODE_ENV === 'development') {
+    const morgan = require('morgan');
     app.use(morgan('dev'));
 }
 
