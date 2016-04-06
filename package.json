@@ -1,6 +1,6 @@
 {
   "name": "todo-hi",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "app.js",
   "private": true,
   "scripts": {
@@ -8,17 +8,16 @@
     "build": "webpack --config webpack.config.js",
     "build-dev": "webpack --config webpack.dev.config.js",
     "deploy:dynamic": "git push heroku master",
-    "dev": "webpack --config webpack.dev.config.js && npm start",
+    "dev": "webpack --config webpack.dev.config.js && npm run start",
     "deploy": "npm-run-all deploy:*",
     "lint:js": "eslint --fix .",
     "lint:css": "stylelint **/*.css",
     "lint": "npm-run-all lint:*",
     "start": "NODE_ENV=development node app.js",
     "test": "mocha --recursive tests",
-    "precommit": "npm-run-all lint:* test && mocha --recursive tests",
-    "prepush": "npm-run-all lint:* test && mocha --recursive tests",
-    "reload": "webpack --config webpackconfig.js && node app.js",
-    "reload-dev": "webpack --config webpack.dev.config.js && NODE_ENV=development node app.js"
+    "precommit": "npm-run-all lint:* && npm test",
+    "prepush": "npm-run-all lint:* && npm test",
+    "production": "webpack --config webpack.config.js && node app.js"
   },
   "license": "MIT",
   "dependencies": {
