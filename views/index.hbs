@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TODOxi</title>
+        <link rel="stylesheet" href="/index.css">
+    </head>
+    <body>
+        <label class="refresh">
+            <img src="/animated.gif" alt="">
+        </label>
+        <header>
+            <h1>TODO-хи</h1>
+        </header>
+        <main>
+            <div class="list">
+                {{#if tasks.length}}
+                    {{#each tasks}}
+                    <div>
+                        <div class="list__form">
+                            <div class="list__task">{{name}}</div>
+                            <input type="image" src="/trash.png" class="list__trash">
+                        </div>
+                        <div class="list__fix">
+                            <textarea class="list__text">{{name}}</textarea>
+                            <input type="submit" value="Сохранить" class="list__saving">
+                        </div>
+                    </div>
+                    {{/each}}
+                {{^}}
+                    <p>Tasks not found</p>
+                {{/if}}
+            </div>
+            <form method="post" action="/inserts" class="form">
+                <input type="text" name="task" class="form__text">
+                <input type="submit" value="Добавить" class="form__button">
+            </form>
+        </main>
+        <script src='/process.js'></script>
+    </body>
+</html>

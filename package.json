@@ -1,0 +1,26 @@
+{
+  "name": "webdev-tasks-5",
+  "version": "1.0.0",
+  "description": "TODOxi list",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bazhenova/webdev-tasks-5.git"
+  },
+  "author": "bazhenova",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bazhenova/webdev-tasks-5/issues"
+  },
+  "homepage": "https://github.com/bazhenova/webdev-tasks-5#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "hbs": "^4.0.0",
+    "webpack": "^1.12.14"
+  }
+}
