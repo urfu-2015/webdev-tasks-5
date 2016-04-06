@@ -1,3 +1,5 @@
+"use strict";
+
 class Todo {
     constructor() {
         this.todo = [];
