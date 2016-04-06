@@ -4,13 +4,8 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const morgan = require('morgan');
-const viewsDir = path.join(__dirname, 'views');
-const hbs = require('hbs');
 
-app.set('views', viewsDir);
-app.set('view engine', 'hbs');
-
-app.use(express.static(viewsDir));
+app.use('/', express.static(path.join(__dirname, 'client')));
 
 app.use(morgan('dev'));
 
@@ -32,8 +27,6 @@ app.use((req, res, next) => {
 });
 
 require('./routes')(app);
-
-hbs.registerPartials(viewsDir);
 
 app.listen(app.get('port'),
     () => console.log(`Listening on port ${app.get('port')}`));

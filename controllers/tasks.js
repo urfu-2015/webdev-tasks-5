@@ -1,29 +1,32 @@
 'use strict';
 
 const Task = require('../models/task');
+const fs = require('fs');
 
 exports.list = (req, res) => {
-    var data = {
-        list: Task.findAll()
-    };
-    res.render('list', data);
+    res.json({
+        tasks: Task.findAll()
+    });
 };
 
 exports.add = (req, res) => {
     var newTask = new Task(req.body.text).save();
-    res.sendStatus(200);
+    res.json({
+        tasks: Task.findAll()
+    });
 };
 
 exports.remove = (req, res) => {
     var isRemoved = Task.remove(req.body.id);
-    isRemoved ? res.sendStatus(200) : res.status(500).send('Incorrect id');
+    res.json({
+        tasks: Task.findAll()
+    });
 };
 
 exports.edit = (req, res) => {
     var newText = req.body.text;
     Task.edit(req.body.id, newText);
-    var data = {
-        text: newText
-    };
-    res.status(200).send(data);
+    res.json({
+        tasks: Task.findAll()
+    });
 };
