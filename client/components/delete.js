@@ -14,7 +14,7 @@ export default ({store}) => {
 
         var id = getNodeIndex(event.currentTarget);
 
-        setTimeout(sendRequest('DELETE', '/list', {id: id}, function (error, data) {
+        sendRequest('DELETE', '/list', {id: id}, function (error, data) {
             if (error) {
                 console.error(error);
                 return;
@@ -23,7 +23,7 @@ export default ({store}) => {
                 var action = deleteTodo(id);
                 store.dispatch(action);
             }
-        }), 0);
+        });
     }
 
     return (

@@ -34,7 +34,7 @@ function getList(error) {
     }
 
     reload.style.display = 'block';
-    setTimeout(sendRequest('GET', '/list', {}, function (error, data) {
+    sendRequest('GET', '/list', {}, function (error, data) {
         if (error) {
             console.error(error);
             return;
@@ -44,7 +44,7 @@ function getList(error) {
             store.dispatch(action);
             reload.style.display = 'none';
         }
-    }), 0);
+    });
 }
 
 function addItemList(error) {
@@ -54,7 +54,7 @@ function addItemList(error) {
     }
 
     var text = 'Новая заметка!';
-    setTimeout(sendRequest('POST', '/list', {content: text}, function (error, data) {
+    sendRequest('POST', '/list', {content: text}, function (error, data) {
         if (error) {
             console.error(error);
             return;
@@ -63,7 +63,7 @@ function addItemList(error) {
             var action = addTodo(text);
             store.dispatch(action);
         }
-    }), 0);
+    });
 }
 
 getList();

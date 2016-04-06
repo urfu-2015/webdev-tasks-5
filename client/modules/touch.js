@@ -2,8 +2,12 @@ export const getNodeIndex = (node) => {
     var item = node.parentNode;
 
     var index = 0;
-    while( (item = item.previousSibling) != null )
-        index++;
+//HTML DOM previousSibling Property
+//A Node object, representing the previous sibling of the node, or null if there is no previous sibling
+    while(item.previousSibling !== null) {
+        item = item.previousSibling;
+        ++index;
+    }
 
     return index;
 };

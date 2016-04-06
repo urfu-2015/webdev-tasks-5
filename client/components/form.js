@@ -16,7 +16,7 @@ export default ({store, text}) => {
         var id = getNodeIndex(node.parentNode);
         var text = node.parentNode.firstChild.value;
 
-        setTimeout(sendRequest('PUT', '/list', {id: id, content: text}, function (error, data) {
+        sendRequest('PUT', '/list', {id: id, content: text}, function (error, data) {
             if (error) {
                 console.error(error);
                 return;
@@ -25,7 +25,7 @@ export default ({store, text}) => {
                 var action = changeTodo(id, text);
                 store.dispatch(action);
             }
-        }), 0);
+        });
     }
 
     return (
