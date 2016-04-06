@@ -1,167 +1,201 @@
 require('./main.css');
-var objCreater = require('./domObjectCreater.js');
-var classes = objCreater.className;
-var request = require('./serverRequest.js');
+var check = require('../../lib/checkTouch');
+import React from 'react';
+import ReactDom from 'react-dom';
+import Tasks from '../../blocks/tasks';
 
-window.onload = function () {
-    setTimeout(removeLoader, 500);
-} ;
+var classes = {
+    input: 'list__task__input__num_',
+    todo: 'list__task__todo__num_',
+    remove: 'remove__num_',
+    save: 'list__task__submit',
+    add: 'list__task__add',
+    taskDiv: 'list__task__num_',
+    loader: 'header__loader',
+    header: 'header'
+}
 
-addEventListeners();
+var tasks = [];
+var addButton = true;
+refresh();
+
+function render() {
+    ReactDom.render(
+        <Tasks tasks={tasks} addButton={addButton} />,
+        document.getElementById('root'), function() {
+        addEventListeners();
+        setTimeout(loader, 500, false);
+    });
+}
 
 function addEventListeners() {
+    addButtonEvents();
+    toDoEvents();
+    saveButtonEvents();
+    removeButtonEvents();
+}
+
+function addButtonEvents() {
     var addButton = document.getElementsByClassName(classes.add)[0];
     if (addButton) {
         addButton.addEventListener('click', addButtonClick);
     }
-    var tasksTodo = document.querySelectorAll('[class^="list__task__todo"]');
-    if (tasksTodo.length) {
-        tasksTodo.forEach(
-            task => {
-                task.addEventListener('touchend', todoTouchEnd);
-                task.addEventListener('touchmove', todoTouchMove);
-            }
-        );
+}
+
+function removeButtonEvents() {
+    var deleteButtons = document.querySelectorAll('[class^=' + classes.remove + ']');
+    if (deleteButtons.length) {
+        for (var i = 0; i < deleteButtons.length; i++) {
+            deleteButtons[i].addEventListener('click', removeTask);
+        };
     }
 }
 
-function createTaskForm(num) {
-	var taskDiv = getDivInList(num);
-    var input = objCreater.getNewInput(num);
-    var saveButton = objCreater.getSaveButton();
-    saveButton.addEventListener('click', saveTask);
-    taskDiv.innerHTML = '';
-    taskDiv.appendChild(input);
-	taskDiv.appendChild(saveButton);
-    input.focus();
+function toDoEvents() {
+    var tasksTodo = document.querySelectorAll('[class^=' + classes.todo + ']');
+    if (tasksTodo.length) {
+        for (var i = 0; i < tasksTodo.length; i++) {
+            tasksTodo[i].addEventListener('touchend', todoTouchEnd);
+            tasksTodo[i].addEventListener('touchmove', todoTouchMove);
+        };
+    }
+}
+
+function saveButtonEvents() {
+    var saveButtons = document.getElementsByClassName(classes.save);
+    if (saveButtons.length) {
+        for (var i = 0; i < saveButtons.length; i++) {
+            saveButtons[i].addEventListener('click', saveTask);
+        };
+    }
 }
 
 function saveTask(event) {
-    var num = getNumFromClassName(event.target.parentNode.className);
-    var input = document.getElementsByClassName(classes.input + num)[0];
-    var task = {
-        orderNum: num,
-        todo: input.value
-    };
-    if (num === '-1') {
+    var task = createTaskObj(event);
+    if (task.orderNum === '-1') {
+        addButton = true;
         addTask(task);
     } else {
+        tasks[task.orderNum].change = false;
         updateTask(task);
     }
 }
-
+ 
 function addTask(task) {
-    request.addTask(task).then(
+    var params = createPOSTparams(task);
+    fetch('/addTask', params
+    ).then(
+        response => response.json()
+    ).then(
         newTask => {
-            if (task.todo) {
-                displayTask(newTask);
-            }
-            createAddButton();               
+            tasks.push(newTask);
+            render();
         },
         err => console.log(err)
     );
 }
 
 function updateTask(task) {
-    request.updateTask(task).then(
-        resolve => {
-            if (!task.todo) {
-                refresh();
-                return;
-            }
-            displayTask(task);
+    var params = createPOSTparams(task);
+    fetch('/updateTask', params
+    ).then(
+        response => response.json()
+    ).then(
+        newTask => {
+            tasks[Number(newTask.orderNum)].todo = newTask.todo;
+            render();
+        },
+        err => console.log(err)
+    )
+}
+
+function removeTask(event) {
+    var task = createTaskObj(event);
+    var params = createPOSTparams(task);
+    fetch('/removeTask', params).then(
+        () => {
+            removeTaskLocal(task.orderNum);
+            render();
         },
         err => console.log(err)
     );
 }
 
-function removeTask(event) {
+function createPOSTparams(task) {
+    var params = {
+        method: 'POST',
+        body: JSON.stringify(task),
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    }
+    return params;
+}
+
+function createTaskObj(event) {
     var num = getNumFromClassName(event.target.parentNode.className);
+    var input = document.getElementsByClassName(classes.input + num)[0] || {};
     var task = {
         orderNum: num,
+        todo: input.value
     };
-    request.removeTask(task).then(
-        resolve => refresh(),
-        err => console.log(err)
-    );
+    return task;
+}
+
+function removeTaskLocal(orderNum) {
+    tasks.splice(orderNum, 1);
+    for (var i = 0; i < tasks.length; i++) {
+        tasks[i].orderNum = i;
+    };
 }
 
 function refresh() {
-    window.location = '/';
+    loader(true);
+    fetch('/getAll').then(
+        response =>  response.json(),
+        err => console.log('ERROR' + err)
+    ).then(
+        data => {
+            tasks = data.allTasks;
+            addButton = true;
+            render();
+        }
+    );
 }
 
-function removeLoader() {
+function loader(display) {
     var loader = document.getElementsByClassName(classes.loader)[0];
-    if (loader) {
-        loader.parentNode.removeChild(loader);
+    if (display) {
+        loader.style.display = "block";
+    } else {
+        loader.style.display ="none";
     }
 }
 
-function addLoader() {
-    var loader = objCreater.getLoader();
-    var header = document.getElementsByClassName(classes.header)[0];
-    header.firstChild = loader;
-}
-
-function createAddButton() {
-    var addButton = objCreater.getAddButton();
-    addButton.addEventListener('click', addButtonClick);
-    var taskDiv = getDivInList(-1);
-    taskDiv.innerHTML = '';
-    taskDiv.appendChild(addButton);
-}
-
-function createRemoveButton(num) {
-    var taskDiv = getDivInList(num);
-    var delDiv = objCreater.getRemoveButton(num);
-    console.log(taskDiv, delDiv);
-    delDiv.addEventListener('click', removeTask);
-    taskDiv.appendChild(delDiv);
-}
-
 function addButtonClick(event) {
-    createTaskForm(-1);
+    addButton = false;
+    render();
 }
 
 function todoTouchEnd(event) {
-    if (isTap(event)) {
+    if (check.isTap(start, event)) {
         var targetClass = event.target.className;
         var num = getNumFromClassName(targetClass);
-        createTaskForm(num);
+        tasks[num].change = true;
+        render();
     }
 }
 
 function todoTouchMove(event) {
     var targetClass = event.target.className;
     var num = getNumFromClassName(targetClass);
-    if (isLeftSwipe(event)) {
-        if(!document.getElementsByClassName(classes.remove + num).length) {
-            createRemoveButton(num);
-        }
-    } else if (isRightSwipe(event)) {
-        var removeButton = document.getElementsByClassName(classes.remove + num)[0];
-        if (removeButton) {
-            removeButton.parentNode.removeChild(removeButton);
-        }
+    if (check.isLeftSwipe(start, event)) {
+        tasks[num].remove = true;
+    } else if (check.isRightSwipe(start, event)) {
+        tasks[num].remove = false;
     }
-}
-
-function getDivInList(num) {
-    return document.getElementsByClassName(classes.taskDiv + num)[0];
-}
-
-function displayTask(task) {
-    var list = document.getElementsByClassName('list')[0];
-    var oldTask = getDivInList(task.orderNum);
-    var newTask = objCreater.getTaskDiv(task);
-    var todo = newTask.firstChild;
-    todo.addEventListener('touchend', todoTouchEnd);
-    todo.addEventListener('touchmove', todoTouchMove);
-    if (oldTask) {
-        list.replaceChild(newTask, oldTask);
-    } else {
-        list.insertBefore(newTask, getDivInList(-1));
-    }
+    render();
 }
 
 function getNumFromClassName(className) {
@@ -181,43 +215,8 @@ document.addEventListener('touchstart', function(event) {
 }, false);
 
 document.addEventListener('touchend' , function(event) {
-    if (isDownSwipe(event)) {
+    if (check.isDownSwipe(start, event)) {
         refresh();
     }
 }, false) 
 
-function isTap(event) {
-    if (event.changedTouches.length > 1) {
-        return false;
-    }
-    var x = event.changedTouches[0].pageX;
-    var y = event.changedTouches[0].pageY; 
-    return (x === start.x && y == start.y);
-}
-
-function isLeftSwipe(event) {
-    if (event.changedTouches.length > 1) {
-        return false;
-    }
-    var x = event.touches[0].pageX;
-    var y = event.touches[0].pageY;
-    return (start.x - x > 300 && Math.abs(start.y - y) < 50);
-}
-
-function isRightSwipe(event) {
-    if (event.changedTouches.length > 1) {
-        return false;
-    }
-    var x = event.touches[0].pageX;
-    var y = event.touches[0].pageY;
-    return (x - start.x > 300 && Math.abs(start.y - y) < 50);
-}
-
-function isDownSwipe(event) {
-    if (event.changedTouches.length > 1) {
-        return false;
-    }
-    var x = event.changedTouches[0].pageX;
-    var y = event.changedTouches[0].pageY;
-    return (Math.abs(x - start.x) < 50 && y - start.y > 300);
-}

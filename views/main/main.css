@@ -1,10 +1,15 @@
-body
+body {
+	background: #eee;
+}
+
+.data
 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     background: #eee;
+    margin-top: 30px;
+
 }
 
 .list {
@@ -13,7 +18,8 @@ body
 	flex-direction: column;
 }
 
-[class^="list__task__num"] {
+[class^="list__task__num"],
+.container {
 	height: 128px;
 	margin: 10px 0;
 	width: 100%;
@@ -33,7 +39,7 @@ body
 	background: #fff;
 }
 
-[class^='remove__num_'] {
+[class^='remove'] {
 	width: 128px;
 	height: 100%;
 	background: url(./delete.png);
@@ -42,7 +48,7 @@ body
 .header__loader {
 	width: 80px;
 	height: 80px;
-	margin: 20px 0;
+	margin: 20px auto;
 	background: url(./load.gif);
 }
 

@@ -1,11 +1,11 @@
 const tasksModel = require('../models/tasks')
 
-module.exports.index = (req, res) => {
+module.exports.getAll = (req, res) => {
 	var tasks = tasksModel(req.db);
 	tasks.getAll().then(
 		allTasks => {
-			data = {tasks: allTasks};
-			res.render('main/main',  Object.assign(data, req.commonData));
+			data = {allTasks};
+			res.status(200).send(data);
 		},
 		error => res.status(400)
 	);

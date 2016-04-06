@@ -2,29 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="{{ meta.charset }}">
-    <title>{{page.title }}</title>
+    <title>ToDo</title>
     <meta name="description" content="{{ meta.description }}">
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <div class="header">
-        <div class="header__loader"></div>
-        <div class="header__title">ToDo</div>
-    </div>
-    <div class="list">
-    {{#if tasks.length}}
-        {{#each tasks}}
-            <div class="list__task__num_{{orderNum}}">
-                <div class="list__task__todo__num_{{orderNum}}">{{ todo }}</div>
-            </div>
-        {{/each}}
-    {{^}}
-        <p>Create your first task!</p>
-    {{/if}}
-        <div class="list__task__num_-1">
-                <button class="list__task__add">Add task</button>
-        </div>
-    </div>
+    <div class="header__loader"></div>
+    <div id="root"></div>
     <script src="main.js"></script>
 </body>
 </html>

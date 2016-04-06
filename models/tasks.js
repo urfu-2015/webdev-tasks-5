@@ -24,17 +24,13 @@ function update(task) {
 	if(task.todo.length === 0) {
 		return remove(task);
 	}
-	console.log(task);
 	var num = Number(task.orderNum);
 	var taskDo = task.todo;
 	return tasksCollection.update(
 		{orderNum: num},
    		{'$set': {todo: taskDo}}
 	).then(
-		update => {
-			console.log(update.result);
-			return task;
-		},
+		update => task,
 		error => error
 	);
 }
