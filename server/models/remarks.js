@@ -4,7 +4,8 @@
 'use strict';
 
 const fs = require('fs');
-const fileWithData = './user_data/remarks.json';
+const path = require('path');
+const fileWithData = path.join(__dirname, '../../user_data/remarks.json');
 
 class Remark{
     //static memoryStorage = {'remarks': []};
@@ -34,10 +35,11 @@ class Remark{
         fs.readFile(fileWithData, (err, data) => {
                 if (err != undefined) {
                     callback(err);
-                }
-                Remark.memoryStorage = JSON.parse(data);
+                } else {
+                    Remark.memoryStorage = JSON.parse(data);
                 //console.log(Remark.memoryStorage);
-                callback(undefined);
+                    callback(undefined);
+                }
             }
         );
     };

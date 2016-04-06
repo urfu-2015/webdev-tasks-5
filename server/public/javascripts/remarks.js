@@ -76,7 +76,6 @@ allCards.map(function(elem, index, array) {
     elem.addEventListener('touchmove', function(event) {
         //event.preventDefault();
         //event.stopPropagation();
-        alert('qweqwe');
         nowPoint = event.changedTouches[0];
         var dif = nowPoint.pageX-startPoint.x;
 
@@ -88,7 +87,7 @@ allCards.map(function(elem, index, array) {
             elem.setAttribute('style', 'transform: translateX(' + dif + 'px)');
             /*if(dif < 0) {
                 var but = document.querySelector('.delButton');
-                document.querySelector('.main').removeChild(but);
+                document.querySelector('.index').removeChild(but);
                 insertAfter(but, elem);
                 but.setAttribute('style', 'display: inline');
                 elem.setAttribute('style', 'transform: translateX(' + dif + 'px)');
@@ -106,7 +105,6 @@ allCards.map(function(elem, index, array) {
         nowPoint = event.changedTouches[0];
         var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
         var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-        console.log(xAbs, yAbs);
         //swipes
         if ((xAbs > 10 || yAbs > 10) && (endTime.getTime()-startTime.getTime())>200) {
             //по горизонтали
@@ -120,11 +118,9 @@ allCards.map(function(elem, index, array) {
                 }
                 //вертикаль
             } else {
-                event.preventDefault();
-                event.stopPropagation();
-                if (startPoint.y < nowPoint.pageY) {
+                /*if (startPoint.y < nowPoint.pageY) {
                     console.log('here');
-                }
+                }*/
             }
         }  else {
             //tap
@@ -179,4 +175,33 @@ allCards.map(function(elem, index, array) {
             }
         }
     }, false);
+});
+
+//для Pull to Refresh
+var startPointDoc = {};
+var startTimeDoc;
+document.addEventListener('touchstart', function (event) {
+    startTimeDoc = new Date();
+    startPointDoc.x = event.pageX;
+    startPointDoc.y = event.pageY;
+});
+
+document.addEventListener('touchmove', function (event) {
+
+});
+
+document.addEventListener('touchend', function (event) {
+
+    var nowPoint = event.changedTouches[0];
+    var xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
+    var yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
+    var endTime = new Date();
+    console.log(xAbs, yAbs);
+    if ((yAbs > 10) && (endTime.getTime()-startTimeDoc.getTime()) > 200) {
+        if (nowPoint.pageY > startPointDoc.y) {
+            console.log('refresh');
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }
 });

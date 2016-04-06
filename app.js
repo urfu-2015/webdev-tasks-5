@@ -6,16 +6,16 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var stylus = require('stylus');
 
-var routes = require('./routes.js');
+var routes = require('./server/routes.js');
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'server', 'bundles'));
 app.set('view engine', 'hbs');
 app.use(stylus.middleware({
-    src: path.join(__dirname, 'styles'),
-    dest: path.join(__dirname,  'public', 'stylesheets')
+    src: path.join(__dirname, 'server', 'styles'),
+    dest: path.join(__dirname, 'server',  'public', 'stylesheets')
 }));
 
 // uncomment after placing your favicon in /public
@@ -24,7 +24,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'server' ,'public')));
 app.use('/', routes);
 //app.use('/users', users);
 
@@ -53,7 +53,6 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

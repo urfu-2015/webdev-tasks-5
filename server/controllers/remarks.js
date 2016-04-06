@@ -17,11 +17,12 @@ module.exports.getRemarks = function(req, res, next) {
         if (err != undefined) {
             console.log(err);
         }
-        res.render('remarks', {
+        res.render('remark/remarks', {
             title: 'TODo-хИ' ,
             stylesheets: [
                 'layout',
-                'remarks'
+                'remarks',
+                'remarkForm'
             ],
             scripts: [
                 'remarks'
@@ -32,7 +33,20 @@ module.exports.getRemarks = function(req, res, next) {
 
 };
 
+module.exports.getRemarksJSON = function(req, res, next) {
+    Remarks.getAll(function (err, data) {
+        if (err != undefined) {
+            console.log(err);
+            res.status(500);
+            res.send('');
+        } else {
+            res.send({data})
+        }
+    })
+};
+
 module.exports.newRemark = function(req, res, next) {
+    console.log(req.body.text);
     Remarks.create(req.body.text, function (err, data) {
         if (err != undefined) {
             console.log(err);
@@ -46,7 +60,7 @@ module.exports.redoRemark = function(req, res, next) {
         if (err != undefined) {
             console.log(err);
         } else {
-            res.send();
+            res.send({});
         }
     });
 };

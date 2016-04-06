@@ -3,7 +3,6 @@
     <head>
         <title>{{title}}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         {{#each stylesheets}}
             <link rel="stylesheet" href="stylesheets/{{this}}.css" />
         {{/each}}
@@ -13,7 +12,7 @@
     <body>
         {{{body}}}
         {{#each scripts}}
-            <script type="text/javascript" src="javascripts/{{this}}.js"></script>
+            <script type="text/javascript" src="{{this}}.js"></script>
         {{/each}}
     </body>
 

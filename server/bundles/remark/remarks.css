@@ -1,0 +1,15 @@
+.car {
+    border: solid 1px #808080;
+    padding: 10px;
+    margin: 2px;
+    width: 100%;
+}
+.creating {
+    display: none;
+}
+.redo {
+    display: none;
+}
+.delButton {
+    display: none;
+}
