@@ -1,0 +1,114 @@
+.container
+{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.container div
+{
+    box-sizing: border-box;
+    min-height: 100px;
+    min-width: 150px;
+}
+.container-reload
+{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.container-reload div
+{
+    box-sizing: border-box;
+    min-height: 100px;
+    min-width: 150px;
+}
+
+.blue-list-item
+{
+    color: #ddd;
+    background-color: #0062d2;
+}
+
+.bluelight-list-item
+{
+    color: #333;
+    background-color: #b4d2f7;
+}
+
+.delete
+{
+    float:right;
+    background-color: #4789f7;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 10%;
+    margin: 10px 0 10px 0;
+}
+
+.blue-list-item, .bluelight-list-item
+{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 30px 10px 30px;
+}
+.reload-image
+{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 10px 30px 10px 30px;
+}
+
+@media (min-width: 800px)
+{
+    .container
+    {
+        width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+.container-flex
+{
+    display: flex;
+    width: 100%;
+}
+.submit-btn, .submit-change-btn
+{
+    margin-left: 10px;
+}
+.image-delete, .image-reload
+{
+    max-height:50px;
+}
+/*# sourceMappingURL=index.map*/
