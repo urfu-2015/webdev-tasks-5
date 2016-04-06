@@ -8,6 +8,7 @@ export default ({todos, selectedTodo, swipedTodo, store}) => (
         {todos.map((todo, i) => (
             <TodoElement
                 id={i}
+                
                 value={todo}
                 isChange={i == selectedTodo}
                 isDelete={i == swipedTodo}

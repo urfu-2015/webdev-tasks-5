@@ -1,6 +1,7 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
+var fs = require('fs');
 
 module.exports = {
     context: path.join(__dirname, 'server/views'),

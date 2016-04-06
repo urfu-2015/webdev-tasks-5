@@ -1,3 +1,9 @@
+export const InitTodos = todos => {
+    return {
+        type: 'INIT_TODOS',
+        todos: todos
+    };
+};
 export const AddTodo = todo => {
     return {
         type: 'ADD_TODO',
@@ -37,5 +43,17 @@ export const ShowDeleteTodo = (todo) => {
 export const HideDeleteTodo = () => {
     return {
         type: 'HIDE_DELETE_TODO'
+    }
+};
+
+export const ShowReloadTodos = () => {
+    return {
+        type: 'SHOW_RELOAD_TODOS'
+    }
+};
+
+export const ReloadTodos = () => {
+    return {
+        type: 'SHOW_UPDATE_TODOS'
     }
 };

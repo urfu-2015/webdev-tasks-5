@@ -3,6 +3,7 @@ const hbs = require('hbs');
 const express = require('express');
 const app = express();
 const path = require('path');
+var socket = require('./server/views/socket.js');
 const publicDir = path.join(__dirname, 'public');
 
 app.set('views', path.join(__dirname, 'server/views'));
@@ -26,7 +27,23 @@ require('./server/routes')(app);
 
 hbs.registerPartials(path.join(__dirname, 'server/blocks'));
 
-app.listen(app.get('port'),
+var server = app.listen(app.get('port'),
     () => console.log(`Listening on port ${app.get('port')}`));
+
+var io = require('socket.io')(server);
+
+io.sockets.on('connection', socket);
+
+//var io = require('socket.io').listen(app.listen(app.get('port')));
+//var io = require('socket.io').listen(app.get('port'),
+//    () => console.log(`Listening on port ${app.get('port')}`));
+
+//io.on('connection', function (socket) {
+//    socket.on('list-todo', function(data) {
+//        socket.emit('ready-list', {
+//            todos : ['test1', 'test2']
+//        });
+//    });
+//});
 
 module.exports = app;
