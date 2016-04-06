@@ -6,6 +6,9 @@ const initialState = {
 
 exports.todoApp = (state, action) => {
     state = state || initialState;
+    let notesCopy;
+    let json;
+    let idx;
 
     switch (action.type) {
         case 'ADD_NOTE':
@@ -26,18 +29,58 @@ exports.todoApp = (state, action) => {
                 selectedNoteName: state.selectedNoteName,
                 deletableNoteName: action.note
             };
+        case 'SELECT_UN_DELETE_NOTE':
+            return {
+                notes: state.notes,
+                selectedNoteName: state.selectedNoteName,
+                deletableNoteName: null
+            };
         case 'CHANGE_NOTE':
-            let notesCopy = state.notes.slice();
-            notesCopy[action.index] = action.newValue;
+            json = JSON.stringify({
+                oldText: action.oldValue,
+                newText: action.newValue
+            });
+
+            fetch('/api/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json; charset=utf-8'
+                },
+                body: json
+            })
+                .then(response => {
+                    console.log(response.status);
+                });
+
+            notesCopy = state.notes.slice();
+            idx = notesCopy.indexOf(action.oldValue);
+            notesCopy[idx] = action.newValue;
             return {
                 notes: notesCopy,
                 selectedNoteName: null,
                 deletableNoteName: null
             };
         case 'DELETE_NOTE':
-            let idx = state.notes.indexOf(action.note);
+            json = JSON.stringify({
+                text: action.note
+            });
+
+            fetch('/api/notes', {
+                method: 'DELETE',
+                headers: {
+                    'Content-type': 'application/json; charset=utf-8'
+                },
+                body: json
+            })
+                .then(response => {
+                    console.log(response.status);
+                });
+
+            notesCopy = state.notes.slice();
+            idx = notesCopy.indexOf(action.note);
+            notesCopy.splice(idx, 1);
             return {
-                notes: state.notes.splice(idx, 1),
+                notes: notesCopy,
                 selectedNoteName: null,
                 deletableNoteName: null
             };

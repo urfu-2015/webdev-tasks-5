@@ -19,10 +19,18 @@ export const selectDeleteNote = note => {
     };
 };
 
-export const changeNote = (index, newValue) => {
+export const selectUnDeleteNote = note => {
+    return {
+        type: 'SELECT_UN_DELETE_NOTE',
+        note: note
+    };
+};
+
+
+export const changeNote = (oldValue, newValue) => {
     return {
         type: 'CHANGE_NOTE',
-        index: index,
+        oldValue: oldValue,
         newValue: newValue
     };
 };

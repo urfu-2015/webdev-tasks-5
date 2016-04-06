@@ -1,37 +1,27 @@
 import React from 'react';
-import {addNote, selectChangeNote, selectDeleteNote, changeNote, deleteNote} from '../actions';
+import Note from './note';
+import DeletableNote from './deletable-note';
+import FormNote from './form-note';
 
 export default ({store}) => {
     const  {notes, selectedNoteName, deletableNoteName} = store.getState();
     return (
         <div className="container">
-            {notes.map(note => (
-                    <div className="row">
-                        {(note === selectedNoteName) ?
-                            <form className="change-form">
-                                <textarea defaultValue={note}></textarea>
-                                <button className="form-button_submit">Изменить</button>
-                            </form>
-                            : null
-                        }
-                        {(note === deletableNoteName) ?
-                            <div>
-                                <div className="note_for-delete">
-                                    {note}
-                                </div>
-                                <div className="trash">
-                                    Удалить
-                                </div>
-                            </div>
-                            : null
-                        }
-                        {((note !==selectedNoteName) && (note !== deletableNoteName)) ?
-                            <div className="note">
-                                {note}
-                            </div>
-                            : null
-                        }
-                    </div>
+            {notes.map(value => (
+                <div className="row">
+                    {(value === selectedNoteName) ?
+                        <FormNote value={value} store={store} />
+                        : null
+                    }
+                    {(value === deletableNoteName) ?
+                        <DeletableNote value={value} store={store} />
+                        : null
+                    }
+                    {((value !==selectedNoteName) && (value !== deletableNoteName)) ?
+                        <Note value={value} store={store} />
+                        : null
+                    }
+                </div>
             ))}
         </div>
     );

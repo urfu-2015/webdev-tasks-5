@@ -49,6 +49,13 @@ header
     margin: 10px 0;
 }
 
+.deletable-note
+{
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+}
+
 .note
 {
     width: 100%;

@@ -60,13 +60,13 @@
 	
 	var _main2 = _interopRequireDefault(_main);
 	
-	var _actions = __webpack_require__(171);
+	var _actions = __webpack_require__(172);
 	
-	var _reducers = __webpack_require__(172);
+	var _reducers = __webpack_require__(175);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(173);
+	__webpack_require__(176);
 	
 	var store = (0, _redux.createStore)(_reducers.todoApp);
 	
@@ -20694,7 +20694,17 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _actions = __webpack_require__(171);
+	var _note = __webpack_require__(171);
+	
+	var _note2 = _interopRequireDefault(_note);
+	
+	var _deletableNote = __webpack_require__(173);
+	
+	var _deletableNote2 = _interopRequireDefault(_deletableNote);
+	
+	var _formNote = __webpack_require__(174);
+	
+	var _formNote2 = _interopRequireDefault(_formNote);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -20710,39 +20720,13 @@
 	    return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
-	        notes.map(function (note) {
+	        notes.map(function (value) {
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'row' },
-	                note === selectedNoteName ? _react2.default.createElement(
-	                    'form',
-	                    { className: 'change-form' },
-	                    _react2.default.createElement('textarea', { defaultValue: note }),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'form-button_submit' },
-	                        'Изменить'
-	                    )
-	                ) : null,
-	                note === deletableNoteName ? _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'note_for-delete' },
-	                        note
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'trash' },
-	                        'Удалить'
-	                    )
-	                ) : null,
-	                note !== selectedNoteName && note !== deletableNoteName ? _react2.default.createElement(
-	                    'div',
-	                    { className: 'note' },
-	                    note
-	                ) : null
+	                value === selectedNoteName ? _react2.default.createElement(_formNote2.default, { value: value, store: store }) : null,
+	                value === deletableNoteName ? _react2.default.createElement(_deletableNote2.default, { value: value, store: store }) : null,
+	                value !== selectedNoteName && value !== deletableNoteName ? _react2.default.createElement(_note2.default, { value: value, store: store }) : null
 	            );
 	        })
 	    );
@@ -20750,6 +20734,64 @@
 
 /***/ },
 /* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _actions = __webpack_require__(172);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (_ref) {
+	    var value = _ref.value;
+	    var store = _ref.store;
+	
+	
+	    var initialPoint = void 0;
+	    var initialNode = void 0;
+	    var start = void 0;
+	
+	    function onTouchStart(event) {
+	        initialPoint = event.changedTouches[0];
+	        initialNode = event.target;
+	        start = new Date();
+	    }
+	
+	    function onTouchEnd(event) {
+	        var finalPoint = event.changedTouches[0];
+	        var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
+	        var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
+	        if (xAbs > 20 || yAbs > 20) {
+	            if (xAbs > yAbs) {
+	                if (finalPoint.pageX < initialPoint.pageX) {
+	                    store.dispatch((0, _actions.selectDeleteNote)(value));
+	                }
+	            }
+	        } else {
+	            var finish = new Date();
+	            if (finish.getTime() - start.getTime() < 200) {
+	                store.dispatch((0, _actions.selectChangeNote)(value));
+	            }
+	        }
+	    }
+	
+	    return _react2.default.createElement(
+	        'div',
+	        { className: 'note', onTouchStart: onTouchStart, onTouchEnd: onTouchEnd },
+	        value
+	    );
+	};
+
+/***/ },
+/* 172 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20778,10 +20820,17 @@
 	    };
 	};
 	
-	var changeNote = exports.changeNote = function changeNote(index, newValue) {
+	var selectUnDeleteNote = exports.selectUnDeleteNote = function selectUnDeleteNote(note) {
+	    return {
+	        type: 'SELECT_UN_DELETE_NOTE',
+	        note: note
+	    };
+	};
+	
+	var changeNote = exports.changeNote = function changeNote(oldValue, newValue) {
 	    return {
 	        type: 'CHANGE_NOTE',
-	        index: index,
+	        oldValue: oldValue,
 	        newValue: newValue
 	    };
 	};
@@ -20794,7 +20843,114 @@
 	};
 
 /***/ },
-/* 172 */
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _actions = __webpack_require__(172);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (_ref) {
+	    var value = _ref.value;
+	    var store = _ref.store;
+	
+	
+	    var initialPoint = void 0;
+	    var initialNode = void 0;
+	    var start = void 0;
+	
+	    function onTouchStart(event) {
+	        initialPoint = event.changedTouches[0];
+	        initialNode = event.target;
+	        start = new Date();
+	    }
+	
+	    function onTouchEnd(event) {
+	        var finalPoint = event.changedTouches[0];
+	        if (initialNode !== event.target) {
+	            return;
+	        }
+	        var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
+	        if (xAbs > 20) {
+	            if (finalPoint.pageX > initialPoint.pageX) {
+	                store.dispatch((0, _actions.selectUnDeleteNote)(value));
+	            }
+	        }
+	    }
+	
+	    function onClickDelete(event) {
+	        store.dispatch((0, _actions.deleteNote)(value));
+	    }
+	
+	    return _react2.default.createElement(
+	        'div',
+	        { className: 'deletable-note', onTouchStart: onTouchStart, onTouchEnd: onTouchEnd },
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'note_for-delete' },
+	            value
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'trash', onClick: onClickDelete },
+	            'Удалить'
+	        )
+	    );
+	};
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _actions = __webpack_require__(172);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (_ref) {
+	    var value = _ref.value;
+	    var store = _ref.store;
+	
+	
+	    function onClick(event) {
+	        event.preventDefault();
+	        var newValue = event.target.parentNode.firstChild.value;
+	        store.dispatch((0, _actions.changeNote)(value, newValue));
+	    }
+	
+	    return _react2.default.createElement(
+	        'form',
+	        { className: 'change-form' },
+	        _react2.default.createElement('textarea', { defaultValue: value }),
+	        _react2.default.createElement(
+	            'button',
+	            { className: 'form-button_submit', onClick: onClick },
+	            'Изменить'
+	        )
+	    );
+	};
+
+/***/ },
+/* 175 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20807,6 +20963,9 @@
 	
 	exports.todoApp = function (state, action) {
 	    state = state || initialState;
+	    var notesCopy = void 0;
+	    var json = void 0;
+	    var idx = void 0;
 	
 	    switch (action.type) {
 	        case 'ADD_NOTE':
@@ -20827,18 +20986,56 @@
 	                selectedNoteName: state.selectedNoteName,
 	                deletableNoteName: action.note
 	            };
+	        case 'SELECT_UN_DELETE_NOTE':
+	            return {
+	                notes: state.notes,
+	                selectedNoteName: state.selectedNoteName,
+	                deletableNoteName: null
+	            };
 	        case 'CHANGE_NOTE':
-	            var notesCopy = state.notes.slice();
-	            notesCopy[action.index] = action.newValue;
+	            json = JSON.stringify({
+	                oldText: action.oldValue,
+	                newText: action.newValue
+	            });
+	
+	            fetch('/api/notes', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-type': 'application/json; charset=utf-8'
+	                },
+	                body: json
+	            }).then(function (response) {
+	                console.log(response.status);
+	            });
+	
+	            notesCopy = state.notes.slice();
+	            idx = notesCopy.indexOf(action.oldValue);
+	            notesCopy[idx] = action.newValue;
 	            return {
 	                notes: notesCopy,
 	                selectedNoteName: null,
 	                deletableNoteName: null
 	            };
 	        case 'DELETE_NOTE':
-	            var idx = state.notes.indexOf(action.note);
+	            json = JSON.stringify({
+	                text: action.note
+	            });
+	
+	            fetch('/api/notes', {
+	                method: 'DELETE',
+	                headers: {
+	                    'Content-type': 'application/json; charset=utf-8'
+	                },
+	                body: json
+	            }).then(function (response) {
+	                console.log(response.status);
+	            });
+	
+	            notesCopy = state.notes.slice();
+	            idx = notesCopy.indexOf(action.note);
+	            notesCopy.splice(idx, 1);
 	            return {
-	                notes: state.notes.splice(idx, 1),
+	                notes: notesCopy,
 	                selectedNoteName: null,
 	                deletableNoteName: null
 	            };
@@ -20848,7 +21045,7 @@
 	};
 
 /***/ },
-/* 173 */
+/* 176 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
