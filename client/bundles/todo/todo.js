@@ -11,7 +11,8 @@ const TodoItem = ({text, todo_id}) => (
         <div className="todo-list__item_text">
             {text}
         </div>
-        <input className="todo-list__item_input" onBlur={updateTodo}/>
+        <input className="todo-list__item_input  todo-form__input" defaultValue={text}
+               onBlur={updateTodo}/>
         <img src="/images/trash.png" className="todo-list__item_trash" onTouchStart={delTodoTap}/>
     </section>
 );
@@ -21,27 +22,28 @@ function onTouchStart(event) {
     initialPoint = event.changedTouches[0];
 }
 function viewTrash(event) {
-
+    var element = event.currentTarget;
     event.preventDefault();
-    event.stopPropagation();
+    //event.stopPropagation();
     finalPoint = event.changedTouches[0];
     var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
     var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
     if (xAbs === 0 && yAbs === 0) {
-        var element = event.target;
+
         var todo_input = element.querySelector('.todo-list__item_input');
         var todo_text = element.querySelector('.todo-list__item_text');
-        todo_input.style = 'display:block';
         todo_text.style = 'display:none';
-    }
-    if (xAbs > 20 || yAbs > 20) {
+        todo_input.style = 'display:block';
+        todo_input.focus();
+    } else if (xAbs > 20 || yAbs > 20) {
+        var todo_trash = element.querySelector('.todo-list__item_trash');
         if (xAbs > yAbs) {
             if (finalPoint.pageX < initialPoint.pageX) {
-                alert('l');
+                todo_trash.style = 'display:block';
                 /*СВАЙП ВЛЕВО*/
             }
             else {
-                alert('r');
+                todo_trash.style = 'display:none';
                 /*СВАЙП ВПРАВО*/
             }
         }
