@@ -1,0 +1,135 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto);body
+{
+    font: 15px Roboto, sans-serif;
+}
+
+header
+{
+    text-align: center;
+}
+
+.container
+{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row wrap;
+    flex-flow: row wrap;
+}
+
+.text-center
+{
+    text-align: center;
+}
+
+@media (min-width: 600px)
+{
+    .container {
+        width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (min-width: 800px)
+{
+    .container {
+        width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.row
+{
+    display: flex;
+    flex-flow: row;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.note
+{
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #0b97c4;
+    text-align: center;
+    color: #fff;
+}
+
+.note_for-delete
+{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #0b97c4;
+    text-align: center;
+    color: #fff;
+    width: 75%;
+}
+
+.trash
+{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #b94a48;
+    text-align: center;
+    color: #fff;
+    width: 25%;
+}
+
+.button-add
+{
+    text-align: center;
+    margin: 0 auto;
+    max-width: 200px;
+    background-color: #b94a48;
+    padding: 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+form.change-form
+{
+    width: 100%;
+    text-align: center;
+    background-color: #0b97c4;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.form-button_submit
+{
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #b94a48;
+    display: block;
+    margin: 5px auto 0;
+    color: #fff;
+}
+
+form.change-form textarea
+{
+    box-sizing: border-box;
+    border-radius: 5px;
+    padding: 5px;
+    font: 15px Roboto, sans-serif;
+    width: 100%;
+    resize: none;
+}
+
+.invisible
+{
+    display: none;
+}
+
+.visible
+{
+    display: block;
+}
+
+/*# sourceMappingURL=main.map*/
