@@ -4,6 +4,8 @@ const pages = require('./controllers/pages');
 const tasks = require('./controllers/tasks');
 
 module.exports = function (app) {
+    app.get('/', pages.main);
+
     app.get('/tasks', tasks.list);
     app.post('/tasks', tasks.create);
     app.get('/tasks/:id', tasks.single);

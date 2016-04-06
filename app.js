@@ -6,7 +6,11 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
-const publicDir = path.join(__dirname, 'public');
+const publicDir = path.join(__dirname, '/public');
+const viewsDir = path.join(__dirname, 'server/pages');
+
+app.set('views', viewsDir);
+app.set('view engine', 'hbs');
 
 app.use(morgan('dev'));
 app.use(express.static(publicDir));
@@ -24,7 +28,7 @@ app.use((err, req, res, next) => {
     next();
 });
 
-require('./routes')(app);
+require('./server/routes')(app);
 
 app.listen(app.get('port'),
     () => console.log(`Listening on port ${app.get('port')}`));
