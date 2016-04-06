@@ -11,16 +11,6 @@ body {
 	display: none;
 }
 
-.task-item_edit_false .task-item__editor
-{
-    display: none;
-}
-
-.task-item_edit_true .task-item__name
-{
-    display: none;
-}
-
 .task-item_delete_true .task-item__delete-task
 {
     display: block;

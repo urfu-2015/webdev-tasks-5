@@ -9,43 +9,53 @@
         this.swipeRightCB = function () {};
         this.swipeUpCB = function () {};
         this.swipeDownCB = function () {};
-        this.__setEventHandlers();
+        if (this.__element) {
+            this.__setEventHandlers();
+        }
+    };
+    
+    TapHandler.prototype.__eraseAndCallCB = function (cb) {
+        delete this.__startX;
+        delete this.__startY;
+        delete this.__endX;
+        delete this.__endY;
+        return cb();
     };
     
     TapHandler.prototype.__setEventHandlers = function () {
-        this.__element.addEventListener('touchstart', this.__touchStart.bind(this));
-        this.__element.addEventListener('touchmove', this.__touchMove.bind(this));
-        this.__element.addEventListener('touchend', this.__touchEnd.bind(this));
+        this.__element.addEventListener('touchstart', this.touchStart.bind(this));
+        this.__element.addEventListener('touchmove', this.touchMove.bind(this));
+        this.__element.addEventListener('touchend', this.touchEnd.bind(this));
     };
     
-    TapHandler.prototype.__touchStart = function (event) {
+    TapHandler.prototype.touchStart = function (event) {
         this.__startX = event.touches[0].screenX;
         this.__startY = event.touches[0].screenY;
     };
     
-    TapHandler.prototype.__touchMove = function (event) {
+    TapHandler.prototype.touchMove = function (event) {
         event.preventDefault();
         this.__endX = event.touches[0].screenX;
         this.__endY = event.touches[0].screenY;
     };
     
-    TapHandler.prototype.__touchEnd = function (event) {
+    TapHandler.prototype.touchEnd = function (event) {
         if (this.__endX === undefined || this.__endY == undefined) {
-            return this.tapCB();
+            return this.__eraseAndCallCB(this.tapCB);
         }
         var deltaY = Math.abs(this.__endY - this.__startY);
         var deltaX = Math.abs(this.__endX - this.__startX);
         if (deltaY > deltaX) {
             if (this.__startY > this.__endY) {
-                return this.swipeUpCB();
+                return this.__eraseAndCallCB(this.swipeUpCB);
             } else {
-                return this.swipeDownCB();
+                return this.__eraseAndCallCB(this.swipeDownCB);
             }
         } else {
             if (this.__startX > this.__endX) {
-                return this.swipeLeftCB();
+                return this.__eraseAndCallCB(this.swipeLeftCB);
             } else {
-                return this.swipeRightCB();
+                return this.__eraseAndCallCB(this.swipeRightCB);
             }
         }
     };
