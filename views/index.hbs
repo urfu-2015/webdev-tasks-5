@@ -8,21 +8,13 @@
     <link rel="stylesheet" type="text/css" href="/index.css">
 </head>
 <body>
-    {{#if tasks.length}}
-        <ul class="todo-list">
-            {{#each tasks}}
-                <li class="todo-list__element">
-                    <span class="todo-list__task">{{text}}</span>
-                </li>
-            {{/each}}
-        </ul>
-    {{^}}
-        <p>No tasks!</p>
-    {{/if}}
-    <form method="post" action="/">
-        <input type="text" name="message">
-        <input type="submit" value="Добавить">
-    </form>
-    <script src="/index.js" class="script"></script>
+    <div id="todo-block">
+        {{> index }}
+    </div>
+    <div>
+        <input type="text" name="message" class="todo-list__text-to-create">
+        <input type="button" value="Добавить" class="todo-list__creation-button">
+    </div>
+    <script src="/bundle.js" class="script"></script>
 </body>
 </html>

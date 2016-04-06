@@ -1,5 +1,13 @@
 var current = '';
 
+function render(tasks) {
+    var template = require('./index.hbs');
+    var elem = document.getElementById('todo-block');
+    elem.innerHTML = template({tasks});
+    var tasks = document.getElementsByClassName('todo-list__task');
+    Array.prototype.forEach.call(tasks, (elem, index, array) => addListenerToSpan(elem));
+}
+
 function addListenerToButton(elem, text) {
     elem.addEventListener('click', function (event) {
         var body = 'text=' + text;
@@ -9,11 +17,31 @@ function addListenerToButton(elem, text) {
         xhr.send(body);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
-                document.body.innerHTML = xhr.responseText;
+                render(JSON.parse(xhr.responseText).tasks)
             }
         };
     }, false);
 }
+
+function addListenerToCreationButton(elem) {
+    elem.addEventListener('click', function (event) {
+        var creationInput = document.getElementsByClassName('todo-list__text-to-create');
+        var text = creationInput[0].value;
+        var body = 'message=' + text;
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send(body);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                render(JSON.parse(xhr.responseText).tasks)
+            }
+        };
+    }, false);
+}
+
+var creationButton = document.getElementsByClassName('todo-list__creation-button');
+addListenerToCreationButton(creationButton[0]);
 
 function addListenerToSpan(elem) {
     elem.addEventListener('touchstart', function (event) {
@@ -45,7 +73,11 @@ function addListenerToInput(elem) {
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.send(body);
             addListenerToSpan(span);
-            elem.parentNode.replaceChild(span, elem);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    elem.parentNode.replaceChild(span, elem);
+                }
+            };
         }
     }, false);
 }
@@ -78,7 +110,6 @@ function addListenersToLi(elem) {
         var span;
         if (Math.abs(otk.x) > 100) {
             if (otk.x < 0 && elem.firstElementChild.nodeName == 'SPAN') {
-                console.log(elem.firstElementChild);
                 var button = document.createElement('button');
                 button.value = elem.firstElementChild.innerHTML;
                 button.innerHTML = 'Удалить';

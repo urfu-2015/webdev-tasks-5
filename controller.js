@@ -19,7 +19,7 @@ module.exports.create = (req, res) => {
     }
     const tasks = Task.findAll();
     data = {tasks};
-    res.render('index', Object.assign(data, req.commonData));
+    res.send(Object.assign(data, req.commonData));
 };
 
 module.exports.update = (req, res) => {
@@ -28,12 +28,12 @@ module.exports.update = (req, res) => {
     }
     const tasks = Task.findAll();
     var data = {tasks};
-    res.render('index', Object.assign(data, req.commonData));
+    res.sendStatus(200);
 };
 
 module.exports.delete = (req, res) => {
     Task.deleteTask(req.body.text);
     const tasks = Task.findAll();
     var data = {tasks};
-    res.render('index', Object.assign(data, req.commonData));
+    res.send(Object.assign(data, req.commonData));
 };

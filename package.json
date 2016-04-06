@@ -28,6 +28,8 @@
     "react-dom": "^0.14.8"
   },
   "devDependencies": {
+    "handlebars": "^4.0.5",
+    "hbsfy": "^2.5.1",
     "jscs": "^2.11.0"
   }
 }

@@ -2,9 +2,11 @@ const express = require('express');
 var bodyParser = require('body-parser');
 const app = express();
 var path = require('path');
+var hbs = hbs = require('hbs');
 
 app.set('views', './views');
 app.set('view engine', 'hbs');
+hbs.registerPartials(path.join(__dirname, 'public'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
