@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= 'Todo-хи'
+  div
+    each val in todoes
+      div(class='todo' id=val.id)= val.text
+  form
+    input(id='form_input_text' type='text')
+    input(id='form_input_button_new' class='button' type='button' value='Добавить')
