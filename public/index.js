@@ -1,5 +1,20 @@
 var current = '';
 
+function addListenerToButton(elem, text) {
+    elem.addEventListener('click', function (event) {
+        var body = 'text=' + text;
+        var xhr = new XMLHttpRequest();
+        xhr.open('DELETE', '/', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send(body);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                document.body.innerHTML = xhr.responseText;
+            }
+        };
+    }, false);
+}
+
 function addListenerToSpan(elem) {
     elem.addEventListener('touchstart', function (event) {
         if (event.targetTouches.length == 1) {
@@ -26,7 +41,7 @@ function addListenerToInput(elem) {
             var body = 'oldText=' + current +
                 '&newText=' + elem.value;
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/update', true);
+            xhr.open('PUT', '/', true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             xhr.send(body);
             addListenerToSpan(span);
@@ -64,55 +79,20 @@ function addListenersToLi(elem) {
         if (Math.abs(otk.x) > 100) {
             if (otk.x < 0 && elem.firstElementChild.nodeName == 'SPAN') {
                 console.log(elem.firstElementChild);
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/deletion';
-                form.class = 'todo-list__deletion';
-                form.innerHTML = '\<input type="hidden" name="text" value="' +
-                    elem.firstElementChild.innerHTML + '"\>' +
-                    '\<input type="submit" value="Удалить" ' +
-                    'class="todo-list__deletion-button"\>';
+                var button = document.createElement('button');
+                button.value = elem.firstElementChild.innerHTML;
+                button.innerHTML = 'Удалить';
+                addListenerToButton(button, elem.firstElementChild.innerHTML);
                 span = elem.firstElementChild;
-                elem.replaceChild(form, span);
+                elem.replaceChild(button, span);
             }
-            if (otk.x > 0 && elem.firstElementChild.nodeName == 'FORM') {
+            if (otk.x > 0 && elem.firstElementChild.nodeName == 'BUTTON') {
                 span = document.createElement('span');
                 span.className = 'todo-list__task';
-                span.innerHTML = elem.firstElementChild.firstElementChild.value;
-                form = elem.firstElementChild;
-                elem.replaceChild(span, form);
+                span.innerHTML = elem.firstElementChild.value;
+                button = elem.firstElementChild;
+                elem.replaceChild(span, button);
                 addListenerToSpan(span);
-            }
-        }
-    }, false);
-
-    elem.addEventListener('touchend', function (event) {
-        var pdelay = new Date();
-        nowPoint = event.changedTouches[0];
-        var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
-        var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-        if ((xAbs > 20 || yAbs > 20) && (pdelay.getTime() - ldelay.getTime()) < 200) {
-            if (xAbs > yAbs) {
-                if (nowPoint.pageX < startPoint.x && elem.firstElementChild.nodeName == 'SPAN') {
-                    var form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = '/deletion';
-                    form.class = 'todo-list__deletion';
-                    form.innerHTML = '\<input type="hidden" name="text" value="' +
-                        elem.firstElementChild.innerHTML + '"\>' +
-                        '\<input type="submit" value="Удалить" ' +
-                        'class="todo-list__deletion-button"\>';
-                    span = elem.firstElementChild;
-                    elem.replaceChild(form, span);
-                }
-                if (nowPoint.pageX < startPoint.x && elem.firstElementChild.nodeName == 'FORM') {
-                    span = document.createElement('span');
-                    span.className = 'todo-list__task';
-                    span.innerHTML = elem.firstElementChild.firstElementChild.value;
-                    form = elem.firstElementChild;
-                    elem.replaceChild(span, form);
-                    addListenerToSpan(span);
-                }
             }
         }
     }, false);
@@ -138,32 +118,6 @@ document.body.addEventListener('touchmove', function (event) {
                 var img = document.createElement('img');
                 img.src = 'loader.gif';
                 img.className = 'loader';
-                document.body.insertBefore(img, document.body.firstChild);
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', '/', true);
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        document.body.innerHTML = xhr.responseText;
-                    }
-                };
-                xhr.send();
-            }
-        }
-    }
-}, false);
-
-document.body.addEventListener('touchend', function (event) {
-    var pdelay = new Date();
-    nowPoint = event.changedTouches[0];
-    var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
-    var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-    if ((xAbs > 20 || yAbs > 20) && (pdelay.getTime() - ldelay.getTime()) < 200) {
-        if (xAbs < yAbs) {
-            console.log('I swiped!');
-            if (nowPoint.pageY >= startPoint.y) {
-                var img = document.createElement('img');
-                img.src = 'loader.gif';
                 document.body.insertBefore(img, document.body.firstChild);
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', '/', true);

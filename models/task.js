@@ -1,18 +1,15 @@
 'use strict';
 
 var memoryStorage = [];
-var idCounter = 0;
 
 class Task {
     constructor(props) {
         this.text = props.text;
         this.createdAt = props.createdAt;
-        this.editingMode = false;
     }
 
     save() {
-        memoryStorage.push(Object.assign(this, {id: idCounter}));
-        idCounter++;
+        memoryStorage.push(this);
     }
 
     static findAll() {

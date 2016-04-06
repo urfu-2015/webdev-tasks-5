@@ -35,6 +35,5 @@ module.exports.delete = (req, res) => {
     Task.deleteTask(req.body.text);
     const tasks = Task.findAll();
     var data = {tasks};
-    res.redirect('/');
-    //res.render('index', Object.assign(data, req.commonData));
+    res.render('index', Object.assign(data, req.commonData));
 };
