@@ -4,11 +4,12 @@ const Note = require('../models/note');
 
 exports.list = (req, res) => {
     const notes = Note.findAll();
+    console.log(notes);
     const data = {
         notes: notes
     };
 
-    res.render('notes/notes', Object.assign(data, req.commonData));
+    res.send(data);
 };
 
 exports.item = (req, res) => {
@@ -24,7 +25,7 @@ exports.item = (req, res) => {
         text: note.text
     };
 
-    res.render('note/note', Object.assign(data, req.commonData));
+    res.send(data);
 };
 
 exports.create = (req, res) => {
@@ -32,10 +33,7 @@ exports.create = (req, res) => {
         text: req.body.text,
         createdAt: Date.now()
     };
-
     const note = new Note(data);
-
     note.save();
-
-    res.send(data);
+    this.list(req, res);
 };

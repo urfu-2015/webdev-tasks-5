@@ -12,7 +12,7 @@
     "lint:js": "eslint --fix .",
     "lint:css": "stylelint **/*.css",
     "lint": "npm-run-all lint:*",
-    "start": "NODE_ENV=development node app.js",
+    "start": "node ./bin/www",
     "test": "mocha --recursive tests/",
     "precommit": "npm-run-all lint:* test"
   },

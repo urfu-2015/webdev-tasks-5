@@ -5,11 +5,11 @@ const memoryStorage = [];
 class Note {
     constructor(props) {
         this.text = props.text;
-        this.createdAt = props.createdAt;
     }
 
     save() {
         memoryStorage.push(this);
+        console.log(memoryStorage);
     }
 
     static find(name) {
@@ -20,3 +20,5 @@ class Note {
         return memoryStorage;
     }
 }
+
+module.exports = Note;
