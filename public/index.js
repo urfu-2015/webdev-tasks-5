@@ -152,10 +152,11 @@ document.body.addEventListener('touchmove', function (event) {
                 document.body.insertBefore(img, document.body.firstChild);
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', '/', true);
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.setRequestHeader('Accept', 'TODOhi app');
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        document.body.innerHTML = xhr.responseText;
+                        document.getElementsByClassName('loader')[0].remove();
+                        render(JSON.parse(xhr.responseText).tasks);
                     }
                 };
                 xhr.send();

@@ -5,7 +5,12 @@ const Task = require('./models/task');
 module.exports.list = (req, res) => {
     const tasks = Task.findAll();
     const data = {tasks};
-    res.render('index', Object.assign(data, req.commonData));
+    console.log(req.get('Referer'));
+    if (req.get('Referer')) {
+        res.send(Object.assign(data, req.commonData));
+    } else {
+        res.render('index', Object.assign(data, req.commonData));
+    }
 };
 
 module.exports.create = (req, res) => {
