@@ -2,10 +2,7 @@ extends layout
 
 block content
     h1= title
-    .todo-list
+    div(id='root')
+        script(type='text/javascript', src="/todo.js").
 
-    form.todo-list__form(enctype="application/x-www-form-urlencoded")
-        input(type='text', name='todo')
-        input(type='submit', value='Add todo')
 
-    script(type='text/javascript' src="/javascripts/main.js").

@@ -1,53 +1,60 @@
-function Todo() {
-    this.todo = [];
-    this.error_not_foind = {error: "todo not found"};
-    this.message_delete = {message: "todo delete"};
-    this.message_update = {message: "todo update"};
-    this.message_update = {message: "todo update"};
+class Todo {
+    constructor() {
+        this.todo = [];
+        this.message_delete = {message: "todo delete"};
+        this.error_not_found = {error: "todo not found"};
+        this.error_not_found_field = {error: "not found field todo"};
+    }
+
+    length() {
+        return this.todo.length;
+    };
+
+    addTodo(todo) {
+        var s = [];
+        var new_todo = {
+            id: this.todo.length,
+            todo: todo,
+            dateCreate: Date.now(),
+            dateUpdate: Date.now()
+        };
+        this.todo.push(new_todo);
+        return new_todo;
+    };
+
+    updateTodo(index, newTodo) {
+        if (this._checkIdTodo(index)) {
+            var todo = this.todo[index];
+            todo['todo'] = newTodo;
+            todo['dateUpdate'] = Date.now();
+            return todo;
+        }
+        return false;
+    };
+
+    delTodo(index) {
+        if (this._checkIdTodo(index)) {
+            this.todo.splice(index, 1);
+            return true;
+        }
+        return false;
+    };
+
+    getTodo(index) {
+        console.log(index);
+        return this._checkIdTodo(index) ? this.todo[index] : false;
+    };
+
+    getAllTodoReverse() {
+        var allTodo = this.todo.slice();
+        return allTodo.reverse();
+    };
+
+    _checkIdTodo(index) {
+        var keysTodo = Object.keys(this.todo);
+        return keysTodo.includes(index);
+    };
 }
 
-Todo.prototype.length = function () {
-    return this.todo.length;
-};
-
-Todo.prototype.addTodo = function (todo) {
-    var new_todo = {
-        todo: todo,
-        dateCreate: Date.now(),
-        dateUpdate: Date.now()
-    };
-    this.todo.append(new_todo);
-    return new_todo;
-};
-
-Todo.prototype.updateTodo = function (index, newTodo) {
-    if (index in this.todo) {
-        var todo = this.todo[index];
-        todo['todo'] = newTodo;
-        todo['dateUpdate'] = Date.now();
-        return todo;
-    } else {
-        return false;
-    }
-};
-
-Todo.prototype.delTodo = function (index) {
-    if (index in this.todo) {
-        this.todo = this.todo.splice(index, 1);
-        return true;
-    } else {
-        return false;
-    }
-};
-
-Todo.prototype.getTodo = function (index) {
-    return index in this.todo ? this.todo[index] : false;
-};
-
-
-Todo.prototype.getAllTodoReverse = function () {
-    var allTodo = this.todo.slice();
-    return allTodo.reverse();
-};
 
 module.exports = Todo;

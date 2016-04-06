@@ -4,6 +4,9 @@ var multiparty = require('multiparty');
 var Todo = require('../model/todo');
 var todo = new Todo();
 
+todo.addTodo('asda1');
+todo.addTodo('asda2');
+
 /* GET users listing. */
 router.route('/')
     .get((req, res, next) => {
@@ -12,10 +15,11 @@ router.route('/')
     .post((req, res, next) => {
         var form = new multiparty.Form();
         form.parse(req, function (err, fields, files) {
+            console.log(fields);
             if ('todo' in fields && !err) {
                 res.json(todo.addTodo(fields['todo']));
             } else {
-                res.status(400).json({error: "not field todo"})
+                res.status(404).json(todo.error_not_found_field);
             }
         })
     });
@@ -25,26 +29,31 @@ router.route('/:id')
         if (todo.delTodo(req.params.id)) {
             res.json(this.message_delete);
         } else {
-            res.status(500).json(this.error_not_foind);
+            res.status(404).json(todo.error_not_found);
         }
     })
     .put((req, res, next) => {
         var form = new multiparty.Form();
         form.parse(req, function (err, fields, files) {
             if ('todo' in fields && !err) {
-                res.json(todo.addTodo(fields['todo']));
+                var update_todo = todo.updateTodo(req.params.id, fields['todo']);
+                if (update_todo) {
+                    res.json(update_todo);
+                } else {
+                    res.status(404).json(todo.error_not_found);
+                }
+                res.json();
             } else {
-                res.status(400).json({error: "not field todo"})
+                res.status(400).json(todo.error_not_found_field);
             }
-            res.json(todo.delTodo(req.params.id))
         })
     })
     .get((req, res) => {
-        var todo = todo[req.params.id];
-        if (todo !== undefined) {
-            res.json(todo);
+        var get_todo = todo.getTodo(req.params.id);
+        if (get_todo) {
+            res.json(get_todo);
         } else {
-            res.json({message: 'Not found!'});
+            res.status(404).json(todo.error_not_found);
         }
 
     });

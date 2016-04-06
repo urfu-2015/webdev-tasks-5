@@ -1,14 +1,3 @@
-function request(type, url, date, callback) {
-    var xmlhttp = new XMLHttpRequest();
-
-    xmlhttp.open(type, url, true);
-    xmlhttp.onreadystatechange = callback;
-    xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xmlhttp.send(date);
-}
-function close() {
-
-}
 function generate_input_edit(text) {
     var todo_input = document.createElement('input');
     todo_input.className = 'todo-list__item';
@@ -94,7 +83,7 @@ function add_todo(id_todo, text, todo_list_block) {
 function send_form(event) {
     fetch('/api/v1/todo/', {
         method: 'POST',
-        body: new FormData(this)
+        body: new FormData(event.target)
     }).then(update);
     return false;
 }
