@@ -3,15 +3,18 @@
 const path = require('path');
 
 const express = require('express');
+const morgan = require('morgan');
 const app = express();
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
 
 const viewsDir = path.join(__dirname, 'server/bundles');
+const publicDir = path.join(__dirname, 'public');
 
 app.set('views', viewsDir);
 app.set('view engine', 'hbs');
-app.use(express.static(viewsDir));
+app.use(morgan('dev'));
+app.use(express.static(publicDir));
 
 app.use(bodyParser.json());
 
