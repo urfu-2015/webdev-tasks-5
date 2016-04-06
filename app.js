@@ -17,7 +17,6 @@ app.use(morgan('dev'));
 app.use(express.static(publicDir));
 
 app.use(bodyParser.json());
-
 app.set('port', (process.env.PORT || 5000));
 
 require('./server/routes')(app);
