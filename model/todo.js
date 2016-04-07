@@ -54,7 +54,7 @@ class Todo {
 
     _checkIdTodo(index) {
         var keysTodo = Object.keys(this.todo);
-        return keysTodo.includes(index);
+        return keysTodo.indexOf(index) !== -1;
     };
 }
 
