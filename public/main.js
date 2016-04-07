@@ -62,11 +62,11 @@
 	
 	var _actions = __webpack_require__(172);
 	
-	var _reducers = __webpack_require__(175);
+	var _reducers = __webpack_require__(176);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(176);
+	__webpack_require__(177);
 	
 	var store = (0, _redux.createStore)(_reducers.todoApp);
 	
@@ -20706,6 +20706,10 @@
 	
 	var _formNote2 = _interopRequireDefault(_formNote);
 	
+	var _buttonAdd = __webpack_require__(175);
+	
+	var _buttonAdd2 = _interopRequireDefault(_buttonAdd);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = function (_ref) {
@@ -20716,6 +20720,7 @@
 	    var notes = _store$getState.notes;
 	    var selectedNoteName = _store$getState.selectedNoteName;
 	    var deletableNoteName = _store$getState.deletableNoteName;
+	    var addButtonClicked = _store$getState.addButtonClicked;
 	
 	    return _react2.default.createElement(
 	        'div',
@@ -20724,11 +20729,12 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'row' },
-	                value === selectedNoteName ? _react2.default.createElement(_formNote2.default, { value: value, store: store }) : null,
+	                value === selectedNoteName ? _react2.default.createElement(_formNote2.default, { value: value, store: store, type: 'change' }) : null,
 	                value === deletableNoteName ? _react2.default.createElement(_deletableNote2.default, { value: value, store: store }) : null,
 	                value !== selectedNoteName && value !== deletableNoteName ? _react2.default.createElement(_note2.default, { value: value, store: store }) : null
 	            );
-	        })
+	        }),
+	        addButtonClicked ? _react2.default.createElement(_formNote2.default, { store: store, type: 'add' }) : _react2.default.createElement(_buttonAdd2.default, { store: store })
 	    );
 	};
 
@@ -20820,6 +20826,12 @@
 	    };
 	};
 	
+	var selectAddButton = exports.selectAddButton = function selectAddButton() {
+	    return {
+	        type: 'SELECT_ADD_BUTTON'
+	    };
+	};
+	
 	var selectUnDeleteNote = exports.selectUnDeleteNote = function selectUnDeleteNote(note) {
 	    return {
 	        type: 'SELECT_UN_DELETE_NOTE',
@@ -20889,7 +20901,23 @@
 	    }
 	
 	    function onClickDelete(event) {
-	        store.dispatch((0, _actions.deleteNote)(value));
+	        var json = JSON.stringify({
+	            text: value
+	        });
+	        var xhr = new XMLHttpRequest();
+	        xhr.open('DELETE', '/api/notes', 'true');
+	        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+	        xhr.send(json);
+	        xhr.onreadystatechange = function () {
+	
+	            if (xhr.readyState != 4) return;
+	
+	            if (xhr.status != 200) {
+	                return;
+	            } else {
+	                store.dispatch((0, _actions.deleteNote)(value));
+	            }
+	        };
 	    }
 	
 	    return _react2.default.createElement(
@@ -20929,18 +20957,54 @@
 	exports.default = function (_ref) {
 	    var value = _ref.value;
 	    var store = _ref.store;
+	    var type = _ref.type;
 	
 	
 	    function onClick(event) {
 	        event.preventDefault();
 	        var newValue = event.target.parentNode.firstChild.value;
-	        store.dispatch((0, _actions.changeNote)(value, newValue));
+	        var method = void 0;
+	        var json = void 0;
+	        var xhr = new XMLHttpRequest();
+	
+	        if (type === 'change') {
+	            json = JSON.stringify({
+	                oldText: value,
+	                newText: newValue
+	            });
+	            method = 'POST';
+	        }
+	        if (type === 'add') {
+	            json = JSON.stringify({
+	                text: newValue
+	            });
+	            method = 'PUT';
+	        }
+	
+	        xhr.open(method, '/api/notes', 'true');
+	        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+	        xhr.send(json);
+	        xhr.onreadystatechange = function () {
+	
+	            if (xhr.readyState != 4) return;
+	
+	            if (xhr.status != 200) {
+	                return;
+	            } else {
+	                if (type === 'change') {
+	                    store.dispatch((0, _actions.changeNote)(value, newValue));
+	                }
+	                if (type === 'add') {
+	                    store.dispatch((0, _actions.addNote)(newValue));
+	                }
+	            }
+	        };
 	    }
 	
 	    return _react2.default.createElement(
 	        'form',
 	        { className: 'change-form' },
-	        _react2.default.createElement('textarea', { defaultValue: value }),
+	        _react2.default.createElement('textarea', { defaultValue: value, placeholder: 'Введите текст записи...' }),
 	        _react2.default.createElement(
 	            'button',
 	            { className: 'form-button_submit', onClick: onClick },
@@ -20951,6 +21015,40 @@
 
 /***/ },
 /* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _actions = __webpack_require__(172);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (_ref) {
+	    var store = _ref.store;
+	
+	
+	    function onClick(event) {
+	        event.preventDefault();
+	        store.dispatch((0, _actions.selectAddButton)());
+	    }
+	
+	    return _react2.default.createElement(
+	        'button',
+	        { className: 'button-add', onClick: onClick },
+	        'Добавить'
+	    );
+	};
+
+/***/ },
+/* 176 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20958,86 +21056,86 @@
 	var initialState = {
 	    notes: [],
 	    selectedNoteName: null,
-	    deletableNoteName: null
+	    deletableNoteName: null,
+	    addButtonClicked: false
 	};
 	
 	exports.todoApp = function (state, action) {
 	    state = state || initialState;
 	    var notesCopy = void 0;
-	    var json = void 0;
 	    var idx = void 0;
 	
 	    switch (action.type) {
 	        case 'ADD_NOTE':
+	            if (!action.note) {
+	                return {
+	                    notes: state.notes,
+	                    selectedNoteName: null,
+	                    deletableNoteName: null,
+	                    addButtonClicked: false
+	                };
+	            }
 	            return {
 	                notes: state.notes.concat([action.note]),
 	                selectedNoteName: state.selectedNoteName,
-	                deletableNoteName: state.deletableNoteName
+	                deletableNoteName: state.deletableNoteName,
+	                addButtonClicked: false
 	            };
 	        case 'SELECT_CHANGE_NOTE':
 	            return {
 	                notes: state.notes,
 	                selectedNoteName: action.note,
-	                deletableNoteName: state.deletableNoteName
+	                deletableNoteName: state.deletableNoteName,
+	                addButtonClicked: state.addButtonClicked
+	            };
+	        case 'SELECT_ADD_BUTTON':
+	            return {
+	                notes: state.notes,
+	                selectedNoteName: state.selectedNoteName,
+	                deletableNoteName: action.note,
+	                addButtonClicked: true
 	            };
 	        case 'SELECT_DELETE_NOTE':
 	            return {
 	                notes: state.notes,
 	                selectedNoteName: state.selectedNoteName,
-	                deletableNoteName: action.note
+	                deletableNoteName: action.note,
+	                addButtonClicked: state.addButtonClicked
 	            };
 	        case 'SELECT_UN_DELETE_NOTE':
 	            return {
 	                notes: state.notes,
 	                selectedNoteName: state.selectedNoteName,
-	                deletableNoteName: null
+	                deletableNoteName: null,
+	                addButtonClicked: state.addButtonClicked
 	            };
 	        case 'CHANGE_NOTE':
-	            json = JSON.stringify({
-	                oldText: action.oldValue,
-	                newText: action.newValue
-	            });
-	
-	            fetch('/api/notes', {
-	                method: 'POST',
-	                headers: {
-	                    'Content-type': 'application/json; charset=utf-8'
-	                },
-	                body: json
-	            }).then(function (response) {
-	                console.log(response.status);
-	            });
-	
+	            if (!action.newValue) {
+	                return {
+	                    notes: state.notes,
+	                    selectedNoteName: null,
+	                    deletableNoteName: null,
+	                    addButtonClicked: state.addButtonClicked
+	                };
+	            }
 	            notesCopy = state.notes.slice();
 	            idx = notesCopy.indexOf(action.oldValue);
 	            notesCopy[idx] = action.newValue;
 	            return {
 	                notes: notesCopy,
 	                selectedNoteName: null,
-	                deletableNoteName: null
+	                deletableNoteName: null,
+	                addButtonClicked: state.addButtonClicked
 	            };
 	        case 'DELETE_NOTE':
-	            json = JSON.stringify({
-	                text: action.note
-	            });
-	
-	            fetch('/api/notes', {
-	                method: 'DELETE',
-	                headers: {
-	                    'Content-type': 'application/json; charset=utf-8'
-	                },
-	                body: json
-	            }).then(function (response) {
-	                console.log(response.status);
-	            });
-	
 	            notesCopy = state.notes.slice();
 	            idx = notesCopy.indexOf(action.note);
 	            notesCopy.splice(idx, 1);
 	            return {
 	                notes: notesCopy,
 	                selectedNoteName: null,
-	                deletableNoteName: null
+	                deletableNoteName: null,
+	                addButtonClicked: state.addButtonClicked
 	            };
 	        default:
 	            return state;
@@ -21045,7 +21143,7 @@
 	};
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

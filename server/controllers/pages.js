@@ -25,13 +25,18 @@ exports.changeNote = (req, res) => {
     if (idx < 0) {
         res.sendStatus(417);
     } else {
-        notes[idx] = req.body.newText;
+        // Проверка, что не пустая запись
+        if (req.body.newText) {
+            notes[idx] = req.body.newText;
+        }
         res.sendStatus(200);
     }
 };
 
 exports.addNote = (req, res) => {
-    notes.push(req.body.text);
+    if (req.body.text) {
+        notes.push(req.body.text);
+    }
     res.sendStatus(200);
 };
 

@@ -19,6 +19,12 @@ export const selectDeleteNote = note => {
     };
 };
 
+export const selectAddButton = () => {
+    return {
+        type: 'SELECT_ADD_BUTTON'
+    };
+};
+
 export const selectUnDeleteNote = note => {
     return {
         type: 'SELECT_UN_DELETE_NOTE',

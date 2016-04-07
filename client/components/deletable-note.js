@@ -27,7 +27,24 @@ export default ({value, store}) => {
     }
 
     function onClickDelete (event) {
-        store.dispatch(deleteNote(value));
+        const json = JSON.stringify({
+            text: value
+        });
+        const xhr = new XMLHttpRequest();
+        xhr.open('DELETE', '/api/notes', 'true');
+        xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        xhr.send(json);
+        xhr.onreadystatechange = function() {
+
+            if (xhr.readyState != 4) return;
+
+            if (xhr.status != 200) {
+                return;
+            } else {
+                store.dispatch(deleteNote(value));
+            }
+
+        }
     }
 
     return (

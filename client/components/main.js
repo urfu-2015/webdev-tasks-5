@@ -2,15 +2,16 @@ import React from 'react';
 import Note from './note';
 import DeletableNote from './deletable-note';
 import FormNote from './form-note';
+import ButtonAdd from './button-add';
 
 export default ({store}) => {
-    const  {notes, selectedNoteName, deletableNoteName} = store.getState();
+    const  {notes, selectedNoteName, deletableNoteName, addButtonClicked} = store.getState();
     return (
         <div className="container">
             {notes.map(value => (
                 <div className="row">
                     {(value === selectedNoteName) ?
-                        <FormNote value={value} store={store} />
+                        <FormNote value={value} store={store} type="change" />
                         : null
                     }
                     {(value === deletableNoteName) ?
@@ -23,6 +24,11 @@ export default ({store}) => {
                     }
                 </div>
             ))}
+            {addButtonClicked ?
+                <FormNote store={store} type="add" />
+                :
+                <ButtonAdd store={store} />
+            }
         </div>
     );
 }
