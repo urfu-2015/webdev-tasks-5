@@ -8,7 +8,7 @@
     </head>
     <body>
         <label class="refresh">
-            <img src="/animated.gif" alt="">
+            <img src="/animated.gif" alt="" class="refresh__img">
         </label>
         <header>
             <h1>TODO-хи</h1>
@@ -18,14 +18,14 @@
                 {{#if tasks.length}}
                     {{#each tasks}}
                     <div>
-                        <div class="list__form">
+                        <form method="post" action="/deletions" class="list__form list__form_visible">
                             <div class="list__task">{{name}}</div>
                             <input type="image" src="/trash.png" class="list__trash">
-                        </div>
-                        <div class="list__fix">
+                        </form>
+                        <form class="list__fix">
                             <textarea class="list__text">{{name}}</textarea>
                             <input type="submit" value="Сохранить" class="list__saving">
-                        </div>
+                        </form>
                     </div>
                     {{/each}}
                 {{^}}

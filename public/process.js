@@ -7,8 +7,8 @@ for (var i = 0; i < saveButtons.length; i++) {
         var fix = this.parentElement;
         var task = fix.parentElement;
         var form = task.children[0];
-        form.style.display = 'block';
-        fix.style.display = 'none';
+        form.classList.add('list__form_visible');
+        fix.classList.remove('list__fix_visible');
         var index = 0;
         var list = task.parentElement;
         for (var i = 0; i < list.children.length; i++) {
@@ -18,7 +18,11 @@ for (var i = 0; i < saveButtons.length; i++) {
             }
         }
         var body = index + ',' + fix.children[0].value;
-        sendRequest(body, '/updates');
+        var options = {
+            method: 'post',
+            body: body
+        };
+        sendRequest('/updates', options);
     }, false);
 }
 
@@ -38,18 +42,18 @@ for (var i = 0; i < tasks.length; i++) {
         var distanceX = Math.abs(end.pageX - start.pageX);
         if (distanceX > 20) {
             if (end.pageX < start.pageX) {
-                this.style.transform = 'translateX(-50px)';
-                trash.style.display = 'inline-block';
+                this.classList.add('list__task_shift');
+                trash.classList.add('list__trash_visible');
             }
             if (end.pageX > start.pageX) {
-                this.style.transform = 'translateX(0px)';
-                trash.style.display = 'none';
+                this.classList.remove('list__task_shift');
+                trash.classList.remove('list__trash_visible');
             }
         } else {
             var form = this.parentElement;
             var fix = form.parentElement.children[1];
-            form.style.display = 'none';
-            fix.style.display = 'block';
+            form.classList.remove('list__form_visible');
+            fix.classList.add('list__fix_visible');
         }
     }, false);
 }
@@ -64,14 +68,18 @@ document.addEventListener('touchend', function(event) {
     globalEnd = event.changedTouches[0];
     var refresh = document.getElementsByClassName('refresh')[0];
     if (globalEnd.pageY - globalStart.pageY > 20) {
-        document.body.style.transform = 'translateY(30px)';
-        refresh.style.display = 'inline-block';
+        document.body.classList.add('body_shift_down');
+        refresh.classList.add('refresh_visible');
         var list = getListTasks();
         var cb = function() {
-            refresh.style.display = 'none';
-            document.body.style.transform = 'translateY(0px)';
+            refresh.classList.remove('refresh_visible');
+            document.body.classList.remove('body_shift_down');
         };
-        sendRequest(list, '/', cb);
+        var options = {
+            method: 'post',
+            body: list.join()
+        };
+        sendRequest('/', options, cb);
     }
 }, false);
 
@@ -90,28 +98,25 @@ for (var i = 0; i < trashs.length; i++) {
             }
         }
         task.style.display = 'none';
-        sendRequest(index, '/deletions');
+        var options = {
+            method: 'post',
+            body: index.toString()
+        };
+        sendRequest('/deletions', options);
     }, false);
 }
 
-function sendRequest(body, url, cb) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('post', url, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) {
-            return;
-        }
-        if (xhr.status != 200) {
-            console.log(xhr.statusText);
-        } else {
-            document.body.innerHTML = xhr.responseText;
-            if (typeof cb === 'function') {
-                cb();
-            }
-        }
-    }
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.send(body);
+function sendRequest(url, options, cb) {
+    options['headers'] = {'Content-type': 'application/x-www-form-urlencoded'};
+    fetch(url, options)
+        .then(function(response) {
+            return response.text();
+        })
+        .then(function(body) {
+            document.body.innerHTML = body;
+        })
+        .then(cb)
+        .catch(console.error);
 }
 
 function getListTasks() {

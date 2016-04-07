@@ -28,8 +28,11 @@ class Task {
         tasks.splice(index, 1);
     };
 
-    static sortingTasks(data) {
-        tasks = data.slice();
+    static getSortingTasks(oldTasks) {
+        var sorted = tasks.sort(function (elem1, elem2) {
+            return oldTasks.indexOf(elem1.name) > oldTasks.indexOf(elem2.name);
+        });
+        return sorted;
     };
 }
 

@@ -5,6 +5,11 @@ body
     transition: all .8s ease;
 }
 
+.body_shift_down
+{
+    transform: translateY(30px);
+}
+
 h1
 {
     text-align: center;
@@ -18,7 +23,24 @@ h1
 
 .list__form
 {
+    display: none;
     position: relative;
+}
+
+.list__fix
+{
+    display: none;
+    position: relative;
+    border: 1px solid #a0a0a0;
+    width: 90%;
+    margin: auto;
+    margin-bottom: 4px;
+    text-align: right;
+}
+
+.list__form_visible, .list__fix_visible
+{
+    display: block;
 }
 
 .list__task
@@ -34,6 +56,11 @@ h1
     transition: all .8s ease;
 }
 
+.list__task_shift
+{
+    transform: translateX(-50px);
+}
+
 .list__trash
 {
     position: absolute;
@@ -42,15 +69,23 @@ h1
     height: 40px;
 }
 
-.list__fix
+.refresh
 {
     display: none;
-    position: relative;
-    border: 1px solid #a0a0a0;
-    width: 90%;
-    margin: auto;
-    margin-bottom: 4px;
-    text-align: right;
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    margin: 0;
+}
+
+.refresh__img
+{
+    height: 100%;
+}
+
+.list__trash_visible, .refresh_visible
+{
+    display: inline-block;
 }
 
 .list__text, .list__saving
@@ -68,18 +103,4 @@ h1
 {
     text-align: center;
     margin: 5px;
-}
-
-.refresh
-{
-    display: none;
-    width: 100%;
-    height: 40px;
-    text-align: center;
-    margin: 0;
-}
-
-.refresh img
-{
-    height: 100%;
 }

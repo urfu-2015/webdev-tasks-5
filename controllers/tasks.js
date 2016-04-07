@@ -14,19 +14,20 @@ exports.addTask = (req, res) => {
 };
 
 exports.deleteTask = (req, res) => {
-    var index = parseInt(Object.keys(req.body)[0]);
-    Task.deleteTask(index);
-    res.render('index', {
-        tasks: Task.getAllTasks()
-    });
+    var index = parseInt(Object.keys(req.body)[0], 10);
+    if (!isNaN(index)) {
+        Task.deleteTask(index);
+    }
+    res.redirect('/');
 };
 
 exports.updateTask = (req, res) => {
-    var key = Object.keys(req.body)[0];
-    var indexComma = key.indexOf(',');
-    var index = parseInt(key.substring(0, indexComma));
-    var newText = key.substring(indexComma + 1, key.length);
-    Task.updateTask(index, newText);
+    var keys = Object.keys(req.body);
+    if (keys.length !== 0) {
+        var key = keys[0];
+        var indexAndText = key.split(',');
+        Task.updateTask(indexAndText[0], indexAndText[1]);
+    }
     res.render('index', {
         tasks: Task.getAllTasks()
     });
@@ -35,25 +36,21 @@ exports.updateTask = (req, res) => {
 exports.refresh = (req, res) => {
     var texts = Object.keys(req.body)[0];
     var oldTasks = [];
-    var oldTasksText = [];
     var index = texts.indexOf(',');
     if (index !== -1) {
         while (index !== -1) {
             var text = texts.substring(0, index);
-            oldTasks.push({name: text});
-            oldTasksText.push(text);
+            oldTasks.push(text);
             texts = texts.substring(index + 1, texts.length);
             index = texts.indexOf(',');
         }
     }
-    oldTasks.push({name: texts});
-    oldTasksText.push(texts);
-    var newTasks = Task.getAllTasks().filter(function (elem) {
-        return oldTasksText.indexOf(elem.name) === -1;
-    });
-    var newTasks = newTasks.concat(oldTasks);
-    Task.sortingTasks(newTasks);
+    oldTasks.push(texts);
+    var tasks = Task.getAllTasks();
+    if (oldTasks.length !== tasks.length) {
+        tasks = Task.getSortingTasks(oldTasks);
+    }
     res.render('index', {
-        tasks: newTasks
+        tasks: tasks
     });
 };
