@@ -7,11 +7,9 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-    context: path.join(__dirname, 'server/bundles'),
+    context: path.join(__dirname, 'server/pages'),
     entry: {
-        main: './main/main.js',
-        note: './note/note.js',
-        notes: './notes/notes.js'
+        main: './main/main.js'
     },
     devtool: 'source-map',
     output: {
