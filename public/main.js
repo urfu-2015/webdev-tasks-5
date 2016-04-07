@@ -20505,12 +20505,16 @@
 	        var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
 	        var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
 	        if (xAbs > 20 || yAbs > 20) {
+	            // Свайп вниз
 	            if (yAbs > xAbs) {
+	                event.preventDefault();
 	                if (finalPoint.pageY > initialPoint.pageY) {
 	                    (function () {
+	                        // Сделали гифку видимой
 	                        var reloadGIF = document.querySelector('.loader');
 	                        reloadGIF.className = 'loader';
 	
+	                        // Перезаргужаем записи
 	                        setTimeout(function () {
 	                            var xhr = new XMLHttpRequest();
 	                            xhr.open('GET', '/api/notes', 'true');
@@ -20522,7 +20526,10 @@
 	                                if (xhr.status != 200) {
 	                                    return;
 	                                } else {
+	                                    // Делаем гифку неотображаемой
 	                                    reloadGIF.className = 'loader invisible';
+	
+	                                    // Рисуем записи
 	                                    var data = JSON.parse(xhr.responseText);
 	                                    data.notes.forEach(function (note) {
 	                                        store.dispatch((0, _actions.addNote)(note));

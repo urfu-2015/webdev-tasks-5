@@ -20,11 +20,15 @@ export default ({store}) => {
         let xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
         var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
         if (xAbs > 20 || yAbs > 20) {
+            // Свайп вниз
             if (yAbs > xAbs) {
+                event.preventDefault();
                 if (finalPoint.pageY > initialPoint.pageY) {
+                    // Сделали гифку видимой
                     const reloadGIF = document.querySelector('.loader');
                     reloadGIF.className = 'loader';
 
+                    // Перезаргужаем записи
                     setTimeout(() => {
                         const xhr = new XMLHttpRequest();
                         xhr.open('GET', '/api/notes', 'true');
@@ -36,7 +40,10 @@ export default ({store}) => {
                             if (xhr.status != 200) {
                                 return;
                             } else {
+                                // Делаем гифку неотображаемой
                                 reloadGIF.className = 'loader invisible';
+
+                                // Рисуем записи
                                 const data = JSON.parse(xhr.responseText);
                                 data.notes.forEach(note => {
                                     store.dispatch(addNote(note));
