@@ -12,7 +12,7 @@ exports.todoApp = (state, action) => {
 
     switch (action.type) {
         case 'ADD_NOTE':
-            if (!action.note) {
+            if ((!action.note) || (state.notes.indexOf(action.note) >= 0)) {
                 return {
                     notes: state.notes,
                     selectedNoteName: null,
@@ -20,8 +20,10 @@ exports.todoApp = (state, action) => {
                     addButtonClicked: false
                 };
             }
+            notesCopy = state.notes.slice();
+            notesCopy.unshift(action.note);
             return {
-                notes: state.notes.concat([action.note]),
+                notes: notesCopy,
                 selectedNoteName: state.selectedNoteName,
                 deletableNoteName: state.deletableNoteName,
                 addButtonClicked: false

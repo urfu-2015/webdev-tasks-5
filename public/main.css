@@ -140,4 +140,14 @@ form.change-form textarea
     display: block;
 }
 
+.loader
+{
+    margin: 0 auto;
+}
+
+.loader img
+{
+    width: 50px;
+}
+
 /*# sourceMappingURL=main.map*/
