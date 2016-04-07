@@ -8,7 +8,6 @@ function eventListenerForNewNote() {
     var inputArea = document.getElementsByClassName("input-area")[0];
     submitButton.addEventListener('touchstart', function(event) {
         submitButton.classList.add('touched');
-        // inputArea.classList.remove('hidden');
     }, false);
     submitButton.addEventListener('touchend', function(event) {
         var isTouched = submitButton.classList.contains('touched');
@@ -16,10 +15,9 @@ function eventListenerForNewNote() {
         newNote.setAttribute('class', 'note');
         //todo add listener, r
         newNote.innerHTML = inputArea.value;
-        container.appendChild(newNote);
+        container.insertBefore(newNote, container.firstChild);
         if (isTouched) {
             submitButton.classList.remove('touched');
-            // nputArea.classList.add('hidden');
             var xhr = new XMLHttpRequest();
             xhr.open('POST', '/', true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -31,8 +29,12 @@ function eventListenerForNewNote() {
 function addMoveReaction() {
     var container = document.getElementsByClassName('notes-container')[0];
     const body = document.getElementsByTagName('body')[0];
+    var startX = 0;
+    var startY = 0;
+    var endX = 0;
+    var endY = 0;
     body.addEventListener('touchstart', function (event) {
-        touch = event.changedTouches[0];
+        var touch = event.changedTouches[0];
         startX = touch.pageX;
         startY = touch.pageY;
     })
@@ -42,19 +44,21 @@ function addMoveReaction() {
         endX = touch.pageX;
         endY = touch.pageY;
         if ((endY - startY) > 20) {
-            var allNotes = document.getElementsByClassName('note');
-            var container = document.getElementsByClassName('notes-container')[0];
-            if (allNotes.length > 0) {
-                for (var noteIndex in allNotes) {
-                    container.removeChild(allNotes[noteIndex]);
-                }
+            if (!body.classList.contains('refresh')) {
+                body.classList.add('refresh');
             }
+        }
+    })
+    body.addEventListener('touchend', function (event) {
+        if ((endY - startY) > 20) {
+            body.classList.remove('refresh');
             reloadNotes();
         }
     })
 }
 
 function addDeleteEvent (note) {
+    console.log('add delete event');
     var container = document.getElementsByClassName('notes-container')[0];
     note.addEventListener('touchstart', function (event) {
         touch = event.changedTouches[0];
@@ -66,17 +70,17 @@ function addDeleteEvent (note) {
         touch = touches[touches.length - 1];
         endX = touch.pageX;
         endY = touch.pageY;
-        if ((startX - endX) > 20) {
+        if ((startX - endX) > 20 && Math.abs(startY - endY) < 10) {
             note.classList.add('for-deletion');
         }
     })
     note.addEventListener('touchend', function (event) {
-        if ((startX - endX) > 20) {
+        if ((startX - endX) > 20 && Math.abs(startY - endY) < 10) {
             container.removeChild(note);
             var xhr = new XMLHttpRequest();
             xhr.open('DELETE', '/', true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send('note=' + note.innerHTML);
+            xhr.send('text=' + note.innerHTML);
         }
     })
 }
@@ -86,14 +90,19 @@ function reloadNotes() {
     xhr.open('GET', '/notes', true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState !== 4) {
-            console.log('ret');
             return;
         }
         if (xhr.status != 200) {
-            console.log(xhr.status);
         } else {
+            var allNotes = document.getElementsByClassName('note');
+            var container = document.getElementsByClassName('notes-container')[0];
+            if (allNotes.length > 0) {
+                for (var noteIndex = 0; noteIndex < allNotes.length; noteIndex++) {
+                    console.log(allNotes[noteIndex]);
+                    container.removeChild(allNotes[noteIndex]);
+                }
+            }
             var notes = JSON.parse(xhr.responseText).notes;
-            console.log(notes);
             for (var note in notes) {
                 var container = document.getElementsByClassName('notes-container')[0];
                 var newNote = document.createElement('div');
@@ -101,12 +110,16 @@ function reloadNotes() {
                 //todo add listener, r
                 newNote.innerHTML = notes[note].text;
                 container.appendChild(newNote);
+                addDeleteEvent(newNote);
             }
         }
     }
     xhr.send();
 };
 
-reloadNotes();
-eventListenerForNewNote();
-addMoveReaction();
+
+window.onload = () => {
+    reloadNotes();
+    eventListenerForNewNote();
+    addMoveReaction();
+}

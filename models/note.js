@@ -8,8 +8,13 @@ class Note {
     }
 
     save() {
-        memoryStorage.push(this);
-        console.log(memoryStorage);
+        memoryStorage.unshift(this);
+    }
+
+    delete() {
+        var index = memoryStorage.indexOf(this);
+        memoryStorage.splice(index, 1);
+        return memoryStorage;
     }
 
     static find(name) {
@@ -21,4 +26,6 @@ class Note {
     }
 }
 
+var testNote = new Note({text: 'Test-note'});
+memoryStorage.push(testNote)
 module.exports = Note;

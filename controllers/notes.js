@@ -37,3 +37,9 @@ exports.create = (req, res) => {
     note.save();
     this.list(req, res);
 };
+
+exports.delete = (req, res) => {
+    console.log(req.body);
+    const note = new Note(req.body);
+    note.delete();
+}

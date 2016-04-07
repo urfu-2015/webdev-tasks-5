@@ -5,7 +5,7 @@ const notes = require('../controllers/notes');
 
 module.exports = function (app) {
     app.get('/notes', notes.list);
-    // app.get('/', notes.list);
+    app.delete('/', notes.delete);
     app.post('/', notes.create);
     app.all('*', pages.error404);
     app.use((err, req, res, next) => {
