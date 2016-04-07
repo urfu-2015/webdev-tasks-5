@@ -9,7 +9,7 @@ class Note {
     }
 
     save() {
-        memoryStorage.push(this);
+        memoryStorage.unshift(this);
     }
 
     static find(text) {

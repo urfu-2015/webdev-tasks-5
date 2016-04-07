@@ -96,8 +96,6 @@ function swipeToDelete(note, notes) {
                 isImage = false;
                 notes.removeChild(notes.lastChild);
             }
-        } else {
-            addEventListenerToNote(notes);
         }
     });
 
@@ -131,10 +129,11 @@ function insertAfter(elem, refElem, parents) {
 
 function addEventListenerToNote(note) {
     console.log('TOUCH ME');
-    note.addEventListener('touchstart', event => {
+    note.addEventListener('touchend', event => {
         let form = document.createElement('form');
         form = createForm(form, note.firstChild.innerHTML);
-        note.parentNode.replaceChild(form, note);
+        console.log(notes);
+        notes.replaceChild(form, note);
     });
 }
 
@@ -162,11 +161,13 @@ function addEventListenerUpdateInput(form, oldText) {
 
     submit.addEventListener('touchstart', event => {
         let oldValue = 'oldValue=' + oldText;
-        let newValue = 'newValue=' + input.value;
+        let innerHTML = input.value ? input.value : 'Название';
+        let newValue = 'newValue=' + innerHTML;
+        let text = oldValue + '&' + newValue;
 
-        createNote(input.value, '/update', oldValue + '&' + newValue);
-        swipeToDelete(noteText, note);
+        let note = createNote(innerHTML, '/update', text);
         form.parentNode.replaceChild(note, form);
+        reloadDocument();
     });
 }
 
@@ -176,9 +177,13 @@ addEventListenerCreateInput(inputs[0]);
 function addEventListenerCreateInput(input) {
     input.addEventListener('touchstart', event => {
         let inputText = document.getElementsByClassName('note_create__input')[0];
-        createNote(inputText.value, '/', 'text=' + inputText.value);
+        let newValue = inputText.value ? inputText.value : 'Название';
+        let text =  'text=' + newValue;
+
+        let note = createNote(newValue, '/', text);
+        notes.insertBefore(note, notes.firstChild);
         inputText.value = '';
-        swipeToDelete(noteText, note);
+        scroll(0,0);
     });
 }
 
@@ -189,10 +194,11 @@ function createNote(innerHTML, action, text) {
     noteText.className = 'noteText';
     noteText.innerHTML = innerHTML;
     note.appendChild(noteText);
-    notes.appendChild(note);
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', action, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.send(text);
+    swipeToDelete(noteText, note);
+    return note;
 }
