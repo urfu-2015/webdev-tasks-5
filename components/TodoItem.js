@@ -14,9 +14,6 @@ class TodoItem extends Component {
     componentWillMount() {
         //React.initializeTouchEvents(true);
         this.startPoint = {};
-        // this.nowPoint;
-        // this.ldelay;
-        // this.editFormTimer;
     }
 
     handleClick() {
@@ -33,8 +30,14 @@ class TodoItem extends Component {
     }
 
     handleTouchStart(event) {
-        //console.log(event.target);
+        console.log(event.currentTarget);
+        console.log(event.target);
         event.stopPropagation();
+        if (this.state.todoItemMovedLeft) {
+            if (event.target.className === 'todo') {
+                this.props.deleteTodo(this.props.todo.id);
+            }
+        }
         this.startPoint.x = event.changedTouches[0].pageX;
         this.startPoint.y = event.changedTouches[0].pageY;
         this.ldelay = new Date();
@@ -60,13 +63,6 @@ class TodoItem extends Component {
                 this.rightSwipeHandler.bind(this)(event);
             }
             this.startPoint = {x: this.nowPoint.pageX, y: this.nowPoint.pageY};
-        }
-        if (Math.abs(offset.y) > 350) {
-            if (offset.y > 0) {
-                console.log('Down swipe on touchmove');
-                //console.log(event);
-                //downSwipeHandler();
-            }
         }
     }
 
@@ -127,13 +123,10 @@ class TodoItem extends Component {
                  onTouchStart={this.handleTouchStart.bind(this)}
                  onTouchMove={this.handleTouchMove.bind(this)}
             >
-                <img id={imgId} className="todo__trashbox" onClick={() => deleteTodo(todo.id)} src="/static/trashbox.png"/>
+                <img id={imgId} className="todo__trashbox" src="/static/trashbox.png"/>
                 <article id={itemId} className={todoItemClass}>
                     {element}
                 </article>
-                <button className="destroy"
-                        onClick={() => deleteTodo(todo.id)}
-                />
             </div>
         )
     }
