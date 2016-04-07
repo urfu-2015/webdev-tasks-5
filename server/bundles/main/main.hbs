@@ -6,21 +6,13 @@
     <title>{{ page.title }}</title>
     <meta name="description" content="{{ meta.description }}">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    {{#if isDev}}
-        <link rel="stylesheet" href="/main.css">
-    {{else}}
-        <link rel="stylesheet" href="//lakate-todohi.surge.sh/main.css">
-    {{/if}}
+    <link rel="stylesheet" href="{{ host }}/main.css">
 </head>
 <body>
 
     <div class="update-progress"></div>
     <div id="root"></div>
 
-    {{#if isDev}}
-        <script src="/main.js"></script>
-    {{else}}
-        <script src="//lakate-todohi.surge.sh/main.js"></script>
-    {{/if}}
+    <script src="{{ host }}/main.js"></script>
 </body>
 </html>

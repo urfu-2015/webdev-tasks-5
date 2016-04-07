@@ -42,7 +42,7 @@ app.use((req, res, next) => {
         page: {
             title: 'ToDo-hi'
         },
-        isDev: argv.NODE_ENV === 'development'
+        host: (argv.NODE_ENV === 'development') ? '' : '//lakate-todohi.surge.sh'
     };
 
     next();

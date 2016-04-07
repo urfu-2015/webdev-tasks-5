@@ -19,16 +19,16 @@ exports.create = (req, res) => {
     const note = new Note(data);
     note.save();
 
-    res.send({task: note.task, id: note.id});
+    res.json({task: note.task, id: note.id});
 };
 
 exports.delete = (req, res) => {
     let id = req.body.id;
 
     Note.delete(id);
-    console.log(Note.findAll());
+    //console.log(Note.findAll());
 
-    res.send({id});
+    res.json({id});
 };
 
 exports.edit = (req, res) => {
@@ -37,5 +37,5 @@ exports.edit = (req, res) => {
 
     Note.edit(id, newText);
 
-    res.send({id, newText});
+    res.json({id, newText});
 };
