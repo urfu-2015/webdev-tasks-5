@@ -7,6 +7,21 @@ export const addTask = task => {
     };
 };
 
+export const editTask = taskId => {
+    return {
+        type: 'EDIT_TASK',
+        taskId
+    }
+};
+
+export const changeTask = (id, task) => {
+    return {
+        type: 'CHANGE_TASK',
+        id,
+        task
+    }
+};
+
 export const removeTask = task => {
     return {
         type: 'REMOVE_TASK',

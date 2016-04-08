@@ -4,7 +4,8 @@ const initialState = {
     tasks: [],
     isUpdating: false,
     isAddNewTaskFormVisible: false,
-    deleteButtonOnTask: null
+    deleteButtonOnTask: null,
+    editingTaskId: null
 };
 
 exports.taskApp = (state, action) => {
@@ -15,6 +16,13 @@ exports.taskApp = (state, action) => {
                 return state;
             }
             state.tasks = [action.task].concat(state.tasks);
+            return state;
+        case 'EDIT_TASK':
+            state.editingTaskId = action.taskId;
+            return state;
+        case 'CHANGE_TASK':
+            state.editingTaskId = null;
+            state.tasks.splice(state.tasks.map(task => task.id).indexOf(action.id), 1, action.task);
             return state;
         case 'REMOVE_TASK':
             state.tasks.splice(state.tasks
