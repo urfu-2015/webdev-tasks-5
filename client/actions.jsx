@@ -10,10 +10,11 @@ export const newRemark = () => {
     }
 };
 
-export const addRemark = remark => {
+export const addRemark = (remark, text) => {
     return {
         type: 'ADD_REMARK',
-        remark
+        remark,
+        text
     }
 };
 
@@ -24,10 +25,11 @@ export const selectRemark = remark => {
     }
 };
 
-export const updateRemark = remark => {
+export const updateRemark = (remark, text) => {
     return {
         type: 'UPDATE_REMARK',
-        remark
+        index: remark,
+        text
     }
 };
 
@@ -89,8 +91,9 @@ export function firstLoadRemarks() {
     }
 }*/
 
-export const chooseForDelete = (remark) => {
+export const chooseForDelete = (remark, diff) => {
     return {
+        diff,
         type: 'CHOOSE_FOR_DELETE',
         remark
     }

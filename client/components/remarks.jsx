@@ -11,7 +11,6 @@ import RemarkForm from './remarkForm.jsx';
 const Remarks = function ({store}) {
     //получили текущее состояние
     const {remarks, selectedRemark} = store.getState();
-    console.log(remarks);
     return (
         <div>
             <Header />

@@ -4,9 +4,7 @@
 
 import React from 'react';
 import ReactDom from 'react-dom';
-import {createStore} from 'redux';
-
-//import Remarks from '../../../client/components/remarks.jsx';
+import {createStore} from 'redux'
 import {newRemark, addRemark, changeOrder,
     chooseForDelete, deleteRemark, firstLoadRemarks,
     reloadRemarks, selectRemark, updateRemark} from '../../../client/actions.jsx';
@@ -22,9 +20,9 @@ function render() {
     );
 }
 
+//const store = applyMiddleware(thunk)(createStore)(remarkApp);
 const store = createStore(remarkApp);
-
-render(store);
+render();
 store.subscribe(render);
 
 
@@ -33,7 +31,7 @@ request('GET', '/api/remarks', (err, result) => {
         console.log(err);
     } else {
         store.dispatch(firstLoadRemarks(result.data));
-        render();
+        //render();
     }
 });
 
@@ -82,12 +80,12 @@ function insertAfter(newNode, referenceNode) {
 }
 
 //для Pull to Refresh
-var startPointDoc = {};
-var startTimeDoc;
+let startPointDoc = {};
+let startTimeDoc;
 document.addEventListener('touchstart', function (event) {
     startTimeDoc = new Date();
-    startPointDoc.x = event.pageX;
-    startPointDoc.y = event.pageY;
+    startPointDoc.x = event.changedTouches[0].pageX;
+    startPointDoc.y = event.changedTouches[0].pageY;
 });
 
 document.addEventListener('touchmove', function (event) {
@@ -95,17 +93,26 @@ document.addEventListener('touchmove', function (event) {
 });
 
 document.addEventListener('touchend', function (event) {
-    var nowPoint = event.changedTouches[0];
-    var xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
-    var yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
-    var endTime = new Date();
-    console.log(xAbs, yAbs);
+    let nowPoint = event.changedTouches[0];
+    let xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
+    let yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
+    let endTime = new Date();
+    console.log(startPointDoc.x, nowPoint.pageX);
     if ((yAbs > 10) && (endTime.getTime()-startTimeDoc.getTime()) > 200) {
         if (nowPoint.pageY > startPointDoc.y) {
             console.log('refresh');
             event.preventDefault();
             event.stopPropagation();
+            //let action = reloadRemarks();
+            //store.dispatch(action);
+            request('GET', '/api/remarks', (err, result) => {
+                if (err != undefined) {
+                    console.log(err);
+                } else {
+                    store.dispatch(firstLoadRemarks(result.data));
+                    //render();
+                }
+            });
         }
     }
 });
-

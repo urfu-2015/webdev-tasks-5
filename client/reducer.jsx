@@ -5,10 +5,13 @@
 //режим отображения
 const modes = {redo: 'redo', delete: 'delete', nan:'nan'};
 
+exports.modes = modes;
+
 const initialState = {
     remarks: [],
     selectedRemark: null,
-    mode: modes.nan
+    mode: modes.nan,
+    diff: 0,
 };
 
 exports.remarkApp = (state = initialState, action) => {
@@ -18,31 +21,39 @@ exports.remarkApp = (state = initialState, action) => {
             return {
                 remarks: state.remarks.slice(),
                 selectedRemark: action.remark,
-                mode: modes.redo
+                mode: modes.redo,
+                diff: 0
             };
         case 'ADD_REMARK':
             return {
                 remarks: state.remarks.concat([action.remark]),
                 selectedRemarks: null,
-                mode: modes.nan
+                mode: modes.nan,
+                diff: 0,
+                newText: action.text
             };
         case 'SELECT_REMARK':
             return {
                 remarks: state.remarks,
                 selectedRemark: action.remark,
-                mode: modes.redo
+                mode: modes.redo,
+                diff: 0
             };
         case 'UPDATE_REMARK':
             return {
                 remarks: state.remarks,
                 selectedRemark: null,
-                mode: modes.nan
+                mode: modes.nan,
+                diff: 0,
+                newText: action.text,
+                indexUpdatedRemark: action.index
             };
         case 'CHOOSE_FOR_DELETE':
             return {
                 remarks: state.remarks,
                 selectedRemark: action.remark,
-                mode: modes.delete
+                mode: modes.delete,
+                diff: action.diff
             };
         case 'DELETE_REMARK':
             return {
@@ -52,20 +63,19 @@ exports.remarkApp = (state = initialState, action) => {
                     }
                 }),
                 selectedRemark: null,
-                mode: modes.nan
+                mode: modes.nan,
+                diff: 0
             };
         case 'CHANGE_ORDER':
             return {
             };
         case 'RELOAD_REMARKS':
-            return {
-
-            };
         case 'FIRST_LOAD_REMARKS':
             return {
                 remarks: action.remarks,
                 selectedRemark: null,
-                mode: modes.nan
+                mode: modes.nan,
+                diff: 0
             };
         default:
             return state;
