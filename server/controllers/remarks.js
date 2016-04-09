@@ -12,7 +12,7 @@ Remarks.preload(
 );
 
 
-module.exports.getRemarks = function(req, res, next) {
+module.exports.getRemarks = function(req, res) {
     Remarks.getAll(function (err, data) {
         if (err != undefined) {
             console.log(err);
@@ -22,7 +22,8 @@ module.exports.getRemarks = function(req, res, next) {
             stylesheets: [
                 'layout',
                 'remarks',
-                'remarkForm'
+                'remarkForm',
+                'reloadPicture'
             ],
             scripts: [
                 'remarks'
@@ -33,7 +34,7 @@ module.exports.getRemarks = function(req, res, next) {
 
 };
 
-module.exports.getRemarksJSON = function(req, res, next) {
+module.exports.getRemarksJSON = function(req, res) {
     Remarks.getAll(function (err, data) {
         if (err != undefined) {
             console.log(err);
@@ -45,7 +46,7 @@ module.exports.getRemarksJSON = function(req, res, next) {
     })
 };
 
-module.exports.newRemark = function(req, res, next) {
+module.exports.newRemark = function(req, res) {
     console.log(req.body.text);
     Remarks.create(req.body.text, function (err, data) {
         if (err != undefined) {
@@ -55,7 +56,7 @@ module.exports.newRemark = function(req, res, next) {
     });
 };
 
-module.exports.redoRemark = function(req, res, next) {
+module.exports.redoRemark = function(req, res) {
     Remarks.redo(req.params.id, req.body.text, function (err) {
         if (err != undefined) {
             console.log(err);
@@ -65,12 +66,12 @@ module.exports.redoRemark = function(req, res, next) {
     });
 };
 
-module.exports.deleteRemark = function(req, res, next) {
-    Remarks.remove(req.params.id, function (err, data) {
+module.exports.deleteRemark = function(req, res) {
+    Remarks.remove(req.params.id, function (err) {
         if (err != undefined) {
             console.log(err);
         } else {
-            res.send();
+            res.send({});
         }
     });
 };

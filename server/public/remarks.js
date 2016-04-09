@@ -133,42 +133,6 @@
 	function insertAfter(newNode, referenceNode) {
 	    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 	}
-	
-	//для Pull to Refresh
-	var startPointDoc = {};
-	var startTimeDoc = void 0;
-	document.addEventListener('touchstart', function (event) {
-	    startTimeDoc = new Date();
-	    startPointDoc.x = event.changedTouches[0].pageX;
-	    startPointDoc.y = event.changedTouches[0].pageY;
-	});
-	
-	document.addEventListener('touchmove', function (event) {});
-	
-	document.addEventListener('touchend', function (event) {
-	    var nowPoint = event.changedTouches[0];
-	    var xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
-	    var yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
-	    var endTime = new Date();
-	    console.log(startPointDoc.x, nowPoint.pageX);
-	    if (yAbs > 10 && endTime.getTime() - startTimeDoc.getTime() > 200) {
-	        if (nowPoint.pageY > startPointDoc.y) {
-	            console.log('refresh');
-	            event.preventDefault();
-	            event.stopPropagation();
-	            //let action = reloadRemarks();
-	            //store.dispatch(action);
-	            (0, _request2.default)('GET', '/api/remarks', function (err, result) {
-	                if (err != undefined) {
-	                    console.log(err);
-	                } else {
-	                    store.dispatch((0, _actions.firstLoadRemarks)(result.data));
-	                    //render();
-	                }
-	            });
-	        }
-	    }
-	});
 
 /***/ },
 /* 1 */
@@ -20587,6 +20551,12 @@
 	        remarks: remarks
 	    };
 	};
+	
+	var startReload = exports.startReload = function startReload() {
+	    return {
+	        type: 'START_RELOAD'
+	    };
+	};
 	//для ассинхронной фунции
 	
 	/*function requestRemarks() {
@@ -20637,7 +20607,7 @@
 	 */
 	
 	//режим отображения
-	var modes = { redo: 'redo', delete: 'delete', nan: 'nan' };
+	var modes = { redo: 'redo', delete: 'delete', nan: 'nan', reload: 'reload' };
 	
 	exports.modes = modes;
 	
@@ -20713,6 +20683,13 @@
 	                mode: modes.nan,
 	                diff: 0
 	            };
+	        case 'START_RELOAD':
+	            return {
+	                remarks: state.remarks,
+	                selectedRemark: null,
+	                mode: modes.reload,
+	                diff: 0
+	            };
 	        default:
 	            return state;
 	    }
@@ -20752,12 +20729,84 @@
 	
 	var _remarkForm2 = _interopRequireDefault(_remarkForm);
 	
+	var _reloadPicture = __webpack_require__(179);
+	
+	var _reloadPicture2 = _interopRequireDefault(_reloadPicture);
+	
+	var _reducer = __webpack_require__(171);
+	
+	var _request = __webpack_require__(176);
+	
+	var _request2 = _interopRequireDefault(_request);
+	
+	var _actions = __webpack_require__(170);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	//для Pull to Refresh
 	/**
 	 * Created by Надежда on 03.04.2016.
 	 */
+	var startPointDoc = {};
+	var startTimeDoc = void 0;
+	function touchStartHandler(store) {
+	    return function (event) {
+	        startTimeDoc = new Date();
+	        startPointDoc.x = event.changedTouches[0].pageX;
+	        startPointDoc.y = event.changedTouches[0].pageY;
+	    };
+	}
 	
+	function touchMoveHandler(store) {
+	    return function (event) {
+	        var nowPoint = event.changedTouches[0];
+	        var xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
+	        var yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
+	        var endTime = new Date();
+	        if (yAbs > 10 && endTime.getTime() - startTimeDoc.getTime() > 200) {
+	            if (nowPoint.pageY > startPointDoc.y) {
+	                var action = (0, _actions.startReload)();
+	                store.dispatch(action);
+	            }
+	        }
+	    };
+	}
+	
+	function touchEndHandler(store) {
+	    return function (event) {
+	        var nowPoint = event.changedTouches[0];
+	        var xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
+	        var yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
+	        var endTime = new Date();
+	        if (yAbs > 10 && endTime.getTime() - startTimeDoc.getTime() > 200) {
+	            if (nowPoint.pageY > startPointDoc.y) {
+	                console.log('refresh');
+	                event.preventDefault();
+	                event.stopPropagation();
+	                (0, _request2.default)('GET', '/api/remarks', function (err, result) {
+	                    if (err != undefined) {
+	                        console.log(err);
+	                    } else {
+	                        store.dispatch((0, _actions.firstLoadRemarks)(result.data));
+	                        //render();
+	                    }
+	                });
+	            }
+	        }
+	    };
+	}
+	
+	function defineStyleForReload(mode) {
+	    if (mode === _reducer.modes.reload) {
+	        return {
+	            display: 'block'
+	        };
+	    } else {
+	        return {
+	            display: 'none'
+	        };
+	    }
+	}
 	
 	var Remarks = function Remarks(_ref) {
 	    var store = _ref.store;
@@ -20768,10 +20817,15 @@
 	
 	    var remarks = _store$getState.remarks;
 	    var selectedRemark = _store$getState.selectedRemark;
+	    var mode = _store$getState.mode;
 	
+	    var styleForReload = defineStyleForReload(mode);
 	    return _react2.default.createElement(
 	        'div',
-	        null,
+	        { onTouchStart: touchStartHandler(store),
+	            onTouchMove: touchMoveHandler(store),
+	            onTouchEnd: touchEndHandler(store) },
+	        _react2.default.createElement(_reloadPicture2.default, { styleFor: styleForReload }),
 	        _react2.default.createElement(_header2.default, null),
 	        _react2.default.createElement(
 	            'main',
@@ -21074,6 +21128,16 @@
 	    return result;
 	}
 	
+	function defineStyleDeleteButton(selected, current, mode) {
+	    var result = {};
+	    if (selected === current && mode === _reducer.modes.delete) {
+	        result['display'] = 'block';
+	    } else {
+	        result['display'] = 'none';
+	    }
+	    return result;
+	}
+	
 	var Remark = function Remark(_ref) {
 	    var text = _ref.text;
 	    var store = _ref.store;
@@ -21094,9 +21158,10 @@
 	    //console.log(selectedRemark, index, text, newText, indexUpdatedRemark);
 	    var styleForRemark = defineStyleRemark(selectedRemark, index, mode, diff);
 	    var styleForTextArea = defineStyleTextBox(selectedRemark, index, mode);
+	    var styleForDeleteButton = defineStyleDeleteButton(selectedRemark, index, mode);
 	    //console.log(styleForRemark, styleForTextArea);
 	    return _react2.default.createElement(
-	        'div',
+	        'li',
 	        { className: 'remarkContainer' },
 	        _react2.default.createElement(
 	            'div',
@@ -21110,7 +21175,7 @@
 	    );
 	};
 	
-	//
+	//<ReloadPicture styleFor={styleForDeleteButton} />
 	exports.default = Remark;
 
 /***/ },
@@ -21203,6 +21268,34 @@
 	
 	exports.default = function () {
 	    return _react2.default.createElement("input", { type: "submit", value: "Создать новую", className: "new-remark" });
+	};
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var pathToPicture = '/images/reload2.png';
+	
+	exports.default = function (_ref) {
+	    var styleFor = _ref.styleFor;
+	
+	    return _react2.default.createElement(
+	        'div',
+	        { className: 'reload' },
+	        _react2.default.createElement('img', { className: 'wheel reload_img', src: pathToPicture, alt: 'Перегрузка', style: styleFor })
+	    );
 	};
 
 /***/ }

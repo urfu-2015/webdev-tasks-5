@@ -3,7 +3,7 @@
  */
 
 //режим отображения
-const modes = {redo: 'redo', delete: 'delete', nan:'nan'};
+const modes = {redo: 'redo', delete: 'delete', nan:'nan', reload:'reload'};
 
 exports.modes = modes;
 
@@ -75,6 +75,13 @@ exports.remarkApp = (state = initialState, action) => {
                 remarks: action.remarks,
                 selectedRemark: null,
                 mode: modes.nan,
+                diff: 0
+            };
+        case 'START_RELOAD':
+            return {
+                remarks: state.remarks,
+                selectedRemark: null,
+                mode: modes.reload,
                 diff: 0
             };
         default:

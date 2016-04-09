@@ -60,6 +60,12 @@ export const firstLoadRemarks = (remarks) => {
         remarks
     }
 };
+
+export const startReload = () => {
+    return {
+        type: 'START_RELOAD'
+    }
+};
 //для ассинхронной фунции
 
 /*function requestRemarks() {

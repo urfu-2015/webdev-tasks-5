@@ -8,7 +8,6 @@ import request from '../lib/request.jsx';
 import RemarkForm from '../components/remarkForm.jsx';
 import {modes} from '../reducer.jsx';
 
-
 var startPoint={};
 var nowPoint;
 var startTime;
@@ -193,6 +192,16 @@ function defineStyleTextBox(selected, current, mode) {
     return result;
 }
 
+function defineStyleDeleteButton(selected, current, mode) {
+    let result = {};
+    if (selected === current && mode === modes.delete) {
+        result['display'] = 'block';
+    } else {
+        result['display'] = 'none';
+    }
+    return result;
+}
+
 const Remark = ({text, store, index}) => {
     //store.subscribe(renderRedo);
     //store.subscribe(renderRemark);
@@ -201,18 +210,19 @@ const Remark = ({text, store, index}) => {
     //console.log(selectedRemark, index, text, newText, indexUpdatedRemark);
     let styleForRemark = defineStyleRemark(selectedRemark, index, mode, diff);
     let styleForTextArea = defineStyleTextBox(selectedRemark, index, mode);
+    let styleForDeleteButton = defineStyleDeleteButton(selectedRemark, index, mode);
     //console.log(styleForRemark, styleForTextArea);
     return (
-        <div className="remarkContainer">
+        <li className="remarkContainer">
             <div className="remark" onTouchStart={touchStartHandler(store)}
                  onTouchMove={touchMoveEvent(store, index)}
                  onTouchEnd={touchEndHandler(store, index)}
                  style={styleForRemark}>{text}</div>
             <RemarkForm formClass="redo-form" nameForm="redo" styleFor={styleForTextArea} text={text}/>
-        </div>
+        </li>
         )
     };
 
 
-//
+//<ReloadPicture styleFor={styleForDeleteButton} />
 export default Remark;
