@@ -1,4 +1,4 @@
-export const  addNote  = note => {
+export const  addNote = note => {
     return {
         type: 'ADD_NOTE',
         note
