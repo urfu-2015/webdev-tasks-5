@@ -47,22 +47,26 @@ module.exports.getRemarksJSON = function(req, res) {
 };
 
 module.exports.newRemark = function(req, res) {
-    console.log(req.body.text);
     Remarks.create(req.body.text, function (err, data) {
         if (err != undefined) {
             console.log(err);
+            res.status(500);
+            res.send();
+            return;
         }
-        res.send({id: data.id});
+        res.send(data);
     });
 };
 
 module.exports.redoRemark = function(req, res) {
-    Remarks.redo(req.params.id, req.body.text, function (err) {
+    Remarks.redo(req.params.id, req.body.text, function (err, data) {
         if (err != undefined) {
             console.log(err);
-        } else {
-            res.send({});
+            res.status(500);
+            res.send();
+            return;
         }
+        res.send(data);
     });
 };
 

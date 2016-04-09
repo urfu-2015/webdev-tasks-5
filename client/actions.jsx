@@ -5,52 +5,69 @@
 
 export const newRemark = () => {
     return {
-        type: 'NEW_REMARK',
-        remark: null
+        type: 'NEW_REMARK'
     }
 };
 
-export const addRemark = (remark, text) => {
+export const addRemark = (remark, text, index) => {
     return {
         type: 'ADD_REMARK',
         remark,
-        text
+        text,
+        index
     }
 };
 
-export const selectRemark = remark => {
+export const createRemark = () => {
+    return {
+        type: 'CREATE_REMARK'
+    }
+};
+
+export const canselAdding = () => {
+    return {
+        type: 'CANCEL_ADDING'
+    }
+};
+
+export const selectRemark = index => {
     return {
         type: 'SELECT_REMARK',
-        remark
+        index
     }
 };
 
-export const updateRemark = (remark, text) => {
+export const updateRemark = (remark, text, index) => {
     return {
         type: 'UPDATE_REMARK',
-        index: remark,
-        text
+        remark,
+        text,
+        index
     }
 };
 
-export const deleteRemark = remark => {
+export const cancelUpdating = () => {
+    return {
+        type: 'CANCEL_UPDATING'
+    }
+}
+
+export const deleteRemark = index => {
     return {
         type: 'DELETE_REMARK',
-        remark
+        index
     }
 };
 
 export const changeOrder = () => {
     return {
-        type: 'CHANGE_ORDER',
-        remark: null
+        type: 'CHANGE_ORDER'
     }
 };
 
 export const reloadRemarks = () => {
     return {
-        type: 'RELOAD_REMARKS',
-        remark: null
+        type: 'RELOAD_REMARKS'
     }
 };
 
@@ -97,10 +114,17 @@ export function firstLoadRemarks() {
     }
 }*/
 
-export const chooseForDelete = (remark, diff) => {
+export const chooseForDelete = (index, diff) => {
     return {
         diff,
         type: 'CHOOSE_FOR_DELETE',
-        remark
+        index
+    }
+};
+
+export const cancelDelete = (index) => {
+    return {
+        type: 'CANCEL_DELETE',
+        index
     }
 };

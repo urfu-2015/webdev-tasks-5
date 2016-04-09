@@ -5,7 +5,7 @@ import React from 'react';
 import Header from './header.jsx';
 import Footer from './footer.jsx';
 import Remark from './remark.jsx';
-import CreatingButton from './creatingButton.jsx';
+import CreatingBlock from './creatingBlock.jsx';
 import RemarkForm from './remarkForm.jsx';
 import ReloadPicture from './reloadPicture.jsx';
 import {modes} from '../reducer.jsx';
@@ -31,6 +31,8 @@ function touchMoveHandler(store) {
         let endTime = new Date();
         if ((yAbs > 10) && (endTime.getTime()-startTimeDoc.getTime()) > 200) {
             if (nowPoint.pageY > startPointDoc.y) {
+                event.preventDefault();
+                event.stopPropagation();
                 let action = startReload();
                 store.dispatch(action);
             }
@@ -86,11 +88,12 @@ const Remarks = function ({store}) {
             <ReloadPicture styleFor={styleForReload}/>
             <Header />
             <main className="main">
-                {remarks.map((remark, index) => {
-                    return <Remark text={remark.text} store={store} index={index}/>;
-                })}
-                <RemarkForm text={""} formClass={"redo-form"} nameForm={"creating"} />
-                <CreatingButton />
+                <ul className="remarks">
+                    {remarks.map((remark, index) => {
+                        return <Remark text={remark.text} store={store} index={index}/>;
+                    })}
+                </ul>
+                <CreatingBlock store={store}/>
             </main>
             <Footer />
         </div>

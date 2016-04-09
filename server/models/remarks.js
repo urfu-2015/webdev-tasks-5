@@ -21,8 +21,8 @@ class Remark{
     }
 
     static save (callback, data) {
-        let strMem= JSON.stringify(Remark.memoryStorage);
-        fs.writeFile(fileWithData, strMem,(err) => {
+        let strMem = JSON.stringify(Remark.memoryStorage);
+        fs.writeFile(fileWithData, strMem, (err) => {
             if (err != undefined) {
                 callback(err);
             } else {
@@ -47,13 +47,13 @@ class Remark{
     static create (text, callback) {
         let id = Remark.memoryStorage.remarks.length;
         Remark.memoryStorage.remarks.push(new Remark({text}));
-        Remark.save(callback, {id});
+        Remark.save(callback, {id, obj: Remark.memoryStorage.remarks[id]});
     };
 
     static redo (id, text, callback) {
         if (id < Remark.memoryStorage.remarks.length) {
             Remark.memoryStorage.remarks[id].text = text;
-            Remark.save(callback);
+            Remark.save(callback, {id, obj: Remark.memoryStorage.remarks[id]});
         } else {
             callback('ErrorInRedo');
         }
@@ -81,7 +81,6 @@ class Remark{
     };
 
     static getAll (callback) {
-
         callback(undefined, Remark.memoryStorage.remarks);
     }
 };

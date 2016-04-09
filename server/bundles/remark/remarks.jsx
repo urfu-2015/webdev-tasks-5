@@ -31,51 +31,5 @@ request('GET', '/api/remarks', (err, result) => {
         console.log(err);
     } else {
         store.dispatch(firstLoadRemarks(result.data));
-        //render();
     }
 });
-
-let newRemarkButton = document.querySelector('.new-remark');
-
-//нажали на кнопку создания новой заметки
-newRemarkButton.addEventListener('click', function (event){
-    event.preventDefault();
-    document.querySelector('.creating').setAttribute('style', 'display: block;');
-    newRemarkButton.setAttribute('style', 'display: none;');
-});
-
-//отмена создания
-document.querySelector('.redo-form_cancel').addEventListener('click', function (event) {
-    event.preventDefault();
-    document.querySelector('.creating').setAttribute('style', 'display: none;');
-    newRemarkButton.setAttribute('style', 'display: block;');
-});
-
-//отправка заметки и ее сохрание
-document.querySelector('.redo-form_send').addEventListener('click', function (event) {
-    event.preventDefault();
-    let text = event.currentTarget.parentNode.querySelector('.redo-form_text').value;
-    request('POST', '/remarks/new', function (err, data) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        console.log(data);
-        let main = document.querySelector('.main');
-        let card = document.createElement('div');
-        card.classList.add('remark');
-        card.innerHTML = text;
-        main.querySelector('.creating').setAttribute('style', 'display: none;');
-        main.removeChild(newRemarkButton);
-        newRemarkButton.setAttribute('style', 'display: block;');
-            main.appendChild(card);
-        main.appendChild(newRemarkButton);
-    }, 'text=' + encodeURIComponent(text));
-});
-
-
-
-function insertAfter(newNode, referenceNode) {
-    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-}
-

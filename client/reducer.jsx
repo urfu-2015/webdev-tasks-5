@@ -3,7 +3,7 @@
  */
 
 //режим отображения
-const modes = {redo: 'redo', delete: 'delete', nan:'nan', reload:'reload'};
+const modes = {redo: 'redo', delete: 'delete', nan:'nan', reload:'reload', creating: 'creating'};
 
 exports.modes = modes;
 
@@ -11,16 +11,23 @@ const initialState = {
     remarks: [],
     selectedRemark: null,
     mode: modes.nan,
-    diff: 0,
+    diff: 0
 };
 
 exports.remarkApp = (state = initialState, action) => {
     console.log(action);
     switch (action.type) {
+        case 'CREATE_REMARK':
+            return {
+                remarks: state.remarks.slice(),
+                selectedRemark: null,
+                mode: modes.creating,
+                diff: 0
+            };
         case 'NEW_REMARK':
             return {
                 remarks: state.remarks.slice(),
-                selectedRemark: action.remark,
+                selectedRemark: action.index,
                 mode: modes.redo,
                 diff: 0
             };
@@ -30,18 +37,21 @@ exports.remarkApp = (state = initialState, action) => {
                 selectedRemarks: null,
                 mode: modes.nan,
                 diff: 0,
-                newText: action.text
+                newText: action.text,
+                indexUpdatedRemark: action.index
             };
         case 'SELECT_REMARK':
             return {
                 remarks: state.remarks,
-                selectedRemark: action.remark,
+                selectedRemark: action.index,
                 mode: modes.redo,
                 diff: 0
             };
         case 'UPDATE_REMARK':
+            let res = state.remarks.slice();
+            res[action.index] = action.remark;
             return {
-                remarks: state.remarks,
+                remarks: res,
                 selectedRemark: null,
                 mode: modes.nan,
                 diff: 0,
@@ -51,23 +61,9 @@ exports.remarkApp = (state = initialState, action) => {
         case 'CHOOSE_FOR_DELETE':
             return {
                 remarks: state.remarks,
-                selectedRemark: action.remark,
+                selectedRemark: action.index,
                 mode: modes.delete,
                 diff: action.diff
-            };
-        case 'DELETE_REMARK':
-            return {
-                remarks: state.remarks.filter(elem => {
-                    if (elem !== remarks) {
-                        return elem;
-                    }
-                }),
-                selectedRemark: null,
-                mode: modes.nan,
-                diff: 0
-            };
-        case 'CHANGE_ORDER':
-            return {
             };
         case 'RELOAD_REMARKS':
         case 'FIRST_LOAD_REMARKS':
@@ -82,6 +78,29 @@ exports.remarkApp = (state = initialState, action) => {
                 remarks: state.remarks,
                 selectedRemark: null,
                 mode: modes.reload,
+                diff: 0
+            };
+        case 'CANCEL_DELETE':
+            return {
+                remarks: state.remarks,
+                selectedRemark: null,
+                mode: modes.nan,
+                diff: 0
+            };
+        case 'DELETE_REMARK':
+            let result = state.remarks.slice(0, action.index).concat(state.remarks.slice(action.index + 1));
+            return {
+                remarks: result,
+                selectedRemark: null,
+                mode: modes.nan,
+                diff: 0
+            };
+        case 'CANCEL_CREATING':
+        case 'CANCEL_UPDATING':
+            return {
+                remarks: state.remarks,
+                selectedRemark: null,
+                mode: modes.nan,
                 diff: 0
             };
         default:

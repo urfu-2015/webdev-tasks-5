@@ -88,51 +88,8 @@
 	        console.log(err);
 	    } else {
 	        store.dispatch((0, _actions.firstLoadRemarks)(result.data));
-	        //render();
 	    }
 	});
-	
-	var newRemarkButton = document.querySelector('.new-remark');
-	
-	//нажали на кнопку создания новой заметки
-	newRemarkButton.addEventListener('click', function (event) {
-	    event.preventDefault();
-	    document.querySelector('.creating').setAttribute('style', 'display: block;');
-	    newRemarkButton.setAttribute('style', 'display: none;');
-	});
-	
-	//отмена создания
-	document.querySelector('.redo-form_cancel').addEventListener('click', function (event) {
-	    event.preventDefault();
-	    document.querySelector('.creating').setAttribute('style', 'display: none;');
-	    newRemarkButton.setAttribute('style', 'display: block;');
-	});
-	
-	//отправка заметки и ее сохрание
-	document.querySelector('.redo-form_send').addEventListener('click', function (event) {
-	    event.preventDefault();
-	    var text = event.currentTarget.parentNode.querySelector('.redo-form_text').value;
-	    (0, _request2.default)('POST', '/remarks/new', function (err, data) {
-	        if (err) {
-	            console.error(err);
-	            return;
-	        }
-	        console.log(data);
-	        var main = document.querySelector('.main');
-	        var card = document.createElement('div');
-	        card.classList.add('remark');
-	        card.innerHTML = text;
-	        main.querySelector('.creating').setAttribute('style', 'display: none;');
-	        main.removeChild(newRemarkButton);
-	        newRemarkButton.setAttribute('style', 'display: block;');
-	        main.appendChild(card);
-	        main.appendChild(newRemarkButton);
-	    }, 'text=' + encodeURIComponent(text));
-	});
-	
-	function insertAfter(newNode, referenceNode) {
-	    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-	}
 
 /***/ },
 /* 1 */
@@ -20496,52 +20453,69 @@
 	
 	var newRemark = exports.newRemark = function newRemark() {
 	    return {
-	        type: 'NEW_REMARK',
-	        remark: null
+	        type: 'NEW_REMARK'
 	    };
 	};
 	
-	var addRemark = exports.addRemark = function addRemark(remark, text) {
+	var addRemark = exports.addRemark = function addRemark(remark, text, index) {
 	    return {
 	        type: 'ADD_REMARK',
 	        remark: remark,
-	        text: text
+	        text: text,
+	        index: index
 	    };
 	};
 	
-	var selectRemark = exports.selectRemark = function selectRemark(remark) {
+	var createRemark = exports.createRemark = function createRemark() {
+	    return {
+	        type: 'CREATE_REMARK'
+	    };
+	};
+	
+	var canselAdding = exports.canselAdding = function canselAdding() {
+	    return {
+	        type: 'CANCEL_ADDING'
+	    };
+	};
+	
+	var selectRemark = exports.selectRemark = function selectRemark(index) {
 	    return {
 	        type: 'SELECT_REMARK',
-	        remark: remark
+	        index: index
 	    };
 	};
 	
-	var updateRemark = exports.updateRemark = function updateRemark(remark, text) {
+	var updateRemark = exports.updateRemark = function updateRemark(remark, text, index) {
 	    return {
 	        type: 'UPDATE_REMARK',
-	        index: remark,
-	        text: text
+	        remark: remark,
+	        text: text,
+	        index: index
 	    };
 	};
 	
-	var deleteRemark = exports.deleteRemark = function deleteRemark(remark) {
+	var cancelUpdating = exports.cancelUpdating = function cancelUpdating() {
+	    return {
+	        type: 'CANCEL_UPDATING'
+	    };
+	};
+	
+	var deleteRemark = exports.deleteRemark = function deleteRemark(index) {
 	    return {
 	        type: 'DELETE_REMARK',
-	        remark: remark
+	        index: index
 	    };
 	};
 	
 	var changeOrder = exports.changeOrder = function changeOrder() {
 	    return {
-	        type: 'CHANGE_ORDER',
-	        remark: null
+	        type: 'CHANGE_ORDER'
 	    };
 	};
 	
 	var reloadRemarks = exports.reloadRemarks = function reloadRemarks() {
 	    return {
-	        type: 'RELOAD_REMARKS',
-	        remark: null
+	        type: 'RELOAD_REMARKS'
 	    };
 	};
 	
@@ -20588,11 +20562,18 @@
 	    }
 	}*/
 	
-	var chooseForDelete = exports.chooseForDelete = function chooseForDelete(remark, diff) {
+	var chooseForDelete = exports.chooseForDelete = function chooseForDelete(index, diff) {
 	    return {
 	        diff: diff,
 	        type: 'CHOOSE_FOR_DELETE',
-	        remark: remark
+	        index: index
+	    };
+	};
+	
+	var cancelDelete = exports.cancelDelete = function cancelDelete(index) {
+	    return {
+	        type: 'CANCEL_DELETE',
+	        index: index
 	    };
 	};
 
@@ -20607,7 +20588,7 @@
 	 */
 	
 	//режим отображения
-	var modes = { redo: 'redo', delete: 'delete', nan: 'nan', reload: 'reload' };
+	var modes = { redo: 'redo', delete: 'delete', nan: 'nan', reload: 'reload', creating: 'creating' };
 	
 	exports.modes = modes;
 	
@@ -20624,10 +20605,17 @@
 	
 	    console.log(action);
 	    switch (action.type) {
+	        case 'CREATE_REMARK':
+	            return {
+	                remarks: state.remarks.slice(),
+	                selectedRemark: null,
+	                mode: modes.creating,
+	                diff: 0
+	            };
 	        case 'NEW_REMARK':
 	            return {
 	                remarks: state.remarks.slice(),
-	                selectedRemark: action.remark,
+	                selectedRemark: action.index,
 	                mode: modes.redo,
 	                diff: 0
 	            };
@@ -20637,18 +20625,21 @@
 	                selectedRemarks: null,
 	                mode: modes.nan,
 	                diff: 0,
-	                newText: action.text
+	                newText: action.text,
+	                indexUpdatedRemark: action.index
 	            };
 	        case 'SELECT_REMARK':
 	            return {
 	                remarks: state.remarks,
-	                selectedRemark: action.remark,
+	                selectedRemark: action.index,
 	                mode: modes.redo,
 	                diff: 0
 	            };
 	        case 'UPDATE_REMARK':
+	            var res = state.remarks.slice();
+	            res[action.index] = action.remark;
 	            return {
-	                remarks: state.remarks,
+	                remarks: res,
 	                selectedRemark: null,
 	                mode: modes.nan,
 	                diff: 0,
@@ -20658,23 +20649,10 @@
 	        case 'CHOOSE_FOR_DELETE':
 	            return {
 	                remarks: state.remarks,
-	                selectedRemark: action.remark,
+	                selectedRemark: action.index,
 	                mode: modes.delete,
 	                diff: action.diff
 	            };
-	        case 'DELETE_REMARK':
-	            return {
-	                remarks: state.remarks.filter(function (elem) {
-	                    if (elem !== remarks) {
-	                        return elem;
-	                    }
-	                }),
-	                selectedRemark: null,
-	                mode: modes.nan,
-	                diff: 0
-	            };
-	        case 'CHANGE_ORDER':
-	            return {};
 	        case 'RELOAD_REMARKS':
 	        case 'FIRST_LOAD_REMARKS':
 	            return {
@@ -20688,6 +20666,29 @@
 	                remarks: state.remarks,
 	                selectedRemark: null,
 	                mode: modes.reload,
+	                diff: 0
+	            };
+	        case 'CANCEL_DELETE':
+	            return {
+	                remarks: state.remarks,
+	                selectedRemark: null,
+	                mode: modes.nan,
+	                diff: 0
+	            };
+	        case 'DELETE_REMARK':
+	            var result = state.remarks.slice(0, action.index).concat(state.remarks.slice(action.index + 1));
+	            return {
+	                remarks: result,
+	                selectedRemark: null,
+	                mode: modes.nan,
+	                diff: 0
+	            };
+	        case 'CANCEL_CREATING':
+	        case 'CANCEL_UPDATING':
+	            return {
+	                remarks: state.remarks,
+	                selectedRemark: null,
+	                mode: modes.nan,
 	                diff: 0
 	            };
 	        default:
@@ -20721,15 +20722,15 @@
 	
 	var _remark2 = _interopRequireDefault(_remark);
 	
-	var _creatingButton = __webpack_require__(178);
+	var _creatingBlock = __webpack_require__(179);
 	
-	var _creatingButton2 = _interopRequireDefault(_creatingButton);
+	var _creatingBlock2 = _interopRequireDefault(_creatingBlock);
 	
 	var _remarkForm = __webpack_require__(177);
 	
 	var _remarkForm2 = _interopRequireDefault(_remarkForm);
 	
-	var _reloadPicture = __webpack_require__(179);
+	var _reloadPicture = __webpack_require__(181);
 	
 	var _reloadPicture2 = _interopRequireDefault(_reloadPicture);
 	
@@ -20765,6 +20766,8 @@
 	        var endTime = new Date();
 	        if (yAbs > 10 && endTime.getTime() - startTimeDoc.getTime() > 200) {
 	            if (nowPoint.pageY > startPointDoc.y) {
+	                event.preventDefault();
+	                event.stopPropagation();
 	                var action = (0, _actions.startReload)();
 	                store.dispatch(action);
 	            }
@@ -20830,11 +20833,14 @@
 	        _react2.default.createElement(
 	            'main',
 	            { className: 'main' },
-	            remarks.map(function (remark, index) {
-	                return _react2.default.createElement(_remark2.default, { text: remark.text, store: store, index: index });
-	            }),
-	            _react2.default.createElement(_remarkForm2.default, { text: "", formClass: "redo-form", nameForm: "creating" }),
-	            _react2.default.createElement(_creatingButton2.default, null)
+	            _react2.default.createElement(
+	                'ul',
+	                { className: 'remarks' },
+	                remarks.map(function (remark, index) {
+	                    return _react2.default.createElement(_remark2.default, { text: remark.text, store: store, index: index });
+	                })
+	            ),
+	            _react2.default.createElement(_creatingBlock2.default, { store: store })
 	        ),
 	        _react2.default.createElement(_footer2.default, null)
 	    );
@@ -20908,11 +20914,6 @@
 	    value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; }; /**
-	                                                                                                                                                                                                                                                   * Created by Надежда on 03.04.2016.
-	                                                                                                                                                                                                                                                   */
-	
-	
 	var _react = __webpack_require__(1);
 	
 	var _react2 = _interopRequireDefault(_react);
@@ -20933,25 +20934,23 @@
 	
 	var _reducer = __webpack_require__(171);
 	
+	var _deleteButton = __webpack_require__(178);
+	
+	var _deleteButton2 = _interopRequireDefault(_deleteButton);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var startPoint = {};
+	var startPoint = {}; /**
+	                      * Created by Надежда on 03.04.2016.
+	                      */
+	
 	var nowPoint;
 	var startTime;
 	var lastElementInLeft;
 	
-	function insertAfter(newNode, referenceNode) {
-	    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-	}
-	
 	function touchStartHandler(store) {
 	    return function (event) {
 	        console.log('touch');
-	        //event.preventDefault();
-	        //event.stopPropagation();
-	        /*if (lastElementInLeft != undefined) {
-	            lastElementInLeft.setAttribute('style', 'transform: translateX(0px)')
-	        }*/
 	        startPoint.x = event.changedTouches[0].pageX;
 	        startPoint.y = event.changedTouches[0].pageY;
 	        startTime = new Date();
@@ -20968,22 +20967,8 @@
 	            event.preventDefault();
 	            event.stopPropagation();
 	            console.log(nowPoint.pageX, startPoint.x);
-	            //var but = document.querySelector('.delButton');
 	            var action = (0, _actions.chooseForDelete)(index, diff + 'px');
 	            store.dispatch(action);
-	            //event.currentTarget.setAttribute('style', 'transform: translateX(' + dif + 'px)');
-	            /*if(dif < 0) {
-	             var but = document.querySelector('.delButton');
-	             document.querySelector('.index').removeChild(but);
-	             insertAfter(but, elem);
-	             but.setAttribute('style', 'display: inline');
-	             elem.setAttribute('style', 'transform: translateX(' + dif + 'px)');
-	             } else {
-	             var but = document.querySelector('.delButton');
-	             but.setAttribute('style', 'display: none');
-	             elem.setAttribute('style', 'transform: translateX(' + 0 + 'px)');
-	             }*/
-	            //startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
 	        }
 	    };
 	}
@@ -20997,100 +20982,53 @@
 	        //swipes
 	        if ((xAbs > 10 || yAbs > 10) && endTime.getTime() - startTime.getTime() > 200) {
 	            //по горизонтали
-	            if (xAbs > yAbs) {
+	            if (xAbs > 2 * yAbs) {
 	                event.preventDefault();
 	                event.stopPropagation();
 	                if (startPoint.x < nowPoint.pageX) {
-	                    var action = (0, _actions.chooseForDelete)(index, '0');
+	                    var action = (0, _actions.cancelDelete)();
 	                    store.dispatch(action);
-	                    //event.currentTarget.setAttribute('style', 'transform: translateX(0)');
 	                } else {
-	                        console.log('here1');
-	                        var _action = (0, _actions.chooseForDelete)(index, '-10%');
-	                        store.dispatch(_action);
-	                        //event.currentTarget.setAttribute('style', 'transform: translateX(-10%);');
-	                    }
-	                //вертикаль
-	            } else {
-	                    /*if (startPoint.y < nowPoint.pageY) {
-	                     console.log('here');
-	                     }*/
-	                }
-	        } else {
-	                //tap
-	                if (endTime.getTime() - startTime.getTime() < 200) {
-	                    var styleCurrentCard;
-	
-	                    var _ret = function () {
-	                        event.preventDefault();
-	                        event.stopPropagation();
-	                        //определяем
-	                        styleCurrentCard = event.currentTarget.getAttribute('style') || '';
-	
-	                        if (styleCurrentCard.match(/transform: translateX([^0]px)/)) {
-	                            console.log('в стороне');
-	                            return {
-	                                v: void 0
-	                            };
-	                        }
-	                        var action = (0, _actions.selectRemark)(index);
-	                        store.dispatch(action);
-	                        //document.querySelector('.new-remark').setAttribute('style', 'display: none;');
-	                        //var myclick = event.targetTouches[0];
-	                        //var main = document.querySelector('.main');
-	                        var card = event.currentTarget;
-	                        //card.setAttribute('style', 'display:none;');
-	                        //store.dispatch(selectRemark());
-	                        //проверяем, есть ли где-то открытая форма
-	                        //let redo = document.querySelector('.redo-form');
-	                        //let redoTextArea = redo.querySelector('textarea.redo_text');
-	                        //let text = redoTextArea ? redoTextArea.value : '';
-	                        //если есть, то прячем ее
-	                        //if (redo != undefined) {
-	                        //    redo.setAttribute('style', 'display:none;');
-	                        //}
-	                        //renderRemark(redo.parentNode, text, store);
-	                        //let text = event.currentTarget.innerHTML;
-	                        //renderRedo(event.currentTarget.parentNode, text, 'redo', 'redo');
-	                        //card.parentNode.querySelector('.redo-form_text').innerHTML = card.innerHTML;
-	                        //card.parentNode.querySelector('.redo-form').setAttribute('style', 'display:block;');
-	                        //redo.querySelector('.redo_text').innerHTML = card.innerHTML;
-	                        //insertAfter(redo, card);
-	                        //отмена
-	                        card.parentNode.querySelector('.redo-form_cancel').addEventListener('click', function (event) {
-	                            event.preventDefault();
-	                            var action = (0, _actions.updateRemark)(index);
-	                            store.dispatch(action);
-	                            //card.parentNode.querySelector('.redo-form').setAttribute('style', 'display: none;');
-	                            //card.setAttribute('style', 'display:block;');
-	                            //document.querySelector('.new-remark').setAttribute('style', 'display: block;');
-	                        });
-	
-	                        //отправка изменения
-	                        card.parentNode.querySelector('.redo-form_send').addEventListener('click', function (event) {
-	                            event.preventDefault();
-	                            var text = card.parentNode.querySelector('textarea.redo-form_text').value;
-	                            (0, _request2.default)('PUT', '/remarks/' + index, function (err, data) {
-	                                if (err != undefined) {
-	                                    console.error(err);
-	                                    return;
-	                                }
-	                                //let main = document.querySelector('.main');
-	                                //card.innerHTML = text;
-	                                var action = (0, _actions.updateRemark)(index, text);
-	                                store.dispatch(action);
-	                                //card.setAttribute('style', 'display:block;');
-	                                //card.parentNode.querySelector('.redo-form').setAttribute('style', 'display: none;');
-	                                //document.querySelector('.new-remark').setAttribute('style', 'display: block;');
-	                            }, 'text=' + encodeURIComponent(text));
-	                        });
-	                    }();
-	
-	                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-	                } else {
-	                    //long tap
+	                    var _action = (0, _actions.chooseForDelete)(index, '-10%');
+	                    store.dispatch(_action);
 	                }
 	            }
+	        } else {
+	            //tap
+	            if (endTime.getTime() - startTime.getTime() < 200) {
+	                event.preventDefault();
+	                event.stopPropagation();
+	                //определяем
+	                var styleCurrentCard = event.currentTarget.getAttribute('style') || '';
+	                if (styleCurrentCard.match(/transform: translateX([^0]px)/)) {
+	                    console.log('в стороне');
+	                    return;
+	                }
+	                var _action2 = (0, _actions.selectRemark)(index);
+	                store.dispatch(_action2);
+	                /*let card = event.currentTarget;
+	                card.parentNode.querySelector('.redo-form_cancel').addEventListener('click', function (event) {
+	                    event.preventDefault();
+	                    let action = updateRemark(index);
+	                    store.dispatch(action);
+	                });
+	                  //отправка изменения
+	                card.parentNode.querySelector('.redo-form_send').addEventListener('click', function (event) {
+	                    event.preventDefault();
+	                    var text = card.parentNode.querySelector('textarea.redo-form_text').value;
+	                    request('PUT', '/remarks/' + index, function (err, data) {
+	                        if (err != undefined) {
+	                            console.error(err);
+	                            return;
+	                        }
+	                        let action = updateRemark(index, text);
+	                        store.dispatch(action);
+	                    }, 'text=' + encodeURIComponent(text));
+	                });*/
+	            } else {
+	                    //long tap
+	                }
+	        }
 	    };
 	}
 	
@@ -21099,7 +21037,6 @@
 	    if (selected === current) {
 	        switch (mode) {
 	            case _reducer.modes.delete:
-	                console.log(diff);
 	                result['display'] = 'block';
 	                result['transform'] = 'translateX(' + diff + ')';
 	                break;
@@ -21143,9 +21080,6 @@
 	    var store = _ref.store;
 	    var index = _ref.index;
 	
-	    //store.subscribe(renderRedo);
-	    //store.subscribe(renderRemark);
-	
 	    var _store$getState = store.getState();
 	
 	    var selectedRemark = _store$getState.selectedRemark;
@@ -21154,12 +21088,15 @@
 	    var newText = _store$getState.newText;
 	    var indexUpdatedRemark = _store$getState.indexUpdatedRemark;
 	
-	    text = newText != undefined && index === indexUpdatedRemark ? newText : text;
-	    //console.log(selectedRemark, index, text, newText, indexUpdatedRemark);
+	    text = newText !== undefined && index === indexUpdatedRemark ? newText : text;
+	    console.log(text, newText, index, indexUpdatedRemark);
 	    var styleForRemark = defineStyleRemark(selectedRemark, index, mode, diff);
 	    var styleForTextArea = defineStyleTextBox(selectedRemark, index, mode);
 	    var styleForDeleteButton = defineStyleDeleteButton(selectedRemark, index, mode);
-	    //console.log(styleForRemark, styleForTextArea);
+	    var actions = {
+	        first: _actions.cancelUpdating,
+	        second: _actions.updateRemark
+	    };
 	    return _react2.default.createElement(
 	        'li',
 	        { className: 'remarkContainer' },
@@ -21171,11 +21108,14 @@
 	                style: styleForRemark },
 	            text
 	        ),
-	        _react2.default.createElement(_remarkForm2.default, { formClass: 'redo-form', nameForm: 'redo', styleFor: styleForTextArea, text: text })
+	        _react2.default.createElement(_deleteButton2.default, { styleFor: styleForDeleteButton, store: store, index: index,
+	            isDeleted: selectedRemark === index }),
+	        _react2.default.createElement(_remarkForm2.default, { formClass: 'redo-form', nameForm: 'redo', styleFor: styleForTextArea,
+	            text: text, path: '/remarks/' + index, method: 'PUT', store: store, actions: actions })
 	    );
 	};
 	
-	//<ReloadPicture styleFor={styleForDeleteButton} />
+	//{text, formClass, nameForm, styleFor, path, action, method, store}
 	exports.default = Remark;
 
 /***/ },
@@ -21228,13 +21168,43 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _request = __webpack_require__(176);
+	
+	var _request2 = _interopRequireDefault(_request);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function cancelHandler(store, action) {
+	    return function (event) {
+	        event.preventDefault();
+	        store.dispatch(action);
+	    };
+	}
+	
+	function sendHandler(store, actionUnused, method, path, text) {
+	    return function (event) {
+	        event.preventDefault();
+	        text = event.currentTarget.parentNode.querySelector('textarea[name="text"]').value;
+	        (0, _request2.default)(method, path, function (err, data) {
+	            if (err != undefined) {
+	                console.error(err);
+	                return;
+	            }
+	            var action = actionUnused(data.obj, text, data.id);
+	            store.dispatch(action);
+	        }, 'text=' + encodeURIComponent(text));
+	    };
+	}
 	
 	exports.default = function (_ref) {
 	    var text = _ref.text;
 	    var formClass = _ref.formClass;
 	    var nameForm = _ref.nameForm;
 	    var styleFor = _ref.styleFor;
+	    var path = _ref.path;
+	    var actions = _ref.actions;
+	    var method = _ref.method;
+	    var store = _ref.store;
 	
 	    var forSend = formClass + '_send';
 	    var forFormClass = formClass + ' ' + nameForm;
@@ -21245,8 +21215,10 @@
 	        { className: forFormClass, name: nameForm, style: styleFor },
 	        _react2.default.createElement('textarea', { name: 'text', placeholder: 'Введите вашу заметку...', className: forText,
 	            form: nameForm, defaultValue: text, method: 'POST' }),
-	        _react2.default.createElement('input', { type: 'submit', value: 'Сохранить запись', className: forSend }),
-	        _react2.default.createElement('input', { type: 'button', value: 'Отмена', className: forCancel })
+	        _react2.default.createElement('input', { type: 'submit', value: 'Сохранить запись', className: forSend,
+	            onClick: sendHandler(store, actions.second, method, path, text) }),
+	        _react2.default.createElement('input', { type: 'button', value: 'Отмена', className: forCancel,
+	            onClick: cancelHandler(store, actions.first()) })
 	    );
 	};
 
@@ -21254,7 +21226,7 @@
 /* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -21264,14 +21236,167 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _request = __webpack_require__(176);
+	
+	var _request2 = _interopRequireDefault(_request);
+	
+	var _actions = __webpack_require__(170);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function () {
-	    return _react2.default.createElement("input", { type: "submit", value: "Создать новую", className: "new-remark" });
+	function removeRemark(index, store) {
+	    (0, _request2.default)('DELETE', '/remarks/' + index, function (err) {
+	        if (err != undefined) {
+	            console.error(err);
+	            return;
+	        }
+	        var action = (0, _actions.deleteRemark)(index);
+	        store.dispatch(action);
+	    });
+	}
+	
+	function clickHandler(store, isDeleted, index) {
+	    return function (event) {
+	        if (isDeleted) {
+	            removeRemark(index, store);
+	        }
+	    };
+	}
+	
+	exports.default = function (_ref) {
+	    var styleFor = _ref.styleFor;
+	    var store = _ref.store;
+	    var isDeleted = _ref.isDeleted;
+	    var index = _ref.index;
+	
+	    return _react2.default.createElement(
+	        'button',
+	        { style: styleFor, onClick: clickHandler(store, isDeleted, index) },
+	        _react2.default.createElement('img', { src: '/images/trush.png', alt: 'Удаление' })
+	    );
 	};
 
 /***/ },
 /* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _actions = __webpack_require__(170);
+	
+	var _creatingButton = __webpack_require__(180);
+	
+	var _creatingButton2 = _interopRequireDefault(_creatingButton);
+	
+	var _remarkForm = __webpack_require__(177);
+	
+	var _remarkForm2 = _interopRequireDefault(_remarkForm);
+	
+	var _reducer = __webpack_require__(171);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function defineStyleTextBox(mode) {
+	    var result = {};
+	    console.log(mode);
+	    if (mode === _reducer.modes.creating) {
+	        result['display'] = 'block';
+	    } else {
+	        result['display'] = 'none';
+	    }
+	    return result;
+	}
+	
+	exports.default = function (_ref) {
+	    var store = _ref.store;
+	
+	    var _store$getState = store.getState();
+	
+	    var mode = _store$getState.mode;
+	    var newText = _store$getState.newText;
+	
+	    var styleForForm = defineStyleTextBox(mode);
+	    var actions = {
+	        first: _actions.canselAdding,
+	        second: _actions.addRemark
+	    };
+	    var text = newText || "";
+	    console.log(text);
+	    return _react2.default.createElement(
+	        'li',
+	        null,
+	        _react2.default.createElement(_creatingButton2.default, { store: store }),
+	        _react2.default.createElement(_remarkForm2.default, { text: text, formClass: 'redo-form', nameForm: 'creating', styleFor: styleForForm,
+	            path: '/remarks/new', method: 'POST', actions: actions, store: store })
+	    );
+	};
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _request = __webpack_require__(176);
+	
+	var _request2 = _interopRequireDefault(_request);
+	
+	var _actions = __webpack_require__(170);
+	
+	var _reducer = __webpack_require__(171);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function clickHandler(store) {
+	    return function (event) {
+	        event.preventDefault();
+	        var action = (0, _actions.createRemark)();
+	        store.dispatch(action);
+	    };
+	}
+	
+	function defineStyle(mode) {
+	    if (_reducer.modes.nan !== mode) {
+	        return {
+	            display: 'none'
+	        };
+	    } else {
+	        return {
+	            display: 'block'
+	        };
+	    }
+	}
+	
+	exports.default = function (_ref) {
+	    var store = _ref.store;
+	
+	    var _store$getState = store.getState();
+	
+	    var mode = _store$getState.mode;
+	
+	    var styleForButton = defineStyle(mode);
+	    return _react2.default.createElement('input', { type: 'submit', value: 'Создать новую', className: 'new-remark',
+	        onClick: clickHandler(store), style: styleForButton });
+	};
+
+/***/ },
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
