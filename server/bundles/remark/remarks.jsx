@@ -1,13 +1,15 @@
 /**
  * Created by Надежда on 03.04.2016.
  */
+require('./remarks.styl');
+require('../layout.styl');
+require('../remarkForm/remarkForm.styl');
+require('../reloadPicture/reloadPicture.styl');
 
 import React from 'react';
 import ReactDom from 'react-dom';
 import {createStore} from 'redux'
-import {newRemark, addRemark, changeOrder,
-    chooseForDelete, deleteRemark, firstLoadRemarks,
-    reloadRemarks, selectRemark, updateRemark} from '../../../client/actions.jsx';
+import {firstLoadRemarks} from '../../../client/actions.jsx';
 import {remarkApp} from '../../../client/reducer.jsx';
 import Remarks from '../../../client/components/remarks.jsx';
 import request from '../../../client/lib/request.jsx';
@@ -20,7 +22,6 @@ function render() {
     );
 }
 
-//const store = applyMiddleware(thunk)(createStore)(remarkApp);
 const store = createStore(remarkApp);
 render();
 store.subscribe(render);

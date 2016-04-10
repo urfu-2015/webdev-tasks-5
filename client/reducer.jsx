@@ -22,7 +22,8 @@ exports.remarkApp = (state = initialState, action) => {
                 remarks: state.remarks.slice(),
                 selectedRemark: null,
                 mode: modes.creating,
-                diff: 0
+                diff: 0,
+                newText: ''
             };
         case 'NEW_REMARK':
             return {
@@ -95,7 +96,7 @@ exports.remarkApp = (state = initialState, action) => {
                 mode: modes.nan,
                 diff: 0
             };
-        case 'CANCEL_CREATING':
+        case 'CANCEL_ADDING':
         case 'CANCEL_UPDATING':
             return {
                 remarks: state.remarks,

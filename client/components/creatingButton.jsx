@@ -13,7 +13,7 @@ function clickHandler(store) {
 }
 
 function defineStyle(mode) {
-    if (modes.nan !== mode) {
+    if (modes.creating === mode || modes.redo === mode) {
         return {
             display: 'none'
         }

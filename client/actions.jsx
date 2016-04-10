@@ -24,7 +24,7 @@ export const createRemark = () => {
     }
 };
 
-export const canselAdding = () => {
+export const cancelAdding = () => {
     return {
         type: 'CANCEL_ADDING'
     }
@@ -83,36 +83,6 @@ export const startReload = () => {
         type: 'START_RELOAD'
     }
 };
-//для ассинхронной фунции
-
-/*function requestRemarks() {
-    return {
-        type: 'REQUEST_REMARKS',
-        remark: null
-    }
-}
-
-function receiveRemarks(data) {
-    return {
-        type: 'RECEIVE_REMARKS',
-        remarks: data.remarks
-    }
-}
-
-function fetchRemarks() {
-    return dispatch => {
-        dispatch(requestRemarks());
-        return fetch('/api/remarks')
-            .then(response => response.json())
-            .then(json => dispatch(receiveRemarks(json)))
-    }
-}
-
-export function firstLoadRemarks() {
-    return (dispatch) => {
-        return dispatch(fetchRemarks())
-    }
-}*/
 
 export const chooseForDelete = (index, diff) => {
     return {

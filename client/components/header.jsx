@@ -5,7 +5,7 @@ import React from 'react'
 
 export default () => {
             return (
-                <header>
+                <header className="header">
                     <h2>
                         TODo-хИ
                     </h2>

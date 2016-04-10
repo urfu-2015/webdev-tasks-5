@@ -20,10 +20,7 @@ module.exports.getRemarks = function(req, res) {
         res.render('remark/remarks', {
             title: 'TODo-хИ' ,
             stylesheets: [
-                'layout',
                 'remarks',
-                'remarkForm',
-                'reloadPicture'
             ],
             scripts: [
                 'remarks'

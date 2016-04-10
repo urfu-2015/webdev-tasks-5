@@ -15,7 +15,7 @@ import {firstLoadRemarks, startReload} from  '../actions.jsx';
 //для Pull to Refresh
 let startPointDoc = {};
 let startTimeDoc;
-function touchStartHandler(store) {
+function touchStartHandler() {
     return function (event) {
         startTimeDoc = new Date();
         startPointDoc.x = event.changedTouches[0].pageX;
@@ -48,12 +48,12 @@ function touchEndHandler(store) {
         let endTime = new Date();
         if ((yAbs > 10) && (endTime.getTime()-startTimeDoc.getTime()) > 200) {
             if (nowPoint.pageY > startPointDoc.y) {
-                console.log('refresh');
+                //console.log('refresh');
                 event.preventDefault();
                 event.stopPropagation();
                 request('GET', '/api/remarks', (err, result) => {
                     if (err != undefined) {
-                        console.log(err);
+                        console.error(err);
                     } else {
                         store.dispatch(firstLoadRemarks(result.data));
                         //render();
@@ -84,7 +84,7 @@ const Remarks = function ({store}) {
     return (
         <div onTouchStart={touchStartHandler(store)}
              onTouchMove={touchMoveHandler(store)}
-             onTouchEnd={touchEndHandler(store)}>
+             onTouchEnd={touchEndHandler(store)} className="wrapper">
             <ReloadPicture styleFor={styleForReload}/>
             <Header />
             <main className="main">

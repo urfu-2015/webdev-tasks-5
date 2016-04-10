@@ -5,6 +5,6 @@ import React from 'react';
 
 export default () => {
         return (
-            <footer>&copy; 2016 Air_breathing</footer>
+            <footer className="footer">&copy; 2016 Air_breathing</footer>
         )
     }

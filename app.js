@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var stylus = require('stylus');
+//var stylus = require('stylus');
 
 var routes = require('./server/routes.js');
 
@@ -13,10 +13,10 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'server', 'bundles'));
 app.set('view engine', 'hbs');
-app.use(stylus.middleware({
-    src: path.join(__dirname, 'server', 'styles'),
-    dest: path.join(__dirname, 'server',  'public', 'stylesheets')
-}));
+//app.use(stylus.middleware({
+//    src: path.join(__dirname, 'server', 'styles'),
+//    dest: path.join(__dirname, 'server',  'public', 'stylesheets')
+//}));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

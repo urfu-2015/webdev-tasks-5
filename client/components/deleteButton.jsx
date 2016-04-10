@@ -23,9 +23,10 @@ function clickHandler(store, isDeleted, index) {
 }
 
 
-export default ({styleFor, store, isDeleted, index}) => {
+export default ({styleFor, store, isDeleted, index, formClass}) => {
+    let nameClass = formClass + '__delete';
     return (
-        <button style={styleFor} onClick={clickHandler(store, isDeleted, index)}>
+        <button style={styleFor} onClick={clickHandler(store, isDeleted, index)} className={nameClass}>
             <img src="/images/trush.png" alt="Удаление" />
         </button>
     )
