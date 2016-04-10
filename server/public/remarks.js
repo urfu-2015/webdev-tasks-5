@@ -21489,7 +21489,7 @@
 	        nowPoint = event.changedTouches[0];
 	        var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
 	        var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-	        //swipes
+	        //swipess
 	        if ((xAbs > 10 || yAbs > 10) && endTime.getTime() - startTime.getTime() > 200) {
 	            //по горизонтали
 	            if (xAbs > yAbs && yAbs < 30) {
@@ -21505,7 +21505,7 @@
 	            }
 	        } else {
 	            //tap
-	            if (endTime.getTime() - startTime.getTime() < 200) {
+	            if (xAbs < 2 && yAbs < 2 && endTime.getTime() - startTime.getTime() < 200) {
 	                event.preventDefault();
 	                event.stopPropagation();
 	                var _action2 = (0, _actions.selectRemark)(index);

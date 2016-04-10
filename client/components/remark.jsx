@@ -43,7 +43,7 @@ function touchEndHandler(store, index) {
         nowPoint = event.changedTouches[0];
         let xAbs = Math.abs(startPoint.x - nowPoint.pageX);
         let yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-        //swipes
+        //swipess
         if ((xAbs > 10 || yAbs > 10) && (endTime.getTime() - startTime.getTime()) > 200) {
             //по горизонтали
             if (xAbs > yAbs && yAbs < 30) {
@@ -53,13 +53,13 @@ function touchEndHandler(store, index) {
                     let action = cancelDelete();
                     store.dispatch(action);
                 } else {
-                    let action = chooseForDelete(index, '0%');
+                    let action = chooseForDelete(index, '0');
                     store.dispatch(action);
                 }
             }
         } else {
             //tap
-            if ((endTime.getTime() - startTime.getTime()) < 200) {
+            if ((xAbs < 2 && yAbs < 2 && (endTime.getTime() - startTime.getTime()) < 200)) {
                 event.preventDefault();
                 event.stopPropagation();
                 let action = selectRemark(index);
