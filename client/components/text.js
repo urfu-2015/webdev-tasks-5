@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {showForm, showDelete, hideDelete} from '../actions';
-import {getNodeIndex, swipeEvent, tapEvent} from '../modules/touch';
+import {getTodoId, swipeEvent, tapEvent} from '../modules/touch';
 
 export default ({store, text}) => {
     function showFormElement(event) {
@@ -11,7 +11,7 @@ export default ({store, text}) => {
                 console.error(error);
                 return;
             }
-            var action = showForm(getNodeIndex(event.currentTarget));
+            var action = showForm(getTodoId(event.currentTarget));
             store.dispatch(action);
         });
     }
@@ -22,7 +22,7 @@ export default ({store, text}) => {
                 console.error(error);
                 return;
             }
-            var action = showDelete(getNodeIndex(event.currentTarget));
+            var action = showDelete(getTodoId(event.currentTarget));
             store.dispatch(action);
         });
     }
@@ -33,7 +33,7 @@ export default ({store, text}) => {
                 console.error(error);
                 return;
             }
-            var action = hideDelete(getNodeIndex(event.currentTarget));
+            var action = hideDelete(getTodoId(event.currentTarget));
             store.dispatch(action);
         });
     }

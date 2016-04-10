@@ -1,15 +1,5 @@
-export const getNodeIndex = (node) => {
-    var item = node.parentNode;
-
-    var index = 0;
-//HTML DOM previousSibling Property
-//A Node object, representing the previous sibling of the node, or null if there is no previous sibling
-    while(item.previousSibling !== null) {
-        item = item.previousSibling;
-        ++index;
-    }
-
-    return index;
+export const getTodoId = (node) => {
+    return node.parentNode.getAttribute('data-todo-id');
 };
 
 export const swipeEvent = (event, direction, callback) => {

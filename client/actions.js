@@ -7,9 +7,10 @@ export const getListTodo = list => {
     };
 };
 
-export const addTodo = text => {
+export const addTodo = (id, text)=> {
     return {
         type: 'ADD_TODO',
+        id: id,
         text: text
     };
 };

@@ -8,12 +8,9 @@ exports.index = function (req, res) {
 
 exports.getList = function (req, res) {
     var listTodo = Todo.getAll();
-    listTodo = listTodo.map(function (item) {
-        return item.text;
-    });
 
-    res.send({
-        status: 'OK. List TODO.',
+    res.status(200).json({
+        msg: 'OK. List TODO.',
         content: listTodo
     });
 };
@@ -22,23 +19,31 @@ exports.itemAdd = function (req, res) {
     var todo = new Todo(req.body.content);
     todo.save();
 
-    res.send({
-        status: 'OK. Item added.'
+    res.status(200).json({
+        msg: 'OK. Item added.',
+        content: todo
     });
 };
 
 exports.itemDelete = function (req, res) {
-    Todo.getById(req.body.id).delete();
+    var todo = Todo.getTodoById(req.body.id);
+    if (todo !== null) {
+        todo.delete();
+    }
 
-    res.send({
-        status: 'OK. Item deleted.'
+    res.status(200).json({
+        msg: 'OK. Item deleted.',
+        content: {
+            id: req.body.id
+        }
     });
 };
 
 exports.itemChange = function (req, res) {
     Todo.setTextById(req.body.id, req.body.content);
 
-    res.send({
-        status: 'OK. Item changed.'
+    res.status(200).json({
+        msg: 'OK. Item changed.',
+        content: Todo.getTodoById(req.body.id)
     });
 };

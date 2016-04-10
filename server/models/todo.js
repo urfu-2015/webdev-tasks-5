@@ -1,41 +1,50 @@
 'use strict';
 
+var uuid = require('node-uuid');
+
 var listTodo = [];
 
 class Todo {
-    constructor(text, id) {
-        this.id = (id === undefined) ? 0 : id;
+    constructor(text) {
+        this.id = uuid.v4();
         this.text = text;
     }
 
     save() {
-        listTodo = listTodo.map(function (item) {
-            ++item.id;
-            return item;
-        });
         listTodo.unshift(this);
     }
 
     delete() {
-        listTodo = listTodo.map(function (item) {
-            if (item.id > this.id) {
-                --item.id;
-            }
-            return item;
-        }.bind(this));
-        listTodo.splice(this.id, 1);
+        var index = Todo.getIndexById(this.id);
+        if (index !== null) {
+            listTodo.splice(index, 1);
+        }
     }
 
     static setTextById(id, text) {
-        Todo.getById(id).text = text;
+        var todo = Todo.getTodoById(id);
+        if (todo !== null) {
+            todo.text = text;
+        }
     }
 
     static getTextById(id) {
-        return Todo.getById(id).text;
+        var todo = Todo.getTodoById(id);
+        return (todo === null) ? null : todo.text;
     }
 
-    static getById(id) {
-        return listTodo[id];
+    static getIndexById(id) {
+        for (var i = 0; i < listTodo.length; ++i) {
+            if (listTodo[i].id === id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    static getTodoById(id) {
+        var index = Todo.getIndexById(id);
+        return (index === -1) ? null : listTodo[index];
     }
 
     static getAll() {

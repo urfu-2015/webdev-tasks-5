@@ -3,7 +3,7 @@
 import React from 'react';
 import {deleteTodo} from '../actions';
 import {sendRequest} from '../modules/http';
-import {getNodeIndex, tapEvent} from '../modules/touch';
+import {getTodoId, tapEvent} from '../modules/touch';
 
 export default ({store}) => {
     function deleteItemList(error, event) {
@@ -12,24 +12,22 @@ export default ({store}) => {
             return;
         }
 
-        var id = getNodeIndex(event.currentTarget);
+        var id = getTodoId(event.currentTarget);
 
         sendRequest('DELETE', '/list', {id: id}, function (error, data) {
             if (error) {
                 console.error(error);
                 return;
             }
-            if (data.status.indexOf('OK') >= 0) {
-                var action = deleteTodo(id);
-                store.dispatch(action);
-            }
+            var action = deleteTodo(data.content.id);
+            store.dispatch(action);
         });
     }
 
     return (
         <div
             className="main-container__delete"
-            onTouchStart={function(event) {
+            onTouchStart={function (event) {
                 tapEvent(event, deleteItemList);
             }}>
         </div>

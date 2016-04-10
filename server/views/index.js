@@ -39,11 +39,11 @@ function getList(error) {
             console.error(error);
             return;
         }
-        if (data.status.indexOf('OK') >= 0) {
-            var action = getListTodo(data.content);
-            store.dispatch(action);
+        var action = getListTodo(data.content);
+        store.dispatch(action);
+        setTimeout(function () {
             reload.style.display = 'none';
-        }
+        }, 500);
     });
 }
 
@@ -59,17 +59,15 @@ function addItemList(error) {
             console.error(error);
             return;
         }
-        if (data.status.indexOf('OK') >= 0) {
-            var action = addTodo(text);
-            store.dispatch(action);
-        }
+        var action = addTodo(data.content.id, data.content.text);
+        store.dispatch(action);
     });
 }
 
 getList();
 
 main.addEventListener('touchstart', function (event) {
-    swipeEvent(event, 'down', getList)
+    swipeEvent(event, 'down', getList);
 });
 
 addButton.addEventListener('touchstart', function (event) {

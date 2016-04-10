@@ -8,8 +8,8 @@ export default ({store}) => {
 
     return (
         <div className="main-container__list">
-            {listTodo.map((note, index) => (
-                <Item store={store} id={index} />
+            {listTodo.map((note) => (
+                <Item store={store} todo={note} />
             ))}
        </div>
     );
