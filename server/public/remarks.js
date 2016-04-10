@@ -21490,16 +21490,16 @@
 	        var xAbs = Math.abs(startPoint.x - nowPoint.pageX);
 	        var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
 	        //swipess
-	        if ((xAbs > 10 || yAbs > 10) && endTime.getTime() - startTime.getTime() > 200) {
+	        if ((xAbs > 10 || yAbs > 10) && endTime.getTime() - startTime.getTime() > 100) {
 	            //по горизонтали
-	            if (xAbs > yAbs && yAbs < 30) {
+	            if (xAbs > 20 && yAbs < 30) {
 	                event.preventDefault();
 	                event.stopPropagation();
 	                if (startPoint.x < nowPoint.pageX) {
 	                    var action = (0, _actions.cancelDelete)();
 	                    store.dispatch(action);
 	                } else {
-	                    var _action = (0, _actions.chooseForDelete)(index, '0%');
+	                    var _action = (0, _actions.chooseForDelete)(index, '0');
 	                    store.dispatch(_action);
 	                }
 	            }
