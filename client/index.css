@@ -2,10 +2,6 @@
 {
     font-family: 'Bad Script', cursive;
 }
-body
-{    
-    background: url('back.jpg');
-}
 .pull-and-refresh
 {
     border-bottom: 1px solid #000000;
