@@ -2,7 +2,8 @@ const initialState = {
     todos: [],
     selectedTodo: null,
     swipedTodo: null,
-    reloadTodos: null
+    reloadTodos: null,
+    shiftX: 0
 };
 
 function sleep(ms) {
@@ -22,7 +23,8 @@ exports.TodoApp = (state, action) => {
                 todos: state.todos,
                 selectedTodo: state.selectedTodo,
                 swipedTodo: state.swipedTodo,
-                reloadTodos: null
+                reloadTodos: null,
+                shiftX: state.shiftX
             };
         case 'DELETE_TODO':
             socket.emit('delete todo' , action.todo);
@@ -31,14 +33,16 @@ exports.TodoApp = (state, action) => {
                 todos: state.todos,
                 selectedTodo: state.selectedTodo,
                 swipedTodo: null,
-                reloadTodos: null
+                reloadTodos: null,
+                shiftX: state.shiftX
             };
         case 'SELECT_TODO':
             return {
                 todos: state.todos,
                 selectedTodo: action.selectedTodo,
                 swipedTodo: null,
-                reloadTodos: null
+                reloadTodos: null,
+                shiftX: state.shiftX
             };
         case 'CHANGE_TODO':
             socket.emit('change todo' , {old: action.todo, new: action.newTodoValue});
@@ -47,41 +51,55 @@ exports.TodoApp = (state, action) => {
                 todos: state.todos,
                 selectedTodo: null,
                 swipedTodo: null,
-                reloadTodos: null
+                reloadTodos: null,
+                shiftX: state.shiftX
             };
         case 'SHOW_DELETE_TODO':
             return {
                 todos: state.todos,
                 selectedTodo: null,
-                swipedTodo: action.todo
+                swipedTodo: action.todo,
+                reloadTodos: state.reloadTodos
             };
         case 'HIDE_DELETE_TODO':
             return {
                 todos: state.todos,
                 selectedTodo: state.selectedTodo,
                 swipedTodo: null,
-                reloadTodos: null
+                reloadTodos: null,
+                shiftX: state.shiftX
             };
         case 'SHOW_RELOAD_TODOS' :
             return {
                 todos: state.todos,
                 selectedTodo: null,
                 swipedTodo: null,
-                reloadTodos: true
+                reloadTodos: true,
+                shiftX: state.shiftX
             };
         case 'SHOW_UPDATE_TODOS' :
             return {
                 todos: state.todos,
                 selectedTodo: null,
                 swipedTodo: null,
-                reloadTodos: null
+                reloadTodos: null,
+                shiftX: state.shiftX
             };
         case 'INIT_TODOS' :
             return {
                 todos: action.todos,
                 selectedTodo: null,
                 swipedTodo: null,
-                reloadTodos: null
+                reloadTodos: null,
+                shiftX: state.shiftX
+            };
+        case 'MOVE_DELETE_TODO' :
+            return {
+                todos: state.todos,
+                selectedTodo: state.selectedTodo,
+                swipedTodo: action.todo,
+                reloadTodos: state.reloadTodos,
+                shiftX: action.shiftX
             };
         default:
             return state;

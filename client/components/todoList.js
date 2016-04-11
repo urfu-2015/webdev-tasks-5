@@ -2,7 +2,7 @@ import React from 'react';
 import TodoElement from './todoElement';
 import Header from './header';
 
-export default ({todos, selectedTodo, swipedTodo, store}) => (
+export default ({todos, selectedTodo, swipedTodo, store, shiftX}) => (
     <div className="container">
         <Header />
         {todos.map((todo, i) => (
@@ -12,6 +12,7 @@ export default ({todos, selectedTodo, swipedTodo, store}) => (
                 value={todo}
                 isChange={i == selectedTodo}
                 isDelete={i == swipedTodo}
+                shiftX={shiftX}
                 store={store}
             />
         ))}

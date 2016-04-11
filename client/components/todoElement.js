@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import {SelectTodo, DeleteTodo, ChangeTodo, ShowDeleteTodo, HideDeleteTodo} from '../actions';
+import {SelectTodo, DeleteTodo, ChangeTodo, ShowDeleteTodo, HideDeleteTodo, MoveDeleteTodo} from '../actions';
 import {Component} from 'react';
 
 
@@ -11,6 +11,7 @@ class todoElement extends Component {
         this.getClassByNumber = this.getClassByNumber.bind(this);
         this.onTouchStart = this.onTouchStart.bind(this);
         this.onTouchEnd = this.onTouchEnd.bind(this);
+        this.onTouchMove = this.onTouchMove.bind(this);
         this.submitForm = this.submitForm.bind(this);
         this.startPoint = {};
         this.nowPoint = null;
@@ -36,7 +37,7 @@ class todoElement extends Component {
         this.startPoint.y = event.changedTouches[0].pageY;
 
         this.startTime = new Date();
-
+        
         if (event.targetTouches.length == 1) {
             // одиночный тач (по картинке корзины) - удаление
             var clickedElem = event.target;
@@ -46,6 +47,17 @@ class todoElement extends Component {
                 var numberId = idClickedElem.slice(-1 * idClickedElem.length + 3); // берем все после первых 3 цифр
                 this.props.store.dispatch(DeleteTodo(numberId));
             }
+        }
+    }
+    
+    onTouchMove(event) {
+        event.stopPropagation();
+        this.movePoint = event.changedTouches[0];
+        var clickedElem = event.target;
+        var listNumber = clickedElem.getAttribute('id').slice(4);
+        var shiftX = this.startPoint.x - this.movePoint.pageX;
+        if (shiftX < 50) {
+            this.props.store.dispatch(MoveDeleteTodo(listNumber, shiftX));
         }
     }
 
@@ -73,7 +85,7 @@ class todoElement extends Component {
             }
         }
         // Если свайп влево, показываем картинку удаления
-        if(Math.abs(shift.x) > 20) {
+        if(Math.abs(shift.x) > 40) {
             if(shift.x < 0 && Math.abs(shift.y) < 50){
                 this.props.store.dispatch(ShowDeleteTodo(listNumber));
             }
@@ -98,12 +110,23 @@ class todoElement extends Component {
     }
 
     render () {
-        const {id, value, isChange, isDelete, store} = this.props;
-        if (isDelete) {
+        const {id, value, isChange, isDelete, shiftX, store} = this.props;
+        if (shiftX != 0 && isDelete) {
             this.deleteInlineStyle = {
-                marginLeft : "0px",
-                marginRight : "0px"
+                marginLeft: Math.min(Math.max(15 - shiftX, 0), 30) + "px",
+                marginRight: 0 + "px"
             };
+            if (shiftX > 0) {
+                this.trashInlineStyle = {
+                    minWidth: 50 + 2 * shiftX + 'px'
+                };
+            } else {
+                if (this.getById('del' + id)) {
+                    this.trashInlineStyle = {
+                        minWidth: this.getById('del' + id).clientWidth + shiftX + 'px'
+                    };
+                }
+            }
         } else {
             this.deleteInlineStyle = {
                 marginLeft : "30px",
@@ -111,7 +134,7 @@ class todoElement extends Component {
             };
         }
         return (
-            <div className="container-flex" id={"list" + id} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd}>
+            <div className="container-flex" id={"list" + id} onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd} onTouchMove={this.onTouchMove}>
                 <div className="bluelight-list-item" id={"cont" + id} style={this.deleteInlineStyle}>
                     {isChange ?
                         <form className="changeForm" action="#1" method="POST" onSubmit={this.submitForm}>
@@ -122,7 +145,7 @@ class todoElement extends Component {
                     }
                 </div>
                 {isDelete ?
-                    <div className="delete" id={"del"+id} onTouchStart={this.onTouchStart}>
+                    <div className="delete" id={"del"+id} onTouchStart={this.onTouchStart} style={this.trashInlineStyle}>
                         <img id={"img"+id} src="trash.png" className="image-delete" />
                     </div>:
                     null

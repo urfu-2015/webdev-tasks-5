@@ -45,11 +45,11 @@ class Page extends Component {
     };
 
     render() {
-        const {todos, selectedTodo, swipedTodo, reloadTodos} = this.props.store.getState();
+        const {todos, selectedTodo, swipedTodo, reloadTodos, shiftX} = this.props.store.getState();
         return (
             <div>
                 <Reloader isReloader={reloadTodos} store={this.props.store} />
-                    <TodoList todos={todos} selectedTodo={selectedTodo} swipedTodo={swipedTodo} store={this.props.store} />
+                    <TodoList todos={todos} selectedTodo={selectedTodo} swipedTodo={swipedTodo} store={this.props.store} shiftX={shiftX}/>
                 <AddButton store={this.props.store} />
             </div>
         )

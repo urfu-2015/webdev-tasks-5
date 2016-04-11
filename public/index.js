@@ -20503,12 +20503,13 @@
 	            var selectedTodo = _props$store$getState.selectedTodo;
 	            var swipedTodo = _props$store$getState.swipedTodo;
 	            var reloadTodos = _props$store$getState.reloadTodos;
+	            var shiftX = _props$store$getState.shiftX;
 	
 	            return _react2.default.createElement(
 	                'div',
 	                null,
 	                _react2.default.createElement(_reloader2.default, { isReloader: reloadTodos, store: this.props.store }),
-	                _react2.default.createElement(_todoList2.default, { todos: todos, selectedTodo: selectedTodo, swipedTodo: swipedTodo, store: this.props.store }),
+	                _react2.default.createElement(_todoList2.default, { todos: todos, selectedTodo: selectedTodo, swipedTodo: swipedTodo, store: this.props.store, shiftX: shiftX }),
 	                _react2.default.createElement(_addButton2.default, { store: this.props.store })
 	            );
 	        }
@@ -20702,6 +20703,14 @@
 	        type: 'SHOW_UPDATE_TODOS'
 	    };
 	};
+	
+	var MoveDeleteTodo = exports.MoveDeleteTodo = function MoveDeleteTodo(todo, shiftX) {
+	    return {
+	        type: 'MOVE_DELETE_TODO',
+	        todo: todo,
+	        shiftX: shiftX
+	    };
+	};
 
 /***/ },
 /* 173 */
@@ -20809,6 +20818,7 @@
 	    var selectedTodo = _ref.selectedTodo;
 	    var swipedTodo = _ref.swipedTodo;
 	    var store = _ref.store;
+	    var shiftX = _ref.shiftX;
 	    return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
@@ -20820,6 +20830,7 @@
 	                value: todo,
 	                isChange: i == selectedTodo,
 	                isDelete: i == swipedTodo,
+	                shiftX: shiftX,
 	                store: store
 	            });
 	        })
@@ -20864,6 +20875,7 @@
 	        _this.getClassByNumber = _this.getClassByNumber.bind(_this);
 	        _this.onTouchStart = _this.onTouchStart.bind(_this);
 	        _this.onTouchEnd = _this.onTouchEnd.bind(_this);
+	        _this.onTouchMove = _this.onTouchMove.bind(_this);
 	        _this.submitForm = _this.submitForm.bind(_this);
 	        _this.startPoint = {};
 	        _this.nowPoint = null;
@@ -20910,6 +20922,18 @@
 	            }
 	        }
 	    }, {
+	        key: 'onTouchMove',
+	        value: function onTouchMove(event) {
+	            event.stopPropagation();
+	            this.movePoint = event.changedTouches[0];
+	            var clickedElem = event.target;
+	            var listNumber = clickedElem.getAttribute('id').slice(4);
+	            var shiftX = this.startPoint.x - this.movePoint.pageX;
+	            if (shiftX < 50) {
+	                this.props.store.dispatch((0, _actions.MoveDeleteTodo)(listNumber, shiftX));
+	            }
+	        }
+	    }, {
 	        key: 'onTouchEnd',
 	        value: function onTouchEnd(event) {
 	            event.stopPropagation();
@@ -20935,7 +20959,7 @@
 	                }
 	            }
 	            // Если свайп влево, показываем картинку удаления
-	            if (Math.abs(shift.x) > 20) {
+	            if (Math.abs(shift.x) > 40) {
 	                if (shift.x < 0 && Math.abs(shift.y) < 50) {
 	                    this.props.store.dispatch((0, _actions.ShowDeleteTodo)(listNumber));
 	                }
@@ -20967,13 +20991,25 @@
 	            var value = _props.value;
 	            var isChange = _props.isChange;
 	            var isDelete = _props.isDelete;
+	            var shiftX = _props.shiftX;
 	            var store = _props.store;
 	
-	            if (isDelete) {
+	            if (shiftX != 0 && isDelete) {
 	                this.deleteInlineStyle = {
-	                    marginLeft: "0px",
-	                    marginRight: "0px"
+	                    marginLeft: Math.min(Math.max(15 - shiftX, 0), 30) + "px",
+	                    marginRight: 0 + "px"
 	                };
+	                if (shiftX > 0) {
+	                    this.trashInlineStyle = {
+	                        minWidth: 50 + 2 * shiftX + 'px'
+	                    };
+	                } else {
+	                    if (this.getById('del' + id)) {
+	                        this.trashInlineStyle = {
+	                            minWidth: this.getById('del' + id).clientWidth + shiftX + 'px'
+	                        };
+	                    }
+	                }
 	            } else {
 	                this.deleteInlineStyle = {
 	                    marginLeft: "30px",
@@ -20982,7 +21018,7 @@
 	            }
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'container-flex', id: "list" + id, onTouchStart: this.onTouchStart, onTouchEnd: this.onTouchEnd },
+	                { className: 'container-flex', id: "list" + id, onTouchStart: this.onTouchStart, onTouchEnd: this.onTouchEnd, onTouchMove: this.onTouchMove },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'bluelight-list-item', id: "cont" + id, style: this.deleteInlineStyle },
@@ -20995,7 +21031,7 @@
 	                ),
 	                isDelete ? _react2.default.createElement(
 	                    'div',
-	                    { className: 'delete', id: "del" + id, onTouchStart: this.onTouchStart },
+	                    { className: 'delete', id: "del" + id, onTouchStart: this.onTouchStart, style: this.trashInlineStyle },
 	                    _react2.default.createElement('img', { id: "img" + id, src: 'trash.png', className: 'image-delete' })
 	                ) : null
 	            );
@@ -21017,7 +21053,8 @@
 	    todos: [],
 	    selectedTodo: null,
 	    swipedTodo: null,
-	    reloadTodos: null
+	    reloadTodos: null,
+	    shiftX: 0
 	};
 	
 	function sleep(ms) {
@@ -21038,7 +21075,8 @@
 	                todos: state.todos,
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: state.swipedTodo,
-	                reloadTodos: null
+	                reloadTodos: null,
+	                shiftX: state.shiftX
 	            };
 	        case 'DELETE_TODO':
 	            socket.emit('delete todo', action.todo);
@@ -21047,14 +21085,16 @@
 	                todos: state.todos,
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: null,
-	                reloadTodos: null
+	                reloadTodos: null,
+	                shiftX: state.shiftX
 	            };
 	        case 'SELECT_TODO':
 	            return {
 	                todos: state.todos,
 	                selectedTodo: action.selectedTodo,
 	                swipedTodo: null,
-	                reloadTodos: null
+	                reloadTodos: null,
+	                shiftX: state.shiftX
 	            };
 	        case 'CHANGE_TODO':
 	            socket.emit('change todo', { old: action.todo, new: action.newTodoValue });
@@ -21063,41 +21103,55 @@
 	                todos: state.todos,
 	                selectedTodo: null,
 	                swipedTodo: null,
-	                reloadTodos: null
+	                reloadTodos: null,
+	                shiftX: state.shiftX
 	            };
 	        case 'SHOW_DELETE_TODO':
 	            return {
 	                todos: state.todos,
 	                selectedTodo: null,
-	                swipedTodo: action.todo
+	                swipedTodo: action.todo,
+	                reloadTodos: state.reloadTodos
 	            };
 	        case 'HIDE_DELETE_TODO':
 	            return {
 	                todos: state.todos,
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: null,
-	                reloadTodos: null
+	                reloadTodos: null,
+	                shiftX: state.shiftX
 	            };
 	        case 'SHOW_RELOAD_TODOS':
 	            return {
 	                todos: state.todos,
 	                selectedTodo: null,
 	                swipedTodo: null,
-	                reloadTodos: true
+	                reloadTodos: true,
+	                shiftX: state.shiftX
 	            };
 	        case 'SHOW_UPDATE_TODOS':
 	            return {
 	                todos: state.todos,
 	                selectedTodo: null,
 	                swipedTodo: null,
-	                reloadTodos: null
+	                reloadTodos: null,
+	                shiftX: state.shiftX
 	            };
 	        case 'INIT_TODOS':
 	            return {
 	                todos: action.todos,
 	                selectedTodo: null,
 	                swipedTodo: null,
-	                reloadTodos: null
+	                reloadTodos: null,
+	                shiftX: state.shiftX
+	            };
+	        case 'MOVE_DELETE_TODO':
+	            return {
+	                todos: state.todos,
+	                selectedTodo: state.selectedTodo,
+	                swipedTodo: action.todo,
+	                reloadTodos: state.reloadTodos,
+	                shiftX: action.shiftX
 	            };
 	        default:
 	            return state;

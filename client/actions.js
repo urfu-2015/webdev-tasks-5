@@ -57,3 +57,11 @@ export const ReloadTodos = () => {
         type: 'SHOW_UPDATE_TODOS'
     }
 };
+
+export const MoveDeleteTodo = (todo, shiftX) => {
+    return {
+        type: 'MOVE_DELETE_TODO',
+        todo: todo,
+        shiftX: shiftX
+    }
+};
