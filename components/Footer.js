@@ -10,7 +10,7 @@ class Footer extends Component {
     }
     render() {
         return (
-            <footer className="footer">
+            <footer className="todo-app__footer">
                 <TodoTextInput
                     newTodo
                     onSave={this.handleSave.bind(this)}
