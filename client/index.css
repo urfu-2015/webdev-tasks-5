@@ -35,7 +35,8 @@ body
     justify-content: space-around;
     align-items: center;
 }
-.task
+.task,
+.task_wrapper
 {
     margin-bottom: 25px;
     display: flex;
@@ -45,6 +46,10 @@ body
     font-size: 20px;
     width: 80%;
     position: relative;
+}
+.task_wrapper
+{
+    width: 100%;
 }
 .task__text
 {

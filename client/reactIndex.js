@@ -66,6 +66,10 @@ var App = new React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
+        var parElement = document.querySelector('.pull-and-refresh');
+        parElement.classList.add('pull-and-refresh-hidden');
+        parElement.style.height = '0px';
+        document.querySelector('.pull-and-refresh__loader').style.display = 'none';
     },
 
     componentDidMount () {
@@ -73,16 +77,21 @@ var App = new React.createClass({
         setInterval(this.loadTasksFromServer, this.props.pollInterval);
     },
 
+    handlePullAndRefresh () {
+        setInterval(this.loadTasksFromServer, 2000);
+    },
+
     render () {
         return (
             <div id="content">
                 <PullAndRefresh/>
-                <Header/>
+                <Header                    
+                    onResreshEvent={this.handlePullAndRefresh}
+                />
                 <List
                     tasks={this.state.tasks}
                     onDeleteSubmit={this.handleDeleteSubmit}
                     onEditSubmit={this.handleEditSubmit}
-                    onRefreshTime={this.loadTasksFromServer}
                 />
                 <AddContainer onAddSubmit={this.handleAddSubmit}/>
             </div>
@@ -101,9 +110,65 @@ var PullAndRefresh = new React.createClass({
 });
 
 var Header = new React.createClass({
+    getInitialState() {
+        return {
+            dir: 'none',
+            startX: undefined,
+            startY: undefined,
+            distX: 0,
+            distY: 0,
+            deltaTime: 0,
+            startTime: undefined
+        };
+    },
+
+    handleTouchStart (event) {
+        this.state.dir = 'none';
+        this.state.startX = event.changedTouches[0].pageX;
+        this.state.startY = event.changedTouches[0].pageY;
+        this.state.startTime = new Date().getTime();
+        this.state.distX = 0;
+        this.state.distY = 0;
+    },
+
+    handleTouchMove (event) {
+        var touchObj = event.changedTouches[0];
+        this.state.distX = touchObj.pageX - this.state.startX;
+        this.state.distY = touchObj.pageY - this.state.startY;
+
+        var parElement = document.querySelector('.pull-and-refresh');
+        var oldHeight =  parseFloat(window.getComputedStyle(parElement).height);
+        var maxRefreshBlockHeight = 150;
+        var loader = document.querySelector('.pull-and-refresh__loader');
+
+        if (Math.abs(this.state.distX) < Math.abs(this.state.distY)) {
+            if (this.state.distY > 0) {
+                this.state.dir = 'down';
+                var newHeight = Math.min(oldHeight + this.state.distY, maxRefreshBlockHeight);
+                parElement.style.height = newHeight + 'px';
+                parElement.classList.remove('pull-and-refresh-hidden');
+                
+                if (newHeight === maxRefreshBlockHeight) {
+                    loader.style.display = 'block';
+                    this.props.onResreshEvent();
+                }
+            } else {
+                this.state.dir = 'up';
+                loader.style.display = 'none';
+                parElement.style.height = '0px';
+                parElement.classList.add('pull-and-refresh-hidden');
+            }
+        }
+    },
+
     render () {
         return (
-            <div className="header">
+            <div 
+                className="header"
+                onTouchStart={this.handleTouchStart}
+                onTouchMove={this.handleTouchMove}
+                onTouchEnd={this.handleTouchEnd} 
+            >
                 <p className="header-text">TODO-хи!!!</p>
             </div>
         );
@@ -114,7 +179,6 @@ var Task = new React.createClass({
     getInitialState () {
         return {
             dir: 'none',
-            swipeType: 'none',
             startX: undefined,
             startY: undefined,
             distX: 0,
@@ -124,19 +188,25 @@ var Task = new React.createClass({
             allowedTime: 500,
             deltaTime: 0,
             startTime: undefined,
-            maxDeleteBttnWidth: 60
+            maxDeleteBttnWidth: 60,
+            isForm: false,
+            text: this.props.text,
+            id: this.props.id
         };
     },
 
     handleTouchStart (event) {
         this.state.dir = 'none';
-        this.state.swipeType = 'none';
         this.state.startX = event.changedTouches[0].pageX;
         this.state.startY = event.changedTouches[0].pageY;
         this.state.startTime = new Date().getTime();
         this.state.distX = 0;
         this.state.distY = 0;
 
+        this.deleteTask(event);
+    },
+
+    deleteTask (event) {
         var touchedElement = event.target;
         var isTap = event.targetTouches.length === 1;
         var isDeleteElement = touchedElement.id.indexOf('delete') != -1;
@@ -157,11 +227,6 @@ var Task = new React.createClass({
         var deleteButton = document.querySelector('#delete_' + id);
         var buttonWidth = parseFloat(window.getComputedStyle(deleteButton).width);
 
-        var parElement = document.querySelector('.pull-and-refresh');
-        var oldHeight =  parseFloat(window.getComputedStyle(parElement).height);
-        var maxRefreshBlockHeight = 150;
-        var loader = document.querySelector('.pull-and-refresh__loader');
-
         if (Math.abs(this.state.distX) > Math.abs(this.state.distY)) {
             if (this.state.distX < 0) {
                 this.state.dir = 'left';
@@ -178,23 +243,6 @@ var Task = new React.createClass({
                 }
                 deleteButton.style.width = newWidth + 'px';
             }
-        } else {
-            if (this.state.distY > 0) {
-                this.state.dir = 'down';
-                var newHeight = Math.min(oldHeight + this.state.distY, maxRefreshBlockHeight);
-                parElement.style.height = newHeight + 'px';
-                parElement.classList.remove('pull-and-refresh-hidden');
-                
-                if (newHeight === maxRefreshBlockHeight) {
-                    loader.style.display = 'block';
-                    setTimeout(this.props.onResreshEvent(), 1500); //refresh
-                }
-            } else {
-                this.state.dir = 'up';
-                loader.style.display = 'none';
-                parElement.style.height = '0px';
-                parElement.classList.add('pull-and-refresh-hidden');
-            }
         }
     },
 
@@ -205,83 +253,94 @@ var Task = new React.createClass({
         var isTheSame = this.state.dir === 'none' && !this.state.distX && !this.state.distY;
         var toEdit = element.id.indexOf('task') != -1 ||
                     element.id.indexOf('text') != -1;
-        if (isTheSame && toEdit) {
-            var id = element.id.split('_')[1];
-            var hasForm = document.querySelector('.task__edit-form') ? true : false;
-            var task = document.querySelector('#task_' + id);
-            var oldText = document.querySelector('#text_' + id).innerHTML;
-            task.innerHTML = '';
-            task.appendChild(this.createEditForm(id, oldText));
-            var inputSubmit = document.querySelector('#edit-submit_' + id);
-            var inputText = document.querySelector('#edit-text_' + id);
-            var props = this.props;
-            inputSubmit.addEventListener('click', function (event) {
-                var newText = inputText.value;
-                newText.length ? props.onEditEvent({id: id, text: newText}) :
-                    alert('Нельзя добавить пустое задание');
-            });
+        if (isTheSame && toEdit && this.props.canShowForm) {
+            this.state.isForm = true;
+            this.props.onShowFormEvent({value: true});
         }
     },
 
-    createEditForm (id, oldText) {
-        var form = document.createElement('div');
-        form.className = 'task__edit-form';
-        form.id = 'edit-form_' + id;
+    handleTextChange (event) {
+        this.setState({text: event.target.value});
+    },
 
-        var inputText = document.createElement('input');
-        inputText.type = 'text';
-        inputText.setAttribute('value', oldText);
-        inputText.className = 'task__edit-text'; 
-        inputText.id = 'edit-text_' + id;
-        form.appendChild(inputText);
-
-        var inputSubmit = document.createElement('input');
-        inputSubmit.type = 'submit';
-        inputSubmit.setAttribute('value', 'Сохранить');
-        inputSubmit.className = 'task__edit-submit'; 
-        inputSubmit.id = 'edit-submit_' + id;
-        form.appendChild(inputSubmit);
-
-        return form;
+    handleSubmit (event) {
+        this.state.isForm = false;
+        this.props.onShowFormEvent({value: false});
+        event.preventDefault();
+        var newText = this.state.text.trim();
+        if (!newText) {
+            alert('Нельзя добавить пустое задание');
+            return;
+        }        
+        this.props.onEditEvent({id: this.state.id, text: newText});
     },
 
     render () {
+        var taskInnerElement;
+        if (this.state.isForm) {
+            taskInnerElement =
+                <form className="task__edit-form" onSubmit={this.handleSubmit}>
+                    <input 
+                        type="text"
+                        value={this.state.text}
+                        className="task__edit-text"
+                        id={"edit-text_" + this.props.id}
+                        onChange={this.handleTextChange}
+                    />
+                    <input 
+                        type="submit"
+                        value="Сохранить"
+                        className="task__edit-submit"
+                        id={"edit-submit_" + this.props.id}
+                    />
+                </form>
+        } else {
+            taskInnerElement =
+                <div className="task_wrapper">
+                    <div 
+                        className="task__text"
+                        id={"text_" + this.props.id}
+                    >
+                        {this.state.text}
+                    </div>
+                    <div
+                        className="task__delete task__delete-hidden"
+                        id={"delete_" + this.props.id}
+                    >
+                        <i className="fa fa-trash" id={"deleteImage_" + this.props.id}></i>
+                    </div>
+                </div>
+        }
         return (
             <div
                 className="task"
                 id={"task_" + this.props.id}
                 onTouchStart={this.handleTouchStart}
                 onTouchMove={this.handleTouchMove}
-                onTouchEnd={this.handleTouchEnd}
+                onTouchEnd={this.handleTouchEnd}                
             >
-                <div 
-                    className="task__text"
-                    id={"text_" + this.props.id}
-                >
-                    {this.props.text}
-                </div>
-                <div
-                    className="task__delete task__delete-hidden"
-                    id={"delete_" + this.props.id}
-                >
-                    <i className="fa fa-trash"></i>
-                </div>
+                {taskInnerElement}
             </div>
         )
     }
 });
 
 var List = new React.createClass({
+    getInitialState () {
+        return {hasForm: false}
+    },
+
+    handleShowForm (newValue) {
+        this.setState({hasForm: newValue.value});
+    },
+
     handleDeleteEvent (data) {
         this.props.onDeleteSubmit(data);
     },
 
     handleEditEvent (data) {
+        this.hasForm = false;
         this.props.onEditSubmit(data);
-    },
-
-    handleRefreshEvent () {
-        this.props.onRefreshTime();
     },
 
     render () {
@@ -295,7 +354,8 @@ var List = new React.createClass({
                         text={task.text}
                         onDeleteEvent={this.handleDeleteEvent}
                         onEditEvent={this.handleEditEvent}
-                        onResreshEvent={this.handleRefreshEvent}
+                        onShowFormEvent={this.handleShowForm}
+                        canShowForm={!this.state.hasForm}
                     >
                     </Task>
                 );
@@ -343,7 +403,7 @@ var AddContainer = new React.createClass({
                     className="text-to-add"
                     type="text"
                     value={this.state.text}
-                     onChange={this.handleTextChange}
+                    onChange={this.handleTextChange}
                   />
                 <input className="butn-to-add" type="submit" value="Добавить"/>
             </form>
@@ -352,5 +412,5 @@ var AddContainer = new React.createClass({
 });
 
 ReactDOM.render(
-    <App url="/api/tasks" pollInterval={2000} />, document.querySelector('#page')
+    <App url="/api/tasks" pollInterval={100000} />, document.querySelector('#page')
 );
