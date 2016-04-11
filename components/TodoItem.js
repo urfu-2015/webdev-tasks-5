@@ -7,9 +7,11 @@ class TodoItem extends Component {
         super(props, context);
         this.state = {
             editing: false,
-            todoItemStill: true,
-            todoItemMovedLeft: false,
-            todoItemMovedRight: false
+
+            swipedLeft: false,
+            startMovingLeft: false,
+            startMovingRight: false,
+            moveOffset: 0
         };
         this.startPoint = {};
     }
@@ -37,14 +39,13 @@ class TodoItem extends Component {
         //event.stopPropagation();
         // Если в состоянии сдвига попали на корзину -> удаляем
         // Проблема в том, что слой корзины лежит ниже самого TodoItem
-        if (this.state.todoItemMovedLeft) {
+        if (this.state.moveOffset === -100) {
             if (event.target.className === 'todo') {
                 this.props.deleteTodo(this.props.todo.id);
             }
         }
         this.startPoint.x = event.changedTouches[0].pageX;
         this.startPoint.y = event.changedTouches[0].pageY;
-        this.ldelay = new Date();
     }
 
     handleTouchMove(event) {
@@ -54,55 +55,47 @@ class TodoItem extends Component {
             x: [nowPoint.pageX - this.startPoint.x],
             y: [nowPoint.pageY - this.startPoint.y]
         };
-        if (Math.abs(offset.x) > 150) {
+        if (Math.abs(offset.x) > 10) {
             if (offset.x < 0) {
-                // Показать корзину
-                console.log('Left swipe on touchmove');
-                //console.log(event);
-                this.leftSwipeHandler.bind(this)(event);
+                if (!this.state.startMovingRight) {
+                    this.setState({startMovingLeft: true});
+                    if (Math.abs(offset.x) >= 100) {
+                        this.setState({moveOffset: -100});
+                    } else {
+                        this.setState({moveOffset: [parseInt(0, 10) + parseInt(offset.x, 10)]});
+                    }
+                }
             }
             if (offset.x > 0) {
-                // Убрать корзину
-                console.log('Right swipe on touchmove');
-                //console.log(event);
-                this.rightSwipeHandler.bind(this)(event);
+                //console.log(this.state.moveOffset, offset.x);
+                if (!this.state.startMovingLeft && this.state.swipedLeft) {
+                    this.setState({startMovingRight: true});
+                    if (Math.abs(offset.x) >= 100) {
+                        this.setState({moveOffset: 0});
+                    } else {
+                        this.setState({moveOffset: [parseInt(-100, 10) + parseInt(offset.x, 10)]});
+                    }
+                }
             }
-            this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
         }
     }
 
     handleTouchEnd(event) {
         //event.stopPropagation();
         //clearTimeout(editFormTimer);
-        var pdelay = new Date();
-        let nowPoint = event.changedTouches[0];
-        var xAbs = Math.abs(this.startPoint.x - nowPoint.pageX);
-        var yAbs = Math.abs(this.startPoint.y - nowPoint.pageY);
-        // Если сдвинули палец на короткое расстояние и быстро
-        if ((xAbs > 20 || yAbs > 20) && (pdelay.getTime() - this.ldelay.getTime()) < 200) {
-            if (xAbs > yAbs) {
-                if (nowPoint.pageX < this.startPoint.x) {
-                    console.log('Left swipe touchend');
-                    this.leftSwipeHandler.bind(this)(event);
-                }
-                else {
-                    console.log('Right swipe touchend');
-                    this.rightSwipeHandler.bind(this)(event);
-                }
-            }
+        if (this.state.startMovingLeft) {
+            this.setState({
+                startMovingLeft: false,
+                moveOffset: -100,
+                swipedLeft: true
+            });
         }
-    }
-
-    leftSwipeHandler(event) {
-        this.setState({todoItemMovedLeft: true});
-    }
-
-    rightSwipeHandler(event) {
-        if (this.state.todoItemMovedLeft) {
-            this.setState({todoItemMovedRight: true});
-            setTimeout(() => {
-                this.setState({todoItemMovedRight: false, todoItemMovedLeft: false});
-            }, 400);
+        if (this.state.startMovingRight) {
+            this.setState({
+                startMovingRight: false,
+                moveOffset: 0,
+                swipedLeft: false
+            });
         }
     }
 
@@ -116,14 +109,10 @@ class TodoItem extends Component {
         let todoId = `todo-${todo.id}`;
 
         var todoItemClass = classnames({
-            'todo__item': this.state.todoItemStill,
-            'animate-left': this.state.todoItemMovedLeft,
-            'animate-right': this.state.todoItemMovedRight
+            'todo__item': true
         });
         var todoTextClass = classnames({
-            'todo__text': this.state.todoItemStill,
-            'animate-left': this.state.todoItemMovedLeft,
-            'animate-right': this.state.todoItemMovedRight
+            'todo__text': true
         });
         if (this.state.editing) {
             element = (
@@ -150,7 +139,9 @@ class TodoItem extends Component {
                  onTouchEnd={this.handleTouchEnd.bind(this)}
             >
                 <img id={imgId} className="todo__trashbox" src="/static/trashbox.png"/>
-                <article id={itemId} className={todoItemClass}>
+                <article
+                    style={{transform: ' translate(' + this.state.moveOffset + 'px)'}}
+                    id={itemId} className={todoItemClass}>
                     {element}
                 </article>
             </div>

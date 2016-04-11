@@ -70,19 +70,21 @@ class App extends Component {
 
     handleTouchEnd(event) {
         console.log('handleTouchEnd');
-        this.setState({
-            pulling: false,
-            pullPixels: 100,
-            spinning: true
-        });
-        this.props.dispatch(fetchTodos())
-            .then(
-                this.setState({
-                    pulling: false,
-                    pullPixels: 0,
-                    spinning: false
-                })
-            );
+        if (this.state.pullPixels > 0) {
+            this.setState({
+                pulling: false,
+                pullPixels: 100,
+                spinning: true
+            });
+            this.props.dispatch(fetchTodos())
+                .then(
+                    this.setState({
+                        pulling: false,
+                        pullPixels: 0,
+                        spinning: false
+                    })
+                );
+        }
     }
 
     render() {
