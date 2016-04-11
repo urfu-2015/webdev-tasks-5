@@ -20462,6 +20462,7 @@
 	        _this.startTime = null;
 	        _this.touchStarter = _this.touchStarter.bind(_this);
 	        _this.touchEnder = _this.touchEnder.bind(_this);
+	        _this.touchMover = _this.touchMover.bind(_this);
 	        return _this;
 	    }
 	
@@ -20484,8 +20485,17 @@
 	            shift.y = nowPoint.pageY - this.startPoint.y;
 	            // Если свайп сверху вниз, обновляем страничку
 	            if (nowPoint.pageY > this.startPoint.y + 50) {
-	                console.log("show");
 	                this.props.store.dispatch((0, _actions.ShowReloadTodos)());
+	            }
+	        }
+	    }, {
+	        key: 'touchMover',
+	        value: function touchMover(event) {
+	            event.stopPropagation();
+	            this.movePoint = event.changedTouches[0];
+	            var shiftY = this.startPoint.y - this.movePoint.pageY;
+	            if (shiftY < 0) {
+	                this.props.store.dispatch((0, _actions.MoveReload)(shiftY));
 	            }
 	        }
 	    }, {
@@ -20493,6 +20503,7 @@
 	        value: function componentDidMount() {
 	            document.addEventListener('touchstart', this.touchStarter, false);
 	            document.addEventListener('touchend', this.touchEnder, false);
+	            document.addEventListener('touchmove', this.touchMover, false);
 	        }
 	    }, {
 	        key: 'render',
@@ -20504,11 +20515,12 @@
 	            var swipedTodo = _props$store$getState.swipedTodo;
 	            var reloadTodos = _props$store$getState.reloadTodos;
 	            var shiftX = _props$store$getState.shiftX;
+	            var shiftY = _props$store$getState.shiftY;
 	
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(_reloader2.default, { isReloader: reloadTodos, store: this.props.store }),
+	                _react2.default.createElement(_reloader2.default, { isReloader: reloadTodos, store: this.props.store, shiftY: shiftY }),
 	                _react2.default.createElement(_todoList2.default, { todos: todos, selectedTodo: selectedTodo, swipedTodo: swipedTodo, store: this.props.store, shiftX: shiftX }),
 	                _react2.default.createElement(_addButton2.default, { store: this.props.store })
 	            );
@@ -20593,7 +20605,7 @@
 	    _createClass(Reloader, [{
 	        key: 'makeUpdate',
 	        value: function makeUpdate() {
-	            if (this.props.isReloader) {
+	            if (this.props.isReloader && this.props.shiftY == 0) {
 	                console.log('reload');
 	                this.props.store.dispatch((0, _actions.ReloadTodos)());
 	            }
@@ -20610,6 +20622,12 @@
 	        value: function render() {
 	            var isReloader = this.props.isReloader;
 	
+	            if (isReloader) {
+	                console.log(Math.abs(parseInt(this.props.shiftY) / 5));
+	                this.reloadStyle = {
+	                    marginTop: Math.abs(Math.round(this.props.shiftY) / 5) + "px"
+	                };
+	            }
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'reloader' },
@@ -20618,7 +20636,7 @@
 	                    { className: 'container-reload' },
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'container-flex' },
+	                        { className: 'container-flex', style: this.reloadStyle },
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'reload-image' },
@@ -20709,6 +20727,12 @@
 	        type: 'MOVE_DELETE_TODO',
 	        todo: todo,
 	        shiftX: shiftX
+	    };
+	};
+	var MoveReload = exports.MoveReload = function MoveReload(shiftY) {
+	    return {
+	        type: 'MOVE_RELOAD',
+	        shiftY: shiftY
 	    };
 	};
 
@@ -21054,7 +21078,8 @@
 	    selectedTodo: null,
 	    swipedTodo: null,
 	    reloadTodos: null,
-	    shiftX: 0
+	    shiftX: 0,
+	    shiftY: 0
 	};
 	
 	function sleep(ms) {
@@ -21076,7 +21101,8 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: state.swipedTodo,
 	                reloadTodos: null,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        case 'DELETE_TODO':
 	            socket.emit('delete todo', action.todo);
@@ -21086,7 +21112,8 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: null,
 	                reloadTodos: null,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        case 'SELECT_TODO':
 	            return {
@@ -21094,7 +21121,8 @@
 	                selectedTodo: action.selectedTodo,
 	                swipedTodo: null,
 	                reloadTodos: null,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        case 'CHANGE_TODO':
 	            socket.emit('change todo', { old: action.todo, new: action.newTodoValue });
@@ -21104,14 +21132,16 @@
 	                selectedTodo: null,
 	                swipedTodo: null,
 	                reloadTodos: null,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        case 'SHOW_DELETE_TODO':
 	            return {
 	                todos: state.todos,
 	                selectedTodo: null,
 	                swipedTodo: action.todo,
-	                reloadTodos: state.reloadTodos
+	                reloadTodos: state.reloadTodos,
+	                shiftY: state.shiftY
 	            };
 	        case 'HIDE_DELETE_TODO':
 	            return {
@@ -21119,7 +21149,8 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: null,
 	                reloadTodos: null,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        case 'SHOW_RELOAD_TODOS':
 	            return {
@@ -21127,7 +21158,8 @@
 	                selectedTodo: null,
 	                swipedTodo: null,
 	                reloadTodos: true,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: 0
 	            };
 	        case 'SHOW_UPDATE_TODOS':
 	            return {
@@ -21135,7 +21167,8 @@
 	                selectedTodo: null,
 	                swipedTodo: null,
 	                reloadTodos: null,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        case 'INIT_TODOS':
 	            return {
@@ -21143,7 +21176,8 @@
 	                selectedTodo: null,
 	                swipedTodo: null,
 	                reloadTodos: null,
-	                shiftX: state.shiftX
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        case 'MOVE_DELETE_TODO':
 	            return {
@@ -21151,7 +21185,17 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: action.todo,
 	                reloadTodos: state.reloadTodos,
-	                shiftX: action.shiftX
+	                shiftX: action.shiftX,
+	                shiftY: state.shiftY
+	            };
+	        case 'MOVE_RELOAD':
+	            return {
+	                todos: state.todos,
+	                selectedTodo: state.selectedTodo,
+	                swipedTodo: state.swipedTodo,
+	                reloadTodos: true,
+	                shiftX: state.shiftX,
+	                shiftY: action.shiftY
 	            };
 	        default:
 	            return state;

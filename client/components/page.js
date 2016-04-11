@@ -5,7 +5,7 @@ import AddButton from './addButton';
 import TodoList from './todoList';
 import {ReloadTodos} from '../actions';
 import {Component} from 'react';
-import {ShowReloadTodos} from '../actions';
+import {ShowReloadTodos, MoveReload} from '../actions';
 
 class Page extends Component {
 
@@ -16,6 +16,7 @@ class Page extends Component {
         this.startTime = null;
         this.touchStarter = this.touchStarter.bind(this);
         this.touchEnder = this.touchEnder.bind(this);
+        this.touchMover = this.touchMover.bind(this);
     }
 
     touchStarter (event) {
@@ -34,21 +35,30 @@ class Page extends Component {
         shift.y = nowPoint.pageY - this.startPoint.y;
         // Если свайп сверху вниз, обновляем страничку
         if(nowPoint.pageY > this.startPoint.y + 50) {
-            console.log("show");
             this.props.store.dispatch(ShowReloadTodos());
+        }
+    }
+    
+    touchMover (event) {
+        event.stopPropagation();
+        this.movePoint = event.changedTouches[0];
+        var shiftY = this.startPoint.y - this.movePoint.pageY;
+        if (shiftY < 0) {
+            this.props.store.dispatch(MoveReload(shiftY));
         }
     }
 
     componentDidMount () {
         document.addEventListener('touchstart', this.touchStarter, false);
         document.addEventListener('touchend', this.touchEnder, false);
+        document.addEventListener('touchmove', this.touchMover, false);
     };
 
     render() {
-        const {todos, selectedTodo, swipedTodo, reloadTodos, shiftX} = this.props.store.getState();
+        const {todos, selectedTodo, swipedTodo, reloadTodos, shiftX, shiftY} = this.props.store.getState();
         return (
             <div>
-                <Reloader isReloader={reloadTodos} store={this.props.store} />
+                <Reloader isReloader={reloadTodos} store={this.props.store} shiftY={shiftY}/>
                     <TodoList todos={todos} selectedTodo={selectedTodo} swipedTodo={swipedTodo} store={this.props.store} shiftX={shiftX}/>
                 <AddButton store={this.props.store} />
             </div>

@@ -9,7 +9,7 @@ class Reloader extends Component {
     }
 
     makeUpdate() {
-        if (this.props.isReloader) {
+        if (this.props.isReloader && this.props.shiftY == 0) {
             console.log('reload');
             this.props.store.dispatch(ReloadTodos());
         }
@@ -23,11 +23,17 @@ class Reloader extends Component {
 
     render() {
         const {isReloader} = this.props;
+        if (isReloader) {
+            console.log(Math.abs(parseInt(this.props.shiftY) / 5));
+            this.reloadStyle = {
+                marginTop:  Math.abs(Math.round(this.props.shiftY) / 5) + "px"
+            };
+        }
         return (
                 <div className="reloader">
                     {isReloader ?
                         <div className='container-reload'>
-                            <div className="container-flex">
+                            <div className="container-flex" style={this.reloadStyle}>
                                 <div className="reload-image">
                                     <img src="reload.png" className="image-reload" />
                                 </div>

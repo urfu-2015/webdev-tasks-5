@@ -65,3 +65,9 @@ export const MoveDeleteTodo = (todo, shiftX) => {
         shiftX: shiftX
     }
 };
+    export const MoveReload = (shiftY) => {
+        return {
+            type: 'MOVE_RELOAD',
+            shiftY: shiftY
+        };
+};
