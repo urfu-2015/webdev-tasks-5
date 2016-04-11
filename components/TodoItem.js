@@ -7,13 +7,15 @@ class TodoItem extends Component {
         super(props, context);
         this.state = {
             editing: false,
-            todoItemStill: true
+            todoItemStill: true,
+            todoItemMovedLeft: false,
+            todoItemMovedRight: false
         };
+        this.startPoint = {};
     }
 
     componentWillMount() {
         //React.initializeTouchEvents(true);
-        this.startPoint = {};
     }
 
     handleClick() {
@@ -30,9 +32,11 @@ class TodoItem extends Component {
     }
 
     handleTouchStart(event) {
-        console.log(event.currentTarget);
-        console.log(event.target);
-        event.stopPropagation();
+        // console.log(event.currentTarget);
+        // console.log(event.target);
+        //event.stopPropagation();
+        // Если в состоянии сдвига попали на корзину -> удаляем
+        // Проблема в том, что слой корзины лежит ниже самого TodoItem
         if (this.state.todoItemMovedLeft) {
             if (event.target.className === 'todo') {
                 this.props.deleteTodo(this.props.todo.id);
@@ -44,11 +48,12 @@ class TodoItem extends Component {
     }
 
     handleTouchMove(event) {
-        event.stopPropagation();
-        var offset = {};
-        this.nowPoint = event.changedTouches[0];
-        offset.x = this.nowPoint.pageX - this.startPoint.x;
-        offset.y = this.nowPoint.pageY - this.startPoint.y;
+        //event.stopPropagation();
+        let nowPoint = event.changedTouches[0];
+        var offset = {
+            x: [nowPoint.pageX - this.startPoint.x],
+            y: [nowPoint.pageY - this.startPoint.y]
+        };
         if (Math.abs(offset.x) > 150) {
             if (offset.x < 0) {
                 // Показать корзину
@@ -62,17 +67,37 @@ class TodoItem extends Component {
                 //console.log(event);
                 this.rightSwipeHandler.bind(this)(event);
             }
-            this.startPoint = {x: this.nowPoint.pageX, y: this.nowPoint.pageY};
+            this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
+        }
+    }
+
+    handleTouchEnd(event) {
+        //event.stopPropagation();
+        //clearTimeout(editFormTimer);
+        var pdelay = new Date();
+        let nowPoint = event.changedTouches[0];
+        var xAbs = Math.abs(this.startPoint.x - nowPoint.pageX);
+        var yAbs = Math.abs(this.startPoint.y - nowPoint.pageY);
+        // Если сдвинули палец на короткое расстояние и быстро
+        if ((xAbs > 20 || yAbs > 20) && (pdelay.getTime() - this.ldelay.getTime()) < 200) {
+            if (xAbs > yAbs) {
+                if (nowPoint.pageX < this.startPoint.x) {
+                    console.log('Left swipe touchend');
+                    this.leftSwipeHandler.bind(this)(event);
+                }
+                else {
+                    console.log('Right swipe touchend');
+                    this.rightSwipeHandler.bind(this)(event);
+                }
+            }
         }
     }
 
     leftSwipeHandler(event) {
-        var leftSwipe = event.changedTouches[0];
         this.setState({todoItemMovedLeft: true});
     }
 
     rightSwipeHandler(event) {
-        var rightSwipe = event.changedTouches[0];
         if (this.state.todoItemMovedLeft) {
             this.setState({todoItemMovedRight: true});
             setTimeout(() => {
@@ -122,6 +147,7 @@ class TodoItem extends Component {
             <div className="todo" id={todoId}
                  onTouchStart={this.handleTouchStart.bind(this)}
                  onTouchMove={this.handleTouchMove.bind(this)}
+                 onTouchEnd={this.handleTouchEnd.bind(this)}
             >
                 <img id={imgId} className="todo__trashbox" src="/static/trashbox.png"/>
                 <article id={itemId} className={todoItemClass}>
