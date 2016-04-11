@@ -66,10 +66,10 @@ var App = new React.createClass({
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
-        var parElement = document.querySelector('.pull-and-refresh');
-        parElement.classList.add('pull-and-refresh-hidden');
-        parElement.style.height = '0px';
-        document.querySelector('.pull-and-refresh__loader').style.display = 'none';
+        var parElement = this.refs.pullAndRefresh;
+        parElement.changeHeight('0px');
+        parElement.changeClassList('pull-and-refresh pull-and-refresh-hidden');
+        parElement.changeImageDisplay('none');
     },
 
     componentDidMount () {
@@ -84,9 +84,10 @@ var App = new React.createClass({
     render () {
         return (
             <div id="content">
-                <PullAndRefresh/>
+                <PullAndRefresh ref="pullAndRefresh"/>
                 <Header                    
-                    onResreshEvent={this.handlePullAndRefresh}
+                    onRefreshEvent={this.handlePullAndRefresh}
+                    parBlock={this.refs.pullAndRefresh}
                 />
                 <List
                     tasks={this.state.tasks}
@@ -100,10 +101,43 @@ var App = new React.createClass({
 });
 
 var PullAndRefresh = new React.createClass({
+    getInitialState () {
+        return {
+            height: '0px',
+            classList: 'pull-and-refresh pull-and-refresh-hidden',
+            imageDisplay: 'none'
+        }
+    },
+
+    changeHeight (newValue) {
+        this.setState({height: newValue});
+    },
+
+    changeClassList (newValue) {
+        this.setState({classList: newValue});
+    },
+
+    changeImageDisplay (newValue) {
+        this.setState({imageDisplay: newValue});
+    },
+
     render () {
+        var divStyle = {
+            height: this.state.height
+        };
+        var imgStyle = {
+            display: this.state.imageDisplay
+        };
         return (
-            <div className="pull-and-refresh pull-and-refresh-hidden">
-                <img src="loader.gif" className="pull-and-refresh__loader"/>
+            <div 
+                className={this.state.classList}
+                style={divStyle}
+            >
+                <img
+                    src="loader.gif"
+                    className="pull-and-refresh__loader"
+                    style={imgStyle}
+                />
             </div>
         );
     }
@@ -136,27 +170,26 @@ var Header = new React.createClass({
         this.state.distX = touchObj.pageX - this.state.startX;
         this.state.distY = touchObj.pageY - this.state.startY;
 
-        var parElement = document.querySelector('.pull-and-refresh');
-        var oldHeight =  parseFloat(window.getComputedStyle(parElement).height);
+        var parElement = this.props.parBlock;
+        var oldHeight =  parseFloat(parElement.state.height);
         var maxRefreshBlockHeight = 150;
-        var loader = document.querySelector('.pull-and-refresh__loader');
 
         if (Math.abs(this.state.distX) < Math.abs(this.state.distY)) {
             if (this.state.distY > 0) {
                 this.state.dir = 'down';
                 var newHeight = Math.min(oldHeight + this.state.distY, maxRefreshBlockHeight);
-                parElement.style.height = newHeight + 'px';
-                parElement.classList.remove('pull-and-refresh-hidden');
+                parElement.changeHeight(newHeight + 'px');
+                parElement.changeClassList('pull-and-refresh');
                 
                 if (newHeight === maxRefreshBlockHeight) {
-                    loader.style.display = 'block';
-                    this.props.onResreshEvent();
+                    parElement.changeImageDisplay('block');
+                    this.props.onRefreshEvent();
                 }
             } else {
                 this.state.dir = 'up';
-                loader.style.display = 'none';
-                parElement.style.height = '0px';
-                parElement.classList.add('pull-and-refresh-hidden');
+                parElement.changeImageDisplay('none');
+                parElement.changeHeight('0px');
+                parElement.changeClassList('pull-and-refresh pull-and-refresh-hidden');
             }
         }
     },
@@ -211,10 +244,7 @@ var Task = new React.createClass({
         var isTap = event.targetTouches.length === 1;
         var isDeleteElement = touchedElement.id.indexOf('delete') != -1;
         if (isTap && isDeleteElement) {
-            var id = touchedElement.id.split('_')[1];
-            var task = document.querySelector('#task_' + id);
-            this.state.maxDeleteBttnWidth = parseFloat(window.getComputedStyle(task).width) * 0.3;
-            this.props.onDeleteEvent({id: id});
+            this.props.onDeleteEvent({id: this.state.id});
         }
     },
 
@@ -223,25 +253,25 @@ var Task = new React.createClass({
         this.state.distX = touchObj.pageX - this.state.startX;
         this.state.distY = touchObj.pageY - this.state.startY;
 
-        var id = event.target.id.split('_')[1];
-        var deleteButton = document.querySelector('#delete_' + id);
-        var buttonWidth = parseFloat(window.getComputedStyle(deleteButton).width);
+        var id = this.state.id;
+        var deleteButton = this.refs.deleteButton;
+        var buttonWidth = parseFloat(deleteButton.state.width);
 
         if (Math.abs(this.state.distX) > Math.abs(this.state.distY)) {
             if (this.state.distX < 0) {
                 this.state.dir = 'left';
-                deleteButton.classList.remove('task__delete-hidden');
+                deleteButton.changeClassList('task__delete');
                 var widthWithDist = buttonWidth + Math.abs(this.state.distX);
                 var newWidth = Math.min(widthWithDist, this.state.maxDeleteBttnWidth);
-                deleteButton.style.width = newWidth + 'px';
+                deleteButton.changeWidth(newWidth + 'px');
             } else {
                 this.state.dir = 'right';
                 var newWidth = Math.max(0, buttonWidth - this.state.distX);
                 var halfOfMaxWidth = this.state.maxDeleteBttnWidth / 2;
                 if (newWidth > 0 && newWidth < halfOfMaxWidth) {
-                    deleteButton.classList.add('task__delete-hidden');
+                    deleteButton.changeClassList('task__delete task__delete-hidden');
                 }
-                deleteButton.style.width = newWidth + 'px';
+                deleteButton.changeWidth(newWidth + 'px');
             }
         }
     },
@@ -280,7 +310,8 @@ var Task = new React.createClass({
         if (this.state.isForm) {
             taskInnerElement =
                 <form className="task__edit-form" onSubmit={this.handleSubmit}>
-                    <input 
+                    <input
+                        ref={(ref) => this.myTextInput = ref}
                         type="text"
                         value={this.state.text}
                         className="task__edit-text"
@@ -303,12 +334,10 @@ var Task = new React.createClass({
                     >
                         {this.state.text}
                     </div>
-                    <div
-                        className="task__delete task__delete-hidden"
-                        id={"delete_" + this.props.id}
-                    >
-                        <i className="fa fa-trash" id={"deleteImage_" + this.props.id}></i>
-                    </div>
+                    <DeleteButton
+                        ref="deleteButton"
+                        id={this.props.id}
+                    />
                 </div>
         }
         return (
@@ -322,6 +351,38 @@ var Task = new React.createClass({
                 {taskInnerElement}
             </div>
         )
+    }
+});
+
+var DeleteButton = new React.createClass({
+    getInitialState () {
+        return {
+            classList: 'task__delete task__delete-hidden',
+            width: '0px'
+        }
+    },
+
+    changeClassList (newValue) {
+        this.setState({classList: newValue});
+    },
+
+    changeWidth (newValue) {
+        this.setState({width: newValue});
+    },
+
+    render () {
+        var style = {
+            width: this.state.width
+        };
+        return (
+            <div
+                className={this.state.classList}
+                id={"delete_" + this.props.id}
+                style={style}
+            >
+                <i className="fa fa-trash" id={"deleteImage_" + this.props.id}></i>
+            </div>
+        );
     }
 });
 
