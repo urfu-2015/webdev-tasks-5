@@ -16,7 +16,8 @@ class Task {
     }
 
     static remove(id) {
-        var res = checkId(id) ? removeById(id) : false;
+        var isDeleted = checkId(id) ? removeById(id) : false;
+        var res = isDeleted ? 'ok' : 'bad id';
         return res;
     }   
 
@@ -27,7 +28,14 @@ class Task {
     }
 
     static edit(id, newText) {
-    	storage[id].text = newText;
+        if (newText.length == 0)
+            return 'empty task';
+        if (checkId(id) && id <= currentId) {
+            storage[id].text = newText;
+            return 'ok';
+        } else {
+            return 'bad id';
+        }
     }
 }
 

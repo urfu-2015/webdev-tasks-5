@@ -11,7 +11,11 @@ var App = new React.createClass({
             type: 'POST',
             data: data,
             success: function (data) {
-                this.setState({tasks: data.tasks});
+                if (data.message != 'ok') {
+                    alert(`Error: ${data.message}`);
+                } else {
+                    this.setState({tasks: data.tasks});
+                }
             }.bind(this),
             error: function (xhr, status, err) {
                 this.setState({data: tasks});
@@ -21,6 +25,7 @@ var App = new React.createClass({
     },
 
     handleDeleteSubmit (data) {
+        //data.id = 'mu-ha-ha';
         var tasks = this.state.tasks;
         $.ajax({
             url: this.props.url,
@@ -28,7 +33,11 @@ var App = new React.createClass({
             type: 'DELETE',
             data: data,
             success: function (data) {
-                this.setState({tasks: data.tasks});
+                if (data.message != 'ok') {
+                    alert(`Error: ${data.message}`);
+                } else {
+                    this.setState({tasks: data.tasks});
+                }
             }.bind(this),
             error: function (xhr, status, err) {
                 this.setState({data: tasks});
@@ -45,7 +54,11 @@ var App = new React.createClass({
             type: 'PUT',
             data: data,
             success: function (data) {
+                if (data.message != 'ok') {
+                    alert(`Error: ${data.message}`);
+                }
                 this.setState({tasks: data.tasks});
+                //console.log(this.state.tasks);
             }.bind(this),
             error: function (xhr, status, err) {
                 this.setState({data: tasks});
@@ -248,7 +261,7 @@ var Task = new React.createClass({
         }
     },
 
-    handleTouchMove (event) {
+    handleTouchMove (event) {      
         var touchObj = event.changedTouches[0];
         this.state.distX = touchObj.pageX - this.state.startX;
         this.state.distY = touchObj.pageY - this.state.startY;
@@ -298,10 +311,6 @@ var Task = new React.createClass({
         this.props.onShowFormEvent({value: false});
         event.preventDefault();
         var newText = this.state.text.trim();
-        if (!newText) {
-            alert('Нельзя добавить пустое задание');
-            return;
-        }        
         this.props.onEditEvent({id: this.state.id, text: newText});
     },
 
@@ -445,10 +454,10 @@ var AddContainer = new React.createClass({
     handleSubmit (event) {
         event.preventDefault();
         var newText = this.state.text.trim();
-        if (!newText) {
+        /*if (!newText) {
             alert('Нельзя добавить пустое задание');
             return;
-        }
+        }*/
         this.props.onAddSubmit({text: newText});
         this.setState({text: ''});
     },

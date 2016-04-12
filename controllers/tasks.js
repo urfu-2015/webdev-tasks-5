@@ -10,23 +10,31 @@ exports.list = (req, res) => {
 };
 
 exports.add = (req, res) => {
-    var newTask = new Task(req.body.text).save();
+    var result = 'ok';
+    if (req.body.text.length == 0) {
+        result = 'empty task';
+    } else {
+        var newTask = new Task(req.body.text).save();
+    }
     res.json({
-        tasks: Task.findAll()
+        tasks: Task.findAll(),
+        message: result
     });
 };
 
 exports.remove = (req, res) => {
-    var isRemoved = Task.remove(req.body.id);
+    var result = Task.remove(req.body.id);
     res.json({
-        tasks: Task.findAll()
+        tasks: Task.findAll(),
+        message: result
     });
 };
 
 exports.edit = (req, res) => {
     var newText = req.body.text;
-    Task.edit(req.body.id, newText);
+    var result = Task.edit(req.body.id, newText);
     res.json({
-        tasks: Task.findAll()
+        tasks: Task.findAll(),
+        message: result
     });
 };
