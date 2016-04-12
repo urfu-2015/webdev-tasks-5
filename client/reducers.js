@@ -18,8 +18,10 @@ exports.TodoApp = (state, action) => {
     var socket = io.connect();
     switch (action.type) {
         case 'ADD_TODO':
-            socket.emit('add todo' , action.todo);
-            state.todos.unshift(action.todo);
+            if (action.todo != '') {
+                socket.emit('add todo' , action.todo);
+                state.todos.unshift(action.todo);
+            }
             return {
                 todos: state.todos,
                 selectedTodo: state.selectedTodo,

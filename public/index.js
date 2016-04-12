@@ -20494,7 +20494,7 @@
 	            event.stopPropagation();
 	            this.movePoint = event.changedTouches[0];
 	            var shiftY = this.startPoint.y - this.movePoint.pageY;
-	            if (shiftY < 0) {
+	            if (shiftY < -15) {
 	                this.props.store.dispatch((0, _actions.MoveReload)(shiftY));
 	            }
 	        }
@@ -21094,8 +21094,10 @@
 	    var socket = io.connect();
 	    switch (action.type) {
 	        case 'ADD_TODO':
-	            socket.emit('add todo', action.todo);
-	            state.todos.unshift(action.todo);
+	            if (action.todo != '') {
+	                socket.emit('add todo', action.todo);
+	                state.todos.unshift(action.todo);
+	            }
 	            return {
 	                todos: state.todos,
 	                selectedTodo: state.selectedTodo,

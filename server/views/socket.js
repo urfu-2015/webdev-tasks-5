@@ -5,15 +5,8 @@ var todos = [
     'Сделать 5ую задачу'
 ];
 module.exports = function (socket) {
-    // send the new user their name and a list of users
 
     socket.emit('init todos', {todos});
-
-    socket.on('init app', function(data) {
-        socket.emit('init todos', {
-            todos: todos
-        });
-    });
 
     socket.on('add todo', function(todo){
         todos.unshift(todo);
