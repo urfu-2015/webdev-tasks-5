@@ -6,7 +6,6 @@ import {createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 
 import Content from '../../../client/components/content';
-import {addNote} from '../../../client/actions';
 import {todoApp} from '../../../client/reducers';
 
 const createStoreWithMiddleware = applyMiddleware(
@@ -29,13 +28,3 @@ store.subscribe(render);
 //     console.log(store.getState());
 //     render();
 // });
-
-fetch('/todos')
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
-        data.notes.forEach(note => {
-            store.dispatch(addNote(note));
-        });
-    });

@@ -1,17 +1,31 @@
-import React, { Component} from 'react';
+import React from 'react';
 import Header from './header';
 import AddButton from './addButton';
 import Notes from './notes';
+import {addNote} from '../actions';
 
-export default ({store}) => {
-    const {notes, selectedNoteId, swipedNoteId} = store.getState();
+const content  = React.createClass({
+    componentWillMount: function () {
+        fetch('/todos')
+            .then(response => { return response.json() })
+            .then(data => {
+                data.notes.forEach(note => {
+                    this.props.store.dispatch(addNote(note));
+                });
+            });
+    },
 
-    return (
-        <div>
-            <Header />
-            <Notes notes={notes} swipedNoteId={swipedNoteId} store={store} />
-            <AddButton store={store} />
-        </div>
-    );
+    render: function () {
+        const {notes, selectedNoteId, swipedNoteId} = this.props.store.getState();
 
-};
+        return (
+            <div>
+                <Header />
+                <Notes notes={notes} swipedNoteId={swipedNoteId} store={this.props.store} />
+                <AddButton store={this.props.store} />
+            </div>
+        );
+    }
+});
+
+export default content

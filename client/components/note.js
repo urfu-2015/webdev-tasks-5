@@ -11,6 +11,7 @@ class note extends Component {
         this.handleChangeTask = this.handleChangeTask.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.onTouchStart = this.onTouchStart.bind(this);
+        this.onTouchMove = this.onTouchMove.bind(this);
         this.onTouchEnd = this.onTouchEnd.bind(this);
     }
 
@@ -40,13 +41,48 @@ class note extends Component {
     onTouchStart (event) {
         event.stopPropagation();
 
+        let elem = event.target.closest('.notes-item');
+        if (!elem) {
+            return;
+        }
         this.startPosition = {
             x: event.changedTouches[0].pageX,
-            y: event.changedTouches[0].pageY
+            y: event.changedTouches[0].pageY,
+            elem
         };
+
+    }
+
+    onTouchMove (event) {
+        if (!this.startPosition.elem) {
+            return;
+        }
+
+        let xAbs = Math.abs(event.changedTouches[0].pageX - this.startPosition.x);
+        let yAbs = Math.abs(event.changedTouches[0].pageY - this.startPosition.y);
+
+        if (xAbs < 20 && yAbs < 20) {
+            return;
+        }
+
+        let elem = event.target.closest('.notes-item');
+        if (!elem) {
+            return;
+        }
+        event.preventDefault();
+
+        if (xAbs > yAbs) {
+            elem.style.transform = "translateX(" + (event.changedTouches[0].pageX - this.startPosition.x) + "px)";
+        }
+        event.stopPropagation();
     }
 
     onTouchEnd (event) {
+        let elem = event.target.closest('.notes-item');
+        if (!elem) {
+            return;
+        }
+
         let xAbs = Math.abs(event.changedTouches[0].pageX - this.startPosition.x);
         let yAbs = Math.abs(event.changedTouches[0].pageY - this.startPosition.y);
 
@@ -54,37 +90,34 @@ class note extends Component {
             if (xAbs > yAbs) {
                 if (event.changedTouches[0].pageX < this.startPosition.x) {
                     /* СВАЙП ВЛЕВО*/
+                    elem.style.transform = "translateX(" + -5 + "px)";
                     this.props.store.dispatch(swipeLeft(this.props.id));
                 } else {
                     /* СВАЙП ВПРАВО*/
+                    elem.style.transform = "";
                     this.props.store.dispatch(swipeRight());
                 }
             } else {
                 if (event.changedTouches[0].pageY > this.startPosition.y) {
                     /* СВАЙП ВНИЗ*/
                     let loading = document.querySelector('.update-progress');
-                    console.log(loading);
                     loading.classList.add('update-progress_visible');
-                    setTimeout(() => {
-                        this.props.store.dispatch(fetchUpdateNotes());
-                        loading.classList.remove('update-progress_visible');
-                    }, 1000);
+                    this.props.store.dispatch(fetchUpdateNotes());
+                    loading.classList.remove('update-progress_visible');
                 }
             }
         } else {
             if (event.target.classList.contains('notes-item__delete')) {
                 this.handleDel();
             }
-            //event.target.dispatchEvent(new Event('tap', {bubbles: true}));
         }
     }
 
     render() {
-        //let swipeFlag = (this.props.swipedNoteId === this.props.id) ? ' swiped-todo' : '';
         let swipeFlag = (this.props.swipedNoteId === this.props.id) ? '' : ' notes-item__delete_invisible';
         return (
             <li id={this.props.id} className="notes__item notes-item"
-                onTouchStart={this.onTouchStart} onTouchEnd={this.onTouchEnd}>
+                onTouchStart={this.onTouchStart} onTouchMove={this.onTouchMove} onTouchEnd={this.onTouchEnd}>
                 <div id={"task-" + this.props.id} className="notes-item__task" onClick={this.handleClick}>
                     {(this.state.selected) ?
                         <form name="newNote" className="update-form" onSubmit={this.onSubmit}>

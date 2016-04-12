@@ -1,6 +1,7 @@
 'use strict';
 
 const Note = require('../models/note');
+const promisify = require('bluebird').promisify;
 
 exports.list = (req, res) => {
     let notes = Note.findAll();
@@ -17,9 +18,14 @@ exports.create = (req, res) => {
     };
 
     const note = new Note(data);
-    note.save();
-
-    res.json({task: note.task, id: note.id});
+    let asyncSave = promisify(note.save.bind(note));
+    asyncSave()
+        .then(
+            res.json({task: note.task, id: note.id})
+        )
+        .catch(
+            console.error('Save new note failed')
+        )
 };
 
 exports.delete = (req, res) => {
