@@ -13,21 +13,21 @@ class Note {
     }
 
     static delete(id) {
-        let index = memoryStorage.indexOf(this.find(id));
+        const index = memoryStorage.indexOf(this.find(id));
         if (index !== -1) {
             memoryStorage.splice(index, 1);
         }
     }
 
     static edit(id, newText) {
-        let index = memoryStorage.indexOf(this.find(Number(id)));
+        const index = memoryStorage.indexOf(this.find(Number(id)));
         if (index !== -1) {
             memoryStorage[index].task = newText;
         }
     }
 
     static find(id) {
-        let note = memoryStorage.filter(note => note.id === id).pop();
+        const note = memoryStorage.filter(note => note.id === id).pop();
         return note ? note : {};
     }
 

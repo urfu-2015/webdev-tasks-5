@@ -49,9 +49,7 @@ export function fetchAddNote(task) {
             body: JSON.stringify({task})
         })
             .then(response => response.json())
-            .then(json => {
-                dispatch(addNote(json))
-            });
+            .then(json => dispatch(addNote(json)));
     };
 }
 
@@ -65,9 +63,7 @@ export function fetchEditNote(newText, id) {
             body: JSON.stringify({id, newText})
         })
             .then(response => response.json())
-            .then(json => {
-                dispatch(editNote(json))
-            });
+            .then(json => dispatch(editNote(json)));
     };
 }
 
@@ -81,20 +77,14 @@ export function fetchDeleteNote(id) {
             body: JSON.stringify({id})
         })
             .then(response => response.json())
-            .then(json => {
-                dispatch(delNote(json))
-            });
+            .then(json => dispatch(delNote(json)));
     };
 }
 
 export function fetchUpdateNotes() {
     return dispatch => {
         fetch('/todos')
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                dispatch(updateNotes(data.notes));
-            });
+            .then(response => response.json())
+            .then(data => dispatch(updateNotes(data.notes)));
     };
 }

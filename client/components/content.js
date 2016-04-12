@@ -7,7 +7,7 @@ import {addNote} from '../actions';
 const content  = React.createClass({
     componentWillMount: function () {
         fetch('/todos')
-            .then(response => { return response.json() })
+            .then(response => response.json())
             .then(data => {
                 data.notes.forEach(note => {
                     this.props.store.dispatch(addNote(note));
