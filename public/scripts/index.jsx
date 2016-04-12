@@ -8,8 +8,8 @@ function changeTask(id, newText, cb) {
     });
 }
 
-function deleteTask(cb) {
-    XHR.deleteJSON('/api/task/' + th.getId(), cb);
+function deleteTask(id, cb) {
+    XHR.deleteJSON('/api/task/' + id, cb);
 }
 
 function addTask() {
@@ -55,7 +55,7 @@ var TaskItem = React.createClass({
         return {
             taphandler: taphandler,
             edit: false,
-            delete: false,
+            isDelete: false,
             id: this.props.id,
             text: this.props.text
         };
@@ -70,11 +70,11 @@ var TaskItem = React.createClass({
     },
     
     onSwipeLeft: function () {
-        this.setState({ delete: true });
+        this.setState({ isDelete: true });
     },
     
     onSwipeRight: function () {
-        this.setState({ delete: false });
+        this.setState({ isDelete: false });
     },
     
     onClick: function () {
@@ -85,7 +85,14 @@ var TaskItem = React.createClass({
         event.stopPropagation();
     },
     
-    render: function () {
+    onDeleteTask: function (event) {
+        event.stopPropagation();
+        deleteTask(this.state.id, (function () {
+            this.props.deleteCB();
+        }).bind(this));
+    },
+    
+   render: function () {
         var innerContent;
         if (this.state.edit) {
             innerContent =  (
@@ -107,14 +114,24 @@ var TaskItem = React.createClass({
         } else {
             innerContent = <div className="task-item__name">{this.state.text}</div>;
         }
+        var className = "task-item task-item_edit_false task-item_delete_" +
+            this.state.isDelete.toString();
         return (
-            <div className="task-item task-item_delete_false"
-                onTouchStart={this.state.taphandler.touchStart}
-                onTouchMove={this.state.taphandler.touchMove}
-                onTouchEnd={this.state.taphandler.touchEnd}
+            <div className={className}
+                onTouchStart={this.state.taphandler.touchStart.bind(this.state.taphandler)}
+                onTouchMove={this.state.taphandler.touchMove.bind(this.state.taphandler)}
+                onTouchEnd={this.state.taphandler.touchEnd.bind(this.state.taphandler)}
                 onClick={this.onClick}
                 >
                 {innerContent}
+                <div className="task-item__delete-task">
+                <img 
+                src="/images/delete.png"
+                width="30" 
+                height="30"
+                onClick={this.onDeleteTask}
+                />
+            </div>
             </div>
         );
     }
@@ -140,12 +157,26 @@ var TaskList = React.createClass({
     clearTasks: function () {
         this.setState({ tasks: [] });
     },
+    
+    getDeleteCB: function (id) {
+        return (function () {
+            var newTasks = this.state.tasks.filter(function (task) {
+                return task.id != id
+            });
+            this.setState({ tasks: newTasks });
+        }).bind(this);
+    },
 
     render: function () {
         var items = [];
-        this.state.tasks.forEach(function (task) {
-            items.push(<TaskItem key={task.id} id={task.id} text={task.text} />);
-        });
+        this.state.tasks.forEach((function (task) {
+            items.push(<TaskItem
+                key={task.id}
+                id={task.id}
+                text={task.text}
+                deleteCB={this.getDeleteCB(task.id)}
+                />);
+        }).bind(this));
         return <div>{items}</div>;
     }
 });

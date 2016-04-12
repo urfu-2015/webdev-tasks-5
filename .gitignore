@@ -30,3 +30,5 @@ node_modules
 npm-debug.log
 /public/scripts/index.js
 /public/scripts/bundle.js
+/public/scripts/bundle.js
+/public/scripts/index.js

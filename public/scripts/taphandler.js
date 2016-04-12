@@ -28,15 +28,19 @@
         this.__element.addEventListener('touchend', this.touchEnd.bind(this));
     };
     
+    TapHandler.prototype.__getTouchPosition = function (event) {
+        return (event.touches) ? event.touches[0] : event.changedTouches[0];
+    };
+    
     TapHandler.prototype.touchStart = function (event) {
-        this.__startX = event.touches[0].screenX;
-        this.__startY = event.touches[0].screenY;
+        this.__startX = this.__getTouchPosition(event).screenX;
+        this.__startY = this.__getTouchPosition(event).screenY;
     };
     
     TapHandler.prototype.touchMove = function (event) {
         event.preventDefault();
-        this.__endX = event.touches[0].screenX;
-        this.__endY = event.touches[0].screenY;
+        this.__endX = this.__getTouchPosition(event).screenX;
+        this.__endY = this.__getTouchPosition(event).screenY;
     };
     
     TapHandler.prototype.touchEnd = function (event) {
