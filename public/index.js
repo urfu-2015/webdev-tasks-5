@@ -20557,7 +20557,7 @@
 	            { className: "container-flex" },
 	            _react2.default.createElement(
 	                "div",
-	                { className: "blue-list-item" },
+	                { className: "header-list-item" },
 	                "TODO-хи"
 	            )
 	        )

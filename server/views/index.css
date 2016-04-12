@@ -31,6 +31,12 @@
     min-width: 150px;
 }
 
+.header-list-item
+{
+    font-size: 50px;
+    color: #000;
+    background-color: #fff;
+}
 .blue-list-item
 {
     color: #ddd;
@@ -40,7 +46,7 @@
 .bluelight-list-item
 {
     color: #333;
-    background-color: #b4d2f7;
+    background-color: #92b8f7;
 }
 
 .delete
@@ -60,7 +66,7 @@
     margin: 10px 0 10px 0;
 }
 
-.blue-list-item, .bluelight-list-item
+.blue-list-item, .bluelight-list-item, .header-list-item
 {
     display: -webkit-flex;
     display: flex;
