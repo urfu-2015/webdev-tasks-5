@@ -44,7 +44,6 @@ function saveTask(event) {
 }
 
 function reorder(oldNum, newNum) {
-   // loader(true);
     var params = createPOSTparams({oldNum, newNum});
     fetch('/changeOrder', params)
     .then(() => {
@@ -123,19 +122,17 @@ function removeTaskLocal(orderNum) {
 function refresh() {
     loader(true);
     clearStyles();
-    fetch('/getAll').then(
-        response =>  response.json(),
-        err => console.log('ERROR' + err)
-    )
+    fetch('/getAll')
+    .then(response =>  response.json())
     .then(data => {
         commonStaff.tasks = data.allTasks;
         commonStaff.edited = -2;
         render();
-    });
+    })
+    .catch(err => console.log(err));
 }
 
 function clearStyles() {
-    console.log('CLEEEEAR');
     var elems = document.getElementsByClassName("task");
     for(var i =0;i < elems.length; i++) {
         elems[i].firstElementChild.removeAttribute('style');
@@ -156,7 +153,7 @@ document.addEventListener('touchstart', function(event) {
     if (event.targetTouches.length > 1) {
         return;
     }
-    commonStaff.ldelay = new Date(); 
+    commonStaff.ldelay = new Date();
     commonStaff.start.x = event.changedTouches[0].pageX;
     commonStaff.start.y = event.changedTouches[0].pageY;
 }, false);

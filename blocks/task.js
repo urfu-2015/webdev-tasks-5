@@ -9,7 +9,6 @@ export default ({task, commonStaff, handler}) => {
         if (event.targetTouches.length > 1) {
             return;
         }
-        event.preventDefault();
         commonStaff.start.x = event.changedTouches[0].pageX;
         commonStaff.start.y = event.changedTouches[0].pageY;
         if (commonStaff.reoder) return;
