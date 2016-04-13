@@ -1,7 +1,7 @@
 module.exports = {
-    entry: "./js/main.jsx",
+    entry: "./source/js/main.jsx",
     output: {
-        path: __dirname + "/public/javascripts",
+        path: __dirname + "/public",
         filename: 'main.js'
     },
     module: {
