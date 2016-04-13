@@ -21,8 +21,8 @@ const content  = React.createClass({
         return (
             <div>
                 <Header />
-                <Notes notes={notes} swipedNoteId={swipedNoteId} store={this.props.store} />
-                <AddButton store={this.props.store} />
+                <Notes notes={notes} swipedNoteId={swipedNoteId} dispatch={this.props.store.dispatch} />
+                <AddButton dispatch={this.props.store.dispatch} />
             </div>
         );
     }

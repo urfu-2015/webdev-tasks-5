@@ -1,7 +1,7 @@
 import React from 'react';
 import Note from './note';
 
-export default ({notes, swipedNoteId, store}) => {
+export default ({notes, swipedNoteId, dispatch}) => {
     return (
         <ul className="notes">
         {notes.map(note => (
@@ -10,7 +10,7 @@ export default ({notes, swipedNoteId, store}) => {
                 task={note.task}
                 id={note.id}
                 swipedNoteId={swipedNoteId}
-                store={store} />
+                dispatch={dispatch} />
         ))}
     </ul>
     );

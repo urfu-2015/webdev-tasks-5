@@ -31,11 +31,11 @@ class note extends Component {
         }
 
         this.setState({ selected: false });
-        this.props.store.dispatch(fetchEditNote(input.value, this.props.id));
+        this.props.dispatch(fetchEditNote(input.value, this.props.id));
     }
 
     handleDel() {
-        this.props.store.dispatch(fetchDeleteNote(this.props.id));
+        this.props.dispatch(fetchDeleteNote(this.props.id));
     }
 
     onTouchStart (event) {
@@ -91,18 +91,18 @@ class note extends Component {
                 if (event.changedTouches[0].pageX < this.startPosition.x) {
                     /* СВАЙП ВЛЕВО*/
                     elem.style.transform = "translateX(" + -5 + "px)";
-                    this.props.store.dispatch(swipeLeft(this.props.id));
+                    this.props.dispatch(swipeLeft(this.props.id));
                 } else {
                     /* СВАЙП ВПРАВО*/
                     elem.style.transform = "";
-                    this.props.store.dispatch(swipeRight());
+                    this.props.dispatch(swipeRight());
                 }
             } else {
                 if (event.changedTouches[0].pageY > this.startPosition.y) {
                     /* СВАЙП ВНИЗ*/
                     let loading = document.querySelector('.update-progress');
                     loading.classList.add('update-progress_visible');
-                    this.props.store.dispatch(fetchUpdateNotes());
+                    this.props.dispatch(fetchUpdateNotes());
                     loading.classList.remove('update-progress_visible');
                 }
             }

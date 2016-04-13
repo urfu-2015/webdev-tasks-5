@@ -20,7 +20,7 @@ class addButton extends Component {
         return (
             <div className="new-note">
                 <button className={'new-note__button-add ' + className.btn} onClick={this.handleClick}>Добавить</button>
-                <CreateNote formClassName={className.form} store={this.props.store} />
+                <CreateNote formClassName={className.form} dispatch={this.props.dispatch} />
             </div>
         );
     }

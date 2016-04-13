@@ -14,7 +14,7 @@ class createNote extends Component {
             return
         }
 
-        this.props.store.dispatch(fetchAddNote(input.value));
+        this.props.dispatch(fetchAddNote(input.value));
         input.value = '';
     }
 
