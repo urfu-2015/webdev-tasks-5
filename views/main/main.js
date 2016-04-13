@@ -30,8 +30,8 @@ function render() {
 
 function saveTask(event) {
     var task = createTaskObj(event);
+    commonStaff.edited = -2;
     if (task.orderNum === '-1') {
-        commonStaff.edited = -2;
         if (task.todo.length) {
             addTask(task);
         } else {
