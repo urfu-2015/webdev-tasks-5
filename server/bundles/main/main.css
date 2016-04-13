@@ -1,0 +1,23 @@
+@import "../../blocks/header/header.css";
+@import "../../blocks/create/create.css";
+@import "../../blocks/note/note.css";
+
+.notes
+{
+    padding: 0;
+    list-style-type: none;
+}
+
+.update-progress
+{
+    display: none;
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 10px;
+    background-image: url("load.gif");
+}
+
+.update-progress_visible
+{
+    display: block;
+}

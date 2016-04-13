@@ -1,0 +1,37 @@
+.notes__item
+{
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.notes-item__task
+{
+    width: 80%;
+    background-color: #10909e;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.notes-item__delete
+{
+    background: url("delete.png") no-repeat center;
+    width: 20%;
+    border: 1px solid #000;
+    border-radius: 15px;
+}
+
+.notes-item__delete_invisible
+{
+    display: none;
+}
+
+.update-form input
+{
+    padding: 5px;
+    margin: 5px;
+    font-size: 20px;
+}
