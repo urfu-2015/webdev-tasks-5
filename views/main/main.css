@@ -87,6 +87,8 @@ body {
 .task__add,
 .task__input,
 .task__submit {
+    height: 128px;
+    border : solid 1px #00aedb;
     padding : 10px 20px;
     font-size : 50px;
 }
