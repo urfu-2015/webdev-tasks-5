@@ -93,15 +93,8 @@ body {
     font-size : 50px;
 }
 
-
 .task__submit {
     width: 30%;
-}
-
-.task__submit:hover,
-.task__add:hover {
-    color: #fff;
-    background-color: #00aedb;
 }
 
 .task__input {
