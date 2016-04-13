@@ -10,17 +10,17 @@ exports.list = (req, res) => {
 exports.add = (req, res) => {
     var isAdded = new Task(req.body.text).save();
     isAdded ? res.json({tasks: Task.findAll()}) :
-              res.status(500).send('text of any task should not be empty :(');
+              res.status(400).send('text of any task should not be empty :(');
 };
 
 exports.remove = (req, res) => {
     var isRemoved = Task.remove(req.body.id);
     isRemoved ? res.json({tasks: Task.findAll()}) :
-                res.status(500).send('id is not correct :(');
+                res.status(400).send('id is not correct :(');
 };
 
 exports.edit = (req, res) => {
     var isEdited = Task.edit(req.body.id, req.body.text);
     isEdited ? res.json({tasks: Task.findAll()}) :
-               res.status(500).send('id is not correct or text is empty :(');
+               res.status(400).send('id is not correct or text is empty :(');
 };
