@@ -20,11 +20,17 @@ export const deleteNote = note => {
     };
 };
 
-export const callSaveForm = (note, saveForm) => {
+export const callSaveForm = (note) => {
     return {
         type: 'CALL_SAVE_FORM',
-        note,
-        saveForm
+        note
+    }
+};
+
+export const resetSaveForm = (note) => {
+    return {
+        type: 'RESET_SAVE_FORM',
+        note
     }
 };
 

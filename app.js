@@ -40,7 +40,6 @@ app.use((req, res, next) => {
 
 require('./server/routes')(app);
 
-app.listen(app.get('port'),
-    () => console.log(`Listening on port ${app.get('port')}`));
+app.listen(app.get('port'), () => console.log(`Listening on port ${app.get('port')}`));
 
 module.exports = app;

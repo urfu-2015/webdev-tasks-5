@@ -3,11 +3,14 @@
 import React from 'react';
 import Item from './item';
 
+function contextMenu(event) {
+    event.preventDefault();
+}
+
 export default ({store}) => {
 
     const {notes} = store.getState();
 
-    console.log(notes);
     var id = -1;
     var order = -1;
 
@@ -21,23 +24,24 @@ export default ({store}) => {
         return order;
     }
 
-    if (notes.length === 0) {
+    if (!notes.length) {
         return (
             <div className="container">
                 <p className="container_notfound">Notes not found!</p>
             </div>
         );
-    } else {
-        return (
+    }
+
+    return (
         <div className="container">
             {notes.map(note => (
                 <div key={getID()}
                      style={{order: getOrder()}}
-                     className="container__item">
+                     className="container__item"
+                     onContextMenu={contextMenu}>
                     <Item store={store} name={note} />
                 </div>
             ))}
         </div>
-        );
-    }
+    );
 };
