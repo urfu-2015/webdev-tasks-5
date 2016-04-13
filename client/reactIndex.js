@@ -11,21 +11,17 @@ var App = new React.createClass({
             type: 'POST',
             data: data,
             success: function (data) {
-                if (data.message != 'ok') {
-                    alert(`Error: ${data.message}`);
-                } else {
-                    this.setState({tasks: data.tasks});
-                }
+                this.setState({tasks: data.tasks});
             }.bind(this),
             error: function (xhr, status, err) {
                 this.setState({data: tasks});
+                alert(`Error: ${xhr.responseText}`);
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
     },
 
     handleDeleteSubmit (data) {
-        //data.id = 'mu-ha-ha';
         var tasks = this.state.tasks;
         $.ajax({
             url: this.props.url,
@@ -33,14 +29,11 @@ var App = new React.createClass({
             type: 'DELETE',
             data: data,
             success: function (data) {
-                if (data.message != 'ok') {
-                    alert(`Error: ${data.message}`);
-                } else {
-                    this.setState({tasks: data.tasks});
-                }
+                this.setState({tasks: data.tasks});
             }.bind(this),
             error: function (xhr, status, err) {
                 this.setState({data: tasks});
+                alert(`Error: ${xhr.responseText}`);
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
@@ -54,14 +47,11 @@ var App = new React.createClass({
             type: 'PUT',
             data: data,
             success: function (data) {
-                if (data.message != 'ok') {
-                    alert(`Error: ${data.message}`);
-                }
                 this.setState({tasks: data.tasks});
-                //console.log(this.state.tasks);
             }.bind(this),
             error: function (xhr, status, err) {
                 this.setState({data: tasks});
+                alert(`Error: ${xhr.responseText}`);
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
@@ -98,7 +88,7 @@ var App = new React.createClass({
         return (
             <div id="content">
                 <PullAndRefresh ref="pullAndRefresh"/>
-                <Header                    
+                <Header
                     onRefreshEvent={this.handlePullAndRefresh}
                     parBlock={this.refs.pullAndRefresh}
                 />
@@ -261,7 +251,7 @@ var Task = new React.createClass({
         }
     },
 
-    handleTouchMove (event) {      
+    handleTouchMove (event) {
         var touchObj = event.changedTouches[0];
         this.state.distX = touchObj.pageX - this.state.startX;
         this.state.distY = touchObj.pageY - this.state.startY;
@@ -297,6 +287,7 @@ var Task = new React.createClass({
         var toEdit = element.id.indexOf('task') != -1 ||
                     element.id.indexOf('text') != -1;
         if (isTheSame && toEdit && this.props.canShowForm) {
+            this.state.text = this.props.text;
             this.state.isForm = true;
             this.props.onShowFormEvent({value: true});
         }
@@ -307,11 +298,11 @@ var Task = new React.createClass({
     },
 
     handleSubmit (event) {
-        this.state.isForm = false;
         this.props.onShowFormEvent({value: false});
         event.preventDefault();
         var newText = this.state.text.trim();
         this.props.onEditEvent({id: this.state.id, text: newText});
+        this.state.isForm = false;
     },
 
     render () {
@@ -341,7 +332,7 @@ var Task = new React.createClass({
                         className="task__text"
                         id={"text_" + this.props.id}
                     >
-                        {this.state.text}
+                        {this.props.text}
                     </div>
                     <DeleteButton
                         ref="deleteButton"
@@ -355,7 +346,7 @@ var Task = new React.createClass({
                 id={"task_" + this.props.id}
                 onTouchStart={this.handleTouchStart}
                 onTouchMove={this.handleTouchMove}
-                onTouchEnd={this.handleTouchEnd}                
+                onTouchEnd={this.handleTouchEnd}
             >
                 {taskInnerElement}
             </div>

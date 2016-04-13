@@ -11,14 +11,17 @@ class Task {
     }
 
     save() {
-        storage.push(this);
-        currentId++;
+        if (this.text.length) {
+            storage.push(this);
+            currentId++;
+            return true;
+        }
+        return false;
     }
 
     static remove(id) {
         var isDeleted = checkId(id) ? removeById(id) : false;
-        var res = isDeleted ? 'ok' : 'bad id';
-        return res;
+        return isDeleted;
     }   
 
     static findAll() {
@@ -28,14 +31,11 @@ class Task {
     }
 
     static edit(id, newText) {
-        if (newText.length == 0)
-            return 'empty task';
-        if (checkId(id) && id <= currentId) {
+        if (checkId(id) && newText.length) {
             storage[id].text = newText;
-            return 'ok';
-        } else {
-            return 'bad id';
+            return true;
         }
+        return false;
     }
 }
 

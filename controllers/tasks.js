@@ -4,37 +4,23 @@ const Task = require('../models/task');
 const fs = require('fs');
 
 exports.list = (req, res) => {
-    res.json({
-        tasks: Task.findAll()
-    });
+    res.json({tasks: Task.findAll()});
 };
 
 exports.add = (req, res) => {
-    var result = 'ok';
-    if (req.body.text.length == 0) {
-        result = 'empty task';
-    } else {
-        var newTask = new Task(req.body.text).save();
-    }
-    res.json({
-        tasks: Task.findAll(),
-        message: result
-    });
+    var isAdded = new Task(req.body.text).save();
+    isAdded ? res.json({tasks: Task.findAll()}) :
+              res.status(500).send('text of any task should not be empty :(');
 };
 
 exports.remove = (req, res) => {
-    var result = Task.remove(req.body.id);
-    res.json({
-        tasks: Task.findAll(),
-        message: result
-    });
+    var isRemoved = Task.remove(req.body.id);
+    isRemoved ? res.json({tasks: Task.findAll()}) :
+                res.status(500).send('id is not correct :(');
 };
 
 exports.edit = (req, res) => {
-    var newText = req.body.text;
-    var result = Task.edit(req.body.id, newText);
-    res.json({
-        tasks: Task.findAll(),
-        message: result
-    });
+    var isEdited = Task.edit(req.body.id, req.body.text);
+    isEdited ? res.json({tasks: Task.findAll()}) :
+               res.status(500).send('id is not correct or text is empty :(');
 };
