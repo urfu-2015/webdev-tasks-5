@@ -1,66 +1,137 @@
 import React from 'react';
 import SaveForm from './saveForm';
-import RemoveButton from './removeButton';
 import ReactDom from 'react-dom';
 var check = require('../lib/checkTouch');
-var className = {
-    input: 'list__task__input__num_',
-    todo: 'list__task__todo__num_',
-    remove: 'remove__num_',
-    save: 'list__task__submit',
-    add: 'list__task__add',
-    taskDiv: 'list__task__num_',
-    loader: 'header__loader',
-    header: 'header'
-};
-
-export default ({task}) => {
-    var start = {};
-    function getNumFromClassName(className) {
-        return className.split('num_').pop();
+export default ({task, remove , commonStaff, handler}) => {
+    var timeout;
+    var taskWithMargin;
+    function todoTouchStart(event) {
+        if (event.targetTouches.length > 1) {
+        return;
+    }
+        event.preventDefault();
+        commonStaff.ldelay = new Date();
+        commonStaff.start.x = event.changedTouches[0].pageX;
+        commonStaff.start.y = event.changedTouches[0].pageY;
+        if (commonStaff.reoder) return;
+        timeout = setTimeout(dragAndDrop, 1500, event.target);
     }
 
-    function touchStart(event) {
-        if (event.targetTouches.length > 1) {
+    function todoTouchEnd(event) {
+        clearTimeout(timeout)
+        if (commonStaff.reoder) return;
+        var num = event.target.getAttribute("data-num");
+        if (check.isTap(commonStaff.start, event, commonStaff.ldelay)) {
+            commonStaff.tasks[num].change = true;
+            commonStaff.render();
+        }
+        if(!commonStaff.tasks[num].remove) {
+            event.target.nextElementSibling.style.right = -128 +'px';
+            event.target.style.left = 0;
+        }
+    }
+
+    function todoTouchMove(event) {
+        clearTimeout(timeout)
+        if (commonStaff.reoder) return;
+        var num = event.target.getAttribute("data-num");
+        var x = Number(event.changedTouches[0].pageX);
+        var delta = (Number(commonStaff.start.x) - x)/2;
+        var todo = event.target;
+        todo.style.left = getNumInBorder(-128, 0, -delta) + 'px';
+        var removeRight = getNumInBorder(-128, 0, -128 + delta);
+        todo.nextElementSibling.style.right = removeRight + 'px';
+        if (removeRight === 0) {
+            commonStaff.tasks[num].remove = true;
+        } else {
+            commonStaff.tasks[num].remove = false;
+        }
+    }
+
+    function dragAndDrop(task) {
+        var parent = task.parentNode;
+        parent.className = 'task_big';
+        parent.style.top = commonStaff.start.y - 30 + 'px';
+        parent.style.zIndex = 100;
+        parent.addEventListener('touchmove', changePosition, false);
+        parent.addEventListener('touchend', savePosition, false);
+        taskWithMargin = parent.nextElementSibling;
+        commonStaff.reoder = true;
+    }
+
+    function getNumInBorder(min, max, num) {
+        num = Math.max(min, num);
+        num = Math.min(max, num);
+        return num;
+    }
+
+    function changePosition(event) {
+        var addButton = this.parentNode.lastElementChild;
+        var max = addButton.getBoundingClientRect().top - 150;
+        var posY = event.changedTouches[0].pageY - 30;
+        this.style.top = getNumInBorder(200, max, posY) + 'px';
+        var newNum = getNumFromPosition(event.changedTouches[0].pageY);
+        taskWithMargin.style.margin = "10px 0";  
+        taskWithMargin = document.getElementsByClassName('task')[newNum];
+        taskWithMargin.style.margin = "120px 0 0";
+    }
+
+    function getNumFromPosition(posY) {
+        var newNum =  Math.floor(posY / 150) - 1;
+        newNum = getNumInBorder(0 ,commonStaff.tasks.length - 1, newNum);
+        return newNum;
+    }
+
+    function savePosition(event) {
+        this.removeEventListener('touchmove', changePosition, false);
+        this.removeEventListener('touchend', savePosition, false);
+        this.style.top = 0;
+        this.style.zIndex = 0;
+        var newNum = getNumFromPosition(event.changedTouches[0].pageY);
+        var oldNum = Number(this.getAttribute("data-num"));
+        this.className = 'task';
+        changeLocalOrder(oldNum,newNum);
+        commonStaff.reoder = false;
+        taskWithMargin.style.margin = "10px 0";
+        taskWithMargin = null;
+        if (oldNum === newNum) {
             return;
         }
-        //ldelay = new Date(); 
-        start.x = event.changedTouches[0].pageX;
-        start.y = event.changedTouches[0].pageY;
-    };
+        handler.reorder(oldNum, newNum);
+    }
 
-    function touchEnd(event) {
-        if (check.isTap(start, event)) {
-            var targetClass = event.target.className;
-            var num = getNumFromClassName(targetClass);
-            var oldText = '';
-            if (num !== -1) {
-                oldText = document
-                    .getElementsByClassName(className.todo + num)[0]
-                    .innerHTML;
+    function changeLocalOrder(oldNum, newNum) {
+        var tasks = document.getElementsByClassName('task');
+        var text = tasks[oldNum].firstElementChild.innerHTML;
+        if (oldNum < newNum) {
+            for (var i = oldNum; i < newNum; i++) {
+                tasks[i].firstElementChild.innerHTML = 
+                    tasks[i+1].firstElementChild.innerHTML;
+            }
+        } else {
+            for(var i = oldNum; i > newNum; i--) {
+                tasks[i].firstElementChild.innerHTML = 
+                    tasks[i-1].firstElementChild.innerHTML;
             }
         }
-    };
-    
-    function touchMove(event) {
-        var targetClass = event.target.className;
-        var num = getNumFromClassName(targetClass);
-        if (check.isLeftSwipe(start, event)) {
-            if (!document.getElementsByClassName(className.remove + num).length) {
-                ;
-           }
-        }
-        else if (check.isRightSwipe(start, event)) {
-            var removeButton = document.getElementsByClassName(classes.remove + num)[0];
-            if (removeButton) {
-                removeButton.parentNode.removeChild(removeButton);
-            }
-        }
+        tasks[newNum].firstElementChild.innerHTML = text;
     }
 
     return (
-    <div 
-     className={'list__task__todo__num_' + task.orderNum}>
-        {task.todo}
-    </div>);
+        <div key={task.orderNum} className="task" data-num={task.orderNum}>
+            <div className="task__todo"
+                onTouchMove={todoTouchMove}
+                onTouchEnd={todoTouchEnd}
+                onTouchStart={todoTouchStart}
+                data-num={task.orderNum}
+                style={{left: remove ? -128 +'px' : 0}}>
+                {task.todo}
+            </div>
+            <div className ="remove"
+                data-num={task.orderNum}
+                onClick={handler.remove}
+                style={{right: remove ? 0 : -128 +'px'}}>
+            </div>
+        </div>
+    )
 };

@@ -16,50 +16,62 @@ body {
 	display: flex;
 	width: 80%;
 	flex-direction: column;
+	margin: auto;
 }
 
-[class^="list__task__num"],
-.container {
+
+.task {
+	transition-duration: 0.5s;
+	transition-property: margin;
 	height: 128px;
 	margin: 10px 0;
 	width: 100%;
+	position: relative;
+	overflow: hidden;
 	display: flex;
     justify-content: space-between;
+    background-color: #fff;
 }
 
-[class^="list__task__todo__num"] {
-	text-align: center;
+.task[data-num='-1'] {
+	background-color: inherit;
+}
+
+.task_big {
+	left: 5%;
+	height: 128px;
+	overflow: hidden;
+    position: absolute;
+    width: 90%;
+    margin: 10px 0px;
+    border: solid 1px #00f;
+    background-color: #fff0b2;
+}
+
+.task__todo {
+	position: absolute;
+	top: 0;
 	vertical-align: middle;
 	line-height: 128px;
 	font-size: 50px;
 	text-align: center;
 	overflow: hidden;
 	height: 128px;
-	flex-grow: 3;
-	background: #fff;
+	width: 100%;
+	background-color: inherit;
 }
 
-[class^='remove'] {
+.remove {
+	position: absolute;
+	top: 0;
 	width: 128px;
 	height: 100%;
 	background: url(./delete.png);
 }
 
-.header__loader {
-	width: 80px;
-	height: 80px;
-	margin: 20px auto;
-	background: url(./load.gif);
-}
-
-a {
-	text-decoration: none;
-	color: #000;
-}
-
-.list__task__submit,
-.list__task__add,
-[class^='list__task__input'] {
+.task__submit,
+.task__add,
+.task__input {
 	border : solid 9px #696869;
 	border-radius : 3px;
 	font-size : 50px;
@@ -94,4 +106,50 @@ a {
 
 form {
 	width: 100%;
+}
+
+.loading {
+	width: 80px;
+	margin: 30px auto;
+}
+
+.loading-bar {
+  display: inline-block;
+  width: 10px;
+  height: 60px;
+  margin: 0 3px;
+  border-radius: 4px;
+  animation: loading 1s ease-in-out infinite;
+}
+
+.loading-bar:nth-child(1) {
+  background-color: #3498db;
+  animation-delay: 0;
+}
+
+.loading-bar:nth-child(2) {
+  background-color: #c0392b;
+  animation-delay: 0.09s;
+}
+
+.loading-bar:nth-child(3) {
+  background-color: #f1c40f;
+  animation-delay: .18s;
+}
+
+.loading-bar:nth-child(4) {
+  background-color: #27ae60;
+  animation-delay: .27s;
+}
+
+@keyframes loading {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1, 2.2);
+  }
+  40% {
+    transform: scale(1);
+  }
 }
