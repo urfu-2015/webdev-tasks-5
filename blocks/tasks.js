@@ -7,7 +7,7 @@ export default ({commonStaff, handler}) => (
    <div className="list">
     {commonStaff.tasks.length?
         commonStaff.tasks.map(task => {
-            return task.change ?
+            return commonStaff.edited == task.orderNum ?
                 <SaveForm commonStaff={commonStaff}
                     handler={handler}
                     key={task.orderNum}
@@ -15,12 +15,11 @@ export default ({commonStaff, handler}) => (
                 <Task commonStaff={commonStaff}
                     handler = {handler}
                     key={task.orderNum}
-                    task={task}
-                    remove={task.remove}/>
+                    task={task}/>
             }) :
         <p>Create your first task!</p>
     }       
-    {commonStaff.addButton ?
+    {commonStaff.edited != -1 ?
         <AddButton commonStaff={commonStaff} /> :
         <SaveForm  commonStaff={commonStaff}
             handler={handler}

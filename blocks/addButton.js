@@ -2,7 +2,7 @@ import React from 'react'
 
 export default ({commonStaff}) => {
 	function addButtonClick(event) {
-	    commonStaff.addButton = false;
+	    commonStaff.edited = -1;
 	    commonStaff.render();
 	}
 	return (

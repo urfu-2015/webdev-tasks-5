@@ -21,9 +21,13 @@ body {
 
 
 .task {
+	vertical-align: middle;
+	line-height: 128px;
+	text-align: center;
 	transition-duration: 0.5s;
 	transition-property: margin;
 	height: 128px;
+	font-size : 50px;
 	margin: 10px 0;
 	width: 100%;
 	position: relative;
@@ -35,6 +39,8 @@ body {
 
 .task[data-num='-1'] {
 	background-color: inherit;
+	display: flex;
+    justify-content: center;
 }
 
 .task_big {
@@ -49,12 +55,13 @@ body {
 }
 
 .task__todo {
+	vertical-align: middle;
+	text-align: center;
+	line-height: 128px;
+	font-size : 50px;
 	position: absolute;
 	top: 0;
-	vertical-align: middle;
-	line-height: 128px;
-	font-size: 50px;
-	text-align: center;
+	left: 0;
 	overflow: hidden;
 	height: 128px;
 	width: 100%;
@@ -64,24 +71,31 @@ body {
 .remove {
 	position: absolute;
 	top: 0;
+	right: -130px;
 	width: 128px;
 	height: 100%;
 	background: url(./delete.png);
 }
 
-.task__submit,
+
 .task__add,
-.task__input {
+.task__input,
+.task__submit {
 	border : solid 9px #696869;
 	border-radius : 3px;
-	font-size : 50px;
-	color : #696869;
 	padding : 10px 20px;
-	margin: auto;
+	font-size : 50px;
 }
 
-.list p {
-	font-size: 50px;
+
+.task__submit {
+	width: 30%;
+}
+
+.task__input {
+	width: 70%;
+	height: 90px;
+	color : #696869;
 }
 
 .header {

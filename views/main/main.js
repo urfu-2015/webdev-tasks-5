@@ -9,8 +9,9 @@ var handler = {};
 
 commonStaff.render = render;
 commonStaff.tasks = [];
-commonStaff.addButton = true;
 commonStaff.start = {};
+commonStaff.edited = -2;
+commonStaff.deleted = -2;
 
 handler.remove = removeTask;
 handler.save = saveTask;
@@ -19,6 +20,7 @@ handler.reorder = reorder;
 refresh();
 
 function render() {
+    clearStyles();
     ReactDom.render(
         <Main commonStaff={commonStaff} handler={handler}/>,
         document.getElementById('root'), function() {
@@ -29,7 +31,7 @@ function render() {
 function saveTask(event) {
     var task = createTaskObj(event);
     if (task.orderNum === '-1') {
-        commonStaff.addButton = true;
+        commonStaff.edited = -2;
         if (task.todo.length) {
             addTask(task);
         } else {
@@ -64,6 +66,7 @@ function addTask(task) {
 }
 
 function updateTask(task) {
+    loader(true);
     var params = createPOSTparams(task);
     fetch('/updateTask', params)
     .then(response => response.json())
@@ -83,8 +86,7 @@ function removeTask(event) {
     var params = createPOSTparams(task);
     fetch('/removeTask', params)
     .then(() => {
-        removeTaskLocal(task.orderNum);
-        render();
+        refresh();
     })
     .catch(err => console.log(err));
 }
@@ -120,16 +122,25 @@ function removeTaskLocal(orderNum) {
 
 function refresh() {
     loader(true);
+    clearStyles();
     fetch('/getAll').then(
         response =>  response.json(),
         err => console.log('ERROR' + err)
     )
     .then(data => {
-            commonStaff.tasks = data.allTasks;
-            commonStaff.addButton = true;
-            render();
-        }
-    );
+        commonStaff.tasks = data.allTasks;
+        commonStaff.edited = -2;
+        render();
+    });
+}
+
+function clearStyles() {
+    console.log('CLEEEEAR');
+    var elems = document.getElementsByClassName("task");
+    for(var i =0;i < elems.length; i++) {
+        elems[i].firstElementChild.removeAttribute('style');
+        elems[i].lastElementChild.removeAttribute('style');
+    }
 }
 
 function loader(display) {

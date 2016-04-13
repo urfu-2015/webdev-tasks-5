@@ -2,15 +2,14 @@ import React from 'react';
 import SaveForm from './saveForm';
 import ReactDom from 'react-dom';
 var check = require('../lib/checkTouch');
-export default ({task, remove , commonStaff, handler}) => {
+export default ({task, commonStaff, handler}) => {
     var timeout;
     var taskWithMargin;
     function todoTouchStart(event) {
         if (event.targetTouches.length > 1) {
-        return;
-    }
+            return;
+        }
         event.preventDefault();
-        commonStaff.ldelay = new Date();
         commonStaff.start.x = event.changedTouches[0].pageX;
         commonStaff.start.y = event.changedTouches[0].pageY;
         if (commonStaff.reoder) return;
@@ -22,24 +21,31 @@ export default ({task, remove , commonStaff, handler}) => {
         if (commonStaff.reoder) return;
         var num = event.target.getAttribute("data-num");
         if (check.isTap(commonStaff.start, event, commonStaff.ldelay)) {
-            commonStaff.tasks[num].change = true;
+            commonStaff.edited = num;
             commonStaff.render();
         }
         if(!commonStaff.tasks[num].remove) {
-            event.target.nextElementSibling.style.right = -128 +'px';
+            event.target.nextElementSibling.style.right = -130 +'px';
             event.target.style.left = 0;
+        } else {
+            commonStaff.onEvent = true;
         }
     }
 
     function todoTouchMove(event) {
         clearTimeout(timeout)
         if (commonStaff.reoder) return;
-        var num = event.target.getAttribute("data-num");
+        var num = event.target.getAttribute("data-num");        
+        if (commonStaff.edited != -2 || commonStaff.deleted != num) {
+            commonStaff.edited = -2;
+            commonStaff.render();
+            commonStaff.deleted = num;
+        }
         var x = Number(event.changedTouches[0].pageX);
         var delta = (Number(commonStaff.start.x) - x)/2;
         var todo = event.target;
-        todo.style.left = getNumInBorder(-128, 0, -delta) + 'px';
-        var removeRight = getNumInBorder(-128, 0, -128 + delta);
+        todo.style.left = getNumInBorder(-130, 0, -delta) + 'px';
+        var removeRight = getNumInBorder(-130, 0, -130 + delta);
         todo.nextElementSibling.style.right = removeRight + 'px';
         if (removeRight === 0) {
             commonStaff.tasks[num].remove = true;
@@ -49,6 +55,10 @@ export default ({task, remove , commonStaff, handler}) => {
     }
 
     function dragAndDrop(task) {
+        if (commonStaff.edited != -2) {
+            commonStaff.edited = -2;
+            commonStaff.render();
+        }
         var parent = task.parentNode;
         parent.className = 'task_big';
         parent.style.top = commonStaff.start.y - 30 + 'px';
@@ -116,21 +126,18 @@ export default ({task, remove , commonStaff, handler}) => {
         }
         tasks[newNum].firstElementChild.innerHTML = text;
     }
-
     return (
         <div key={task.orderNum} className="task" data-num={task.orderNum}>
             <div className="task__todo"
                 onTouchMove={todoTouchMove}
                 onTouchEnd={todoTouchEnd}
                 onTouchStart={todoTouchStart}
-                data-num={task.orderNum}
-                style={{left: remove ? -128 +'px' : 0}}>
+                data-num={task.orderNum}>
                 {task.todo}
             </div>
             <div className ="remove"
                 data-num={task.orderNum}
-                onClick={handler.remove}
-                style={{right: remove ? 0 : -128 +'px'}}>
+                onClick={handler.remove}>
             </div>
         </div>
     )
