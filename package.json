@@ -7,7 +7,7 @@
     "lint:js": "node_modules/eslint .",
     "watch:css": "stylus -w ./styles/botton.styl -o ./public/stylesheet/style.css",
     "css:pre": "stylus styles/*.styl > public/stylesheet/style.css",
-    "build": "webpack -d"
+    "build": "webpack"
   },
   "dependencies": {
     "babel-polyfill": "^6.7.4",

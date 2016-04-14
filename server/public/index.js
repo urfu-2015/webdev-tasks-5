@@ -42,9 +42,6 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/*!*************************!*\
-  !*** ./index/index.jsx ***!
-  \*************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52,13 +49,10 @@
 	/**
 	 * Created by Надежда on 10.04.2016.
 	 */
-	__webpack_require__(/*! ../layout.styl */ 1);
+	__webpack_require__(1);
 
 /***/ },
 /* 1 */
-/*!*********************!*\
-  !*** ./layout.styl ***!
-  \*********************/
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
