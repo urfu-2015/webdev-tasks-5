@@ -21267,7 +21267,7 @@
 	        var xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
 	        var yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
 	        var endTime = new Date();
-	        if (yAbs > 10 && endTime.getTime() - startTimeDoc.getTime() > 200) {
+	        if (yAbs > 10 && xAbs < 10 && endTime.getTime() - startTimeDoc.getTime() > 200) {
 	            if (nowPoint.pageY > startPointDoc.y) {
 	                event.preventDefault();
 	                event.stopPropagation();
@@ -21459,6 +21459,7 @@
 	var nowPoint;
 	var startTime;
 	var lastElementInLeft;
+	var lengthDeleteButton = 82;
 	
 	function touchStartHandler(store) {
 	    return function (event) {
@@ -21473,7 +21474,7 @@
 	        nowPoint = event.changedTouches[0];
 	        var diff = nowPoint.pageX - startPoint.x;
 	        var yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-	        if (Math.abs(diff) > 20 && yAbs < 30) {
+	        if (diff < 20 && yAbs < 30 && diff > lengthDeleteButton) {
 	            lastElementInLeft = event.currentTarget;
 	            event.preventDefault();
 	            event.stopPropagation();

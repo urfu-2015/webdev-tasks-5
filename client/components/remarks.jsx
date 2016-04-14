@@ -29,7 +29,7 @@ function touchMoveHandler(store) {
         let xAbs = Math.abs(startPointDoc.x - nowPoint.pageX);
         let yAbs = Math.abs(startPointDoc.y - nowPoint.pageY);
         let endTime = new Date();
-        if ((yAbs > 10) && (endTime.getTime()-startTimeDoc.getTime()) > 200) {
+        if (yAbs > 10 && xAbs < 10 && (endTime.getTime()-startTimeDoc.getTime()) > 200) {
             if (nowPoint.pageY > startPointDoc.y) {
                 event.preventDefault();
                 event.stopPropagation();

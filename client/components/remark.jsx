@@ -13,6 +13,7 @@ var startPoint={};
 var nowPoint;
 var startTime;
 var lastElementInLeft;
+const lengthDeleteButton = 82;
 
 function touchStartHandler(store) {
     return function (event) {
@@ -27,7 +28,7 @@ function touchMoveEvent(store, index) {
         nowPoint = event.changedTouches[0];
         let diff = nowPoint.pageX - startPoint.x;
         let yAbs = Math.abs(startPoint.y - nowPoint.pageY);
-        if (Math.abs(diff) > 20 && yAbs < 30) {
+        if (diff < 20 && yAbs < 30 && diff > lengthDeleteButton) {
             lastElementInLeft = event.currentTarget;
             event.preventDefault();
             event.stopPropagation();
