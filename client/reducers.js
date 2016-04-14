@@ -4,9 +4,7 @@ const initialState = {
     editingTodoId: null
 };
 
-exports.todoApp = (state, action) => {
-    state = state || initialState;
-
+exports.todoApp = (state = initialState, action) => {
     switch (action.type) {
         case 'GET_TODOS':
             return {
@@ -37,7 +35,7 @@ exports.todoApp = (state, action) => {
             };
         case 'DELETE_TODO':
             return {
-                todos: state.todos.concat().filter(todo => {
+                todos: state.todos.filter(todo => {
                     return todo.id !== action.deletedTodoId;
                 }),
                 selectedTodoId: null,
@@ -45,13 +43,13 @@ exports.todoApp = (state, action) => {
             };
         case 'EDIT_TODO':
             return {
-                todos: state.todos.concat(),
+                todos: state.todos,
                 selectedTodoId: null,
                 editingTodoId: action.editingTodoId
             };
         case 'UPDATE_TODO':
             return {
-                todos: state.todos.concat().map(todo => {
+                todos: state.todos.map(todo => {
                     if (todo.id === action.updatedTodoId) {
                         todo.text = action.updatedTodoText;
                     }

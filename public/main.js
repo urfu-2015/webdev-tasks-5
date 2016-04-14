@@ -56,22 +56,22 @@
 	
 	var _redux = __webpack_require__(159);
 	
-	var _todo = __webpack_require__(170);
+	var _todos = __webpack_require__(170);
 	
-	var _todo2 = _interopRequireDefault(_todo);
+	var _todos2 = _interopRequireDefault(_todos);
 	
-	var _actions = __webpack_require__(172);
+	var _actions = __webpack_require__(174);
 	
-	var _reducers = __webpack_require__(175);
+	var _reducers = __webpack_require__(177);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(176);
+	__webpack_require__(178);
 	
 	var store = (0, _redux.createStore)(_reducers.todoApp);
 	
 	function render() {
-	    _reactDom2.default.render(_react2.default.createElement(_todo2.default, { store: store }), document.getElementById('root'));
+	    _reactDom2.default.render(_react2.default.createElement(_todos2.default, { store: store }), document.getElementById('root'));
 	}
 	
 	store.subscribe(render);
@@ -20453,40 +20453,43 @@
 	
 	var _todoItem2 = _interopRequireDefault(_todoItem);
 	
-	var _addTodo = __webpack_require__(174);
+	var _addTodo = __webpack_require__(176);
 	
 	var _addTodo2 = _interopRequireDefault(_addTodo);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function (_ref) {
-	    var store = _ref.store;
+	exports.default = _react2.default.createClass({
+	    displayName: 'todos',
+	    render: function render() {
+	        var _this = this;
 	
-	    var _store$getState = store.getState();
+	        var _props$store$getState = this.props.store.getState();
 	
-	    var todos = _store$getState.todos;
-	    var selectedTodoId = _store$getState.selectedTodoId;
-	    var editingTodoId = _store$getState.editingTodoId;
+	        var todos = _props$store$getState.todos;
+	        var selectedTodoId = _props$store$getState.selectedTodoId;
+	        var editingTodoId = _props$store$getState.editingTodoId;
 	
 	
-	    return _react2.default.createElement(
-	        'section',
-	        { id: 'todoSection', className: 'todo' },
-	        todos.map(function (todo) {
-	            return _react2.default.createElement(_todoItem2.default, {
-	                key: todo.id + '_' + Math.random(),
-	                id: todo.id,
-	                text: todo.text,
-	                editingTodoId: editingTodoId,
-	                selectedTodoId: selectedTodoId,
-	                store: store
-	            });
-	        }),
-	        _react2.default.createElement(_addTodo2.default, {
-	            store: store
-	        })
-	    );
-	};
+	        return _react2.default.createElement(
+	            'section',
+	            { id: 'todoSection', className: 'todo' },
+	            todos.map(function (todo) {
+	                return _react2.default.createElement(_todoItem2.default, {
+	                    key: todo.id + '_' + Math.random(),
+	                    id: todo.id,
+	                    text: todo.text,
+	                    editingTodoId: editingTodoId,
+	                    selectedTodoId: selectedTodoId,
+	                    store: _this.props.store
+	                });
+	            }),
+	            _react2.default.createElement(_addTodo2.default, {
+	                store: this.props.store
+	            })
+	        );
+	    }
+	});
 
 /***/ },
 /* 171 */
@@ -20502,139 +20505,180 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _actions = __webpack_require__(172);
+	var _eventsLogic = __webpack_require__(172);
 	
-	var _delBut = __webpack_require__(173);
+	var _eventsLogic2 = _interopRequireDefault(_eventsLogic);
 	
-	var _delBut2 = _interopRequireDefault(_delBut);
+	var _deleteButton = __webpack_require__(175);
+	
+	var _deleteButton2 = _interopRequireDefault(_deleteButton);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function (_ref) {
-	    var id = _ref.id;
-	    var text = _ref.text;
-	    var selectedTodoId = _ref.selectedTodoId;
-	    var editingTodoId = _ref.editingTodoId;
-	    var store = _ref.store;
-	
-	    var startTime;
-	    var endTime;
-	    var initialPoint;
-	    var finalPoint;
-	    var selectedId;
-	
-	    function onTouchStart(event) {
-	        event.preventDefault();
-	
-	        startTime = new Date();
-	        initialPoint = event.changedTouches[0];
-	    }
-	
-	    function onTouchEnd(event) {
-	        event.preventDefault();
-	
-	        endTime = new Date();
-	        finalPoint = event.changedTouches[0];
-	
-	        var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
-	        var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
-	
-	        // ТАП
-	        if (initialPoint.pageX === finalPoint.pageX && initialPoint.pageY === finalPoint.pageY && endTime - startTime < 300) {
-	            if (event.target.getAttribute('class') === 'todo-item__elem') {
-	                selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	                store.dispatch((0, _actions.editTodo)(selectedId));
-	            }
-	
-	            if (event.target.getAttribute('id') === 'editInput') {
-	                event.target.focus();
-	            }
-	
-	            if (event.target.getAttribute('class') === 'todo-edit__save-button') {
-	                var editId = parseInt(event.target.parentNode.parentNode.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	
-	                fetch('/todos/edit', {
-	                    method: "post",
-	                    headers: new Headers({ 'Content-type': 'application/json' }),
-	                    body: JSON.stringify({
-	                        id: editId,
-	                        editText: document.getElementById('editInput').value
-	                    })
-	                }).then(function (response) {
-	                    return response.json();
-	                }).then(function (data) {
-	                    store.dispatch((0, _actions.updateTodo)(data.id, data.editText));
-	                });
-	            }
-	        }
-	
-	        // СВАЙП'ы влево/вправо
-	        if (xAbs > 20 || yAbs > 20) {
-	            if (xAbs > yAbs) {
-	                if (finalPoint.pageX < initialPoint.pageX) {
-	                    // СВАЙП left
-	                    selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	                    store.dispatch((0, _actions.selectTodo)(selectedId));
-	                } else {
-	                    // СВАЙП right
-	                    selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	                    if (selectedTodoId === selectedId) {
-	                        store.dispatch((0, _actions.unselectTodo)(selectedId));
-	                    }
-	                }
-	            } else {
-	                // СВАЙП вниз (Обновление) + анимашка
-	                /* eslint no-lonely-if: 0 */
-	                if (finalPoint.pageY > initialPoint.pageY) {
-	                    document.getElementById('root').innerHTML = '<img ' + 'id="loadGif" ' + 'class="loader" ' + 'src="/loader__anim.gif" ' + 'alt="loading">';
-	
-	                    setTimeout(function () {
-	                        fetch('/todos/all', { method: 'get' }).then(function (response) {
-	                            return response.json();
-	                        }).then(function (data) {
-	                            store.dispatch((0, _actions.getTodos)(data.todos));
-	                        });
-	                    }, 500);
-	                }
-	            }
-	        }
-	    }
-	
-	    return _react2.default.createElement(
-	        'div',
-	        { id: "todo_" + id, className: 'todo-item' },
-	        _react2.default.createElement(
+	exports.default = _react2.default.createClass({
+	    displayName: 'todoItem',
+	    render: function render() {
+	        return _react2.default.createElement(
 	            'div',
-	            { className: 'todo-item__elem',
-	                onTouchStart: onTouchStart,
-	                onTouchEnd: onTouchEnd },
-	            editingTodoId === id ? _react2.default.createElement(
-	                'form',
-	                { className: 'todo-edit' },
-	                _react2.default.createElement('input', {
-	                    id: 'editInput',
-	                    className: 'todo-edit__input',
-	                    placeholder: text,
-	                    maxLength: '12',
-	                    autoFocus: true
-	                }),
-	                _react2.default.createElement(
-	                    'button',
-	                    { className: 'todo-edit__save-button' },
-	                    'Сохранить'
+	            { id: "todo_" + this.props.id, className: 'todo-item' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'todo-item__elem',
+	                    onTouchStart: (0, _eventsLogic2.default)(this.props.store).onTouchStart,
+	                    onTouchEnd: (0, _eventsLogic2.default)(this.props.store, this.props.selectedTodoId).onTouchEnd },
+	                this.props.editingTodoId === this.props.id ? _react2.default.createElement(
+	                    'form',
+	                    null,
+	                    _react2.default.createElement('input', {
+	                        id: 'editInput',
+	                        className: 'todo-edit__input',
+	                        placeholder: this.props.text,
+	                        maxLength: '12',
+	                        autoFocus: true
+	                    }),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'todo-edit__save-button' },
+	                        'Сохранить'
+	                    )
+	                ) : _react2.default.createElement(
+	                    'span',
+	                    { className: 'todo-item__title off-events' },
+	                    this.props.text
 	                )
-	            ) : _react2.default.createElement(
-	                'span',
-	                { className: 'todo-item__title off-events' },
-	                text
-	            )
-	        ),
-	        selectedTodoId === id ? _react2.default.createElement(_delBut2.default, { selectedTodoId: selectedTodoId, store: store }) : null
-	    );
-	};
+	            ),
+	            this.props.selectedTodoId === this.props.id ? _react2.default.createElement(_deleteButton2.default, {
+	                selectedTodoId: this.props.selectedTodoId,
+	                store: this.props.store }) : null
+	        );
+	    }
+	});
 
 /***/ },
 /* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _fetchJSONHelper = __webpack_require__(173);
+	
+	var _fetchJSONHelper2 = _interopRequireDefault(_fetchJSONHelper);
+	
+	var _actions = __webpack_require__(174);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var startTime;
+	var endTime;
+	var initialPoint;
+	var finalPoint;
+	var selectedId;
+	
+	exports.default = function (store, selectedTodoId) {
+	    return {
+	        onTouchStart: function onTouchStart(event) {
+	            event.preventDefault();
+	
+	            startTime = new Date();
+	            initialPoint = event.changedTouches[0];
+	        },
+	
+	        onTouchEnd: function onTouchEnd(event) {
+	            event.preventDefault();
+	
+	            endTime = new Date();
+	            finalPoint = event.changedTouches[0];
+	
+	            var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
+	            var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
+	
+	            // ТАП
+	            if (initialPoint.pageX === finalPoint.pageX && initialPoint.pageY === finalPoint.pageY && endTime - startTime < 300) {
+	                if (event.target.getAttribute('class') === 'todo-item__elem') {
+	                    selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	                    store.dispatch((0, _actions.editTodo)(selectedId));
+	                }
+	
+	                if (event.target.getAttribute('id') === 'editInput') {
+	                    event.target.focus();
+	                }
+	
+	                if (event.target.getAttribute('class') === 'todo-edit__save-button') {
+	                    var editId = parseInt(event.target.parentNode.parentNode.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	
+	                    var editText = document.getElementById('editInput').value;
+	
+	                    if (editText !== '') {
+	                        fetch('/todos/edit', (0, _fetchJSONHelper2.default)('post', {
+	                            id: editId,
+	                            editText: editText
+	                        })).then(function (response) {
+	                            return response.json();
+	                        }).then(function (data) {
+	                            store.dispatch((0, _actions.updateTodo)(data.id, data.editText));
+	                        });
+	                    }
+	                }
+	            }
+	
+	            // СВАЙП'ы влево/вправо
+	            if (xAbs > 20 || yAbs > 20) {
+	                if (xAbs > yAbs) {
+	                    if (finalPoint.pageX < initialPoint.pageX) {
+	                        // СВАЙП left
+	                        selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	                        store.dispatch((0, _actions.selectTodo)(selectedId));
+	                    } else {
+	                        // СВАЙП right
+	                        selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	                        if (selectedTodoId === selectedId) {
+	                            store.dispatch((0, _actions.unselectTodo)(selectedId));
+	                        }
+	                    }
+	                } else {
+	                    // СВАЙП вниз (Обновление) + анимашка
+	                    /* eslint no-lonely-if: 0 */
+	                    if (finalPoint.pageY > initialPoint.pageY) {
+	                        document.getElementById('root').innerHTML = '<img ' + 'id="loadGif" ' + 'class="loader" ' + 'src="/loader__anim.gif" ' + 'alt="loading">';
+	
+	                        setTimeout(function () {
+	                            fetch('/todos/all', { method: 'get' }).then(function (response) {
+	                                return response.json();
+	                            }).then(function (data) {
+	                                store.dispatch((0, _actions.getTodos)(data.todos));
+	                            });
+	                        }, 500);
+	                    }
+	                }
+	            }
+	        }
+	    };
+	};
+
+/***/ },
+/* 173 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	exports.default = function (method, data) {
+	    return {
+	        method: method,
+	        headers: new Headers({ 'Content-type': 'application/json' }),
+	        body: JSON.stringify(data)
+	    };
+	};
+
+/***/ },
+/* 174 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20693,7 +20737,7 @@
 	};
 
 /***/ },
-/* 173 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20706,33 +20750,34 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _actions = __webpack_require__(172);
+	var _fetchJSONHelper = __webpack_require__(173);
+	
+	var _fetchJSONHelper2 = _interopRequireDefault(_fetchJSONHelper);
+	
+	var _actions = __webpack_require__(174);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function (_ref) {
-	    var selectedTodoId = _ref.selectedTodoId;
-	    var store = _ref.store;
+	exports.default = _react2.default.createClass({
+	    displayName: 'deleteButton',
+	    onClick: function onClick(event) {
+	        var _this = this;
 	
-	    function onClick(event) {
 	        event.preventDefault();
 	
-	        fetch('/todos/delete', {
-	            method: "delete",
-	            headers: new Headers({ 'Content-type': 'application/json' }),
-	            body: JSON.stringify({ delId: selectedTodoId })
-	        }).then(function (response) {
+	        fetch('/todos/delete', (0, _fetchJSONHelper2.default)('delete', { delId: this.props.selectedTodoId })).then(function (response) {
 	            return response.json();
 	        }).then(function (data) {
-	            store.dispatch((0, _actions.deleteTodo)(data.delId));
+	            _this.props.store.dispatch((0, _actions.deleteTodo)(data.delId));
 	        });
+	    },
+	    render: function render() {
+	        return _react2.default.createElement('img', { className: 'todo-item__delete-button', src: '/trash.jpg', onClick: this.onClick });
 	    }
-	
-	    return _react2.default.createElement('img', { className: 'todo-item__delete-button', src: '/trash.png', onClick: onClick });
-	};
+	});
 
 /***/ },
-/* 174 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20745,55 +20790,57 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _actions = __webpack_require__(172);
+	var _fetchJSONHelper = __webpack_require__(173);
+	
+	var _fetchJSONHelper2 = _interopRequireDefault(_fetchJSONHelper);
+	
+	var _actions = __webpack_require__(174);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	exports.default = function (_ref) {
-	    var store = _ref.store;
+	exports.default = _react2.default.createClass({
+	    displayName: 'addTodo',
+	    onClick: function onClick(event) {
+	        var _this = this;
 	
-	    function onClick(event) {
 	        event.preventDefault();
 	
-	        var newText = document.getElementById('newTodoText').value;
+	        var newTodoText = this.refs.newTodoText.value;
 	
-	        if (newText !== '') {
-	            fetch('/todos/add', {
-	                method: "put",
-	                headers: new Headers({ 'Content-type': 'application/json' }),
-	                body: JSON.stringify({ text: newText })
-	            }).then(function (response) {
+	        if (newTodoText !== '') {
+	            fetch('/todos/add', (0, _fetchJSONHelper2.default)('put', { text: newTodoText })).then(function (response) {
 	                return response.json();
 	            }).then(function (data) {
-	                store.dispatch((0, _actions.addTodo)(data));
-	                document.getElementById('newTodoText').value = '';
+	                _this.props.store.dispatch((0, _actions.addTodo)(data));
+	                _this.refs.newTodoText.value = '';
 	            });
 	        }
-	    }
-	
-	    return _react2.default.createElement(
-	        'div',
-	        { id: 'addTodo', className: 'todo-item' },
-	        _react2.default.createElement(
+	    },
+	    render: function render() {
+	        return _react2.default.createElement(
 	            'div',
-	            { className: 'todo-item__elem' },
+	            { id: 'addTodo', className: 'todo-item' },
 	            _react2.default.createElement(
-	                'form',
-	                { className: 'todo-add', method: 'put' },
-	                _react2.default.createElement('input', { id: 'newTodoText', className: 'todo-add__input', maxLength: '12',
-	                    placeholder: 'Введите вашу ТуДу-Ху =)' }),
+	                'div',
+	                { className: 'todo-item__elem' },
 	                _react2.default.createElement(
-	                    'a',
-	                    { className: 'todo-item-add__add-button', onClick: onClick },
-	                    'Добавить'
+	                    'form',
+	                    { className: 'todo-add', method: 'put' },
+	                    _react2.default.createElement('input', { ref: 'newTodoText', className: 'todo-add__input', maxLength: '12',
+	                        placeholder: 'Введите вашу ТуДу-Ху =)' }),
+	                    _react2.default.createElement(
+	                        'a',
+	                        { className: 'todo-item-add__add-button', onClick: this.onClick },
+	                        'Добавить'
+	                    )
 	                )
 	            )
-	        )
-	    );
-	};
+	        );
+	    }
+	});
 
 /***/ },
-/* 175 */
+/* 177 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20804,8 +20851,9 @@
 	    editingTodoId: null
 	};
 	
-	exports.todoApp = function (state, action) {
-	    state = state || initialState;
+	exports.todoApp = function () {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+	    var action = arguments[1];
 	
 	    switch (action.type) {
 	        case 'GET_TODOS':
@@ -20837,7 +20885,7 @@
 	            };
 	        case 'DELETE_TODO':
 	            return {
-	                todos: state.todos.concat().filter(function (todo) {
+	                todos: state.todos.filter(function (todo) {
 	                    return todo.id !== action.deletedTodoId;
 	                }),
 	                selectedTodoId: null,
@@ -20845,13 +20893,13 @@
 	            };
 	        case 'EDIT_TODO':
 	            return {
-	                todos: state.todos.concat(),
+	                todos: state.todos,
 	                selectedTodoId: null,
 	                editingTodoId: action.editingTodoId
 	            };
 	        case 'UPDATE_TODO':
 	            return {
-	                todos: state.todos.concat().map(function (todo) {
+	                todos: state.todos.map(function (todo) {
 	                    if (todo.id === action.updatedTodoId) {
 	                        todo.text = action.updatedTodoText;
 	                    }
@@ -20866,7 +20914,7 @@
 	};
 
 /***/ },
-/* 176 */
+/* 178 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

@@ -7,6 +7,7 @@ const app = express();
 
 const hbs = require('hbs');
 const bodyParser = require('body-parser');
+const expressSanitizer = require('express-sanitizer');
 
 const viewsDir = path.join(__dirname, 'server/bundles');
 const publicDir = path.join(__dirname, 'public');
@@ -32,6 +33,8 @@ app.use(
     )
 );
 
+app.use(expressSanitizer());
+
 app.use((err, req, res, next) => {
     console.error(err);
 
@@ -41,11 +44,11 @@ app.use((err, req, res, next) => {
 app.use((req, res, next) => {
     req.commonData = {
         meta: {
-            description: 'Awesome ToDo-hi',
+            description: 'Savi ToDo-hi',
             charset: 'utf-8'
         },
         page: {
-            title: 'Awesome todohi'
+            title: 'Savi ToDo-hi'
         },
         isDev: process.env.NODE_ENV === 'development'
     };

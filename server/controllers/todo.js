@@ -3,7 +3,7 @@
 const Todo = require('../models/todo');
 
 exports.emptyList = (req, res) => {
-    res.render('main/main');
+    res.render('main/main', req.commonData);
 };
 
 exports.list = (req, res) => {
@@ -17,7 +17,7 @@ exports.list = (req, res) => {
 
 exports.add = (req, res) => {
     const todo = new Todo({
-        text: req.body.text
+        text: req.sanitize(req.body.text)
     });
 
     todo.save();
@@ -45,7 +45,7 @@ exports.delete = (req, res) => {
 exports.edit = (req, res) => {
     const data = {
         id: req.body.id,
-        editText: req.body.editText
+        editText: req.sanitize(req.body.editText)
     };
 
     Todo.edit(data.id, data.editText);

@@ -4,7 +4,8 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import {createStore} from 'redux';
 
-import Todo from '../../../client/components/todo';
+import Todo from '../../../client/components/todos';
+
 import {getTodos} from '../../../client/actions';
 import {todoApp} from '../../../client/reducers';
 
