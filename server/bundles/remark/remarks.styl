@@ -15,30 +15,48 @@ body {
 }
 
 .remark {
-    display: block;
     border: solid 1px gray;
     width: 100%;
     padding: 10px;
     height: 60px;
     background-color: #f8f8f8;
 
-
     &__delete {
         height: 80px + 2px;
     }
+
+    &_hidden {
+        display: none;
+    }
+
+    &_delete {
+        display: flex;
+        transform: translateX(0);
+    }
+
+    &_visible {
+        display: flex;
+        transform: translateX(0);
+    }
 }
 
-.creating {
-    display: none;
+.new-remark {
+    &_visible {
+        display: block;
+    }
+    &_hidden {
+        display: none;
+    }
 }
 
-
-.redo {
-    display: none;
-}
 
 .delButton {
-    display: none;
+    &_visible {
+        display: inline-block;
+    }
+    &_hidden {
+        display: none;
+    }
 }
 
 .remarks {

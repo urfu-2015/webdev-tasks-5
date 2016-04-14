@@ -12,7 +12,7 @@ common_height = paddings * 2 + text_height + button_height
   height: common_height;
   background-color: #f8f8f8;
 
-  &_text {
+  &__text {
     width: 100%;
     height: text_height;
     resize: none;
@@ -21,13 +21,21 @@ common_height = paddings * 2 + text_height + button_height
     border: 0;
   }
 
-  &_buttons {
+  &__buttons {
     display: flex;
     flex-direction: row;
   }
 
-  &_cancel
-  &_send {
+  &__cancel
+  &__send {
     height: button_height;
+  }
+
+  &_visible {
+    display: block;
+  }
+
+  &_hidden {
+    display: none;
   }
 }

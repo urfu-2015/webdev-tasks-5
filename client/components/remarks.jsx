@@ -64,15 +64,11 @@ function touchEndHandler(store) {
     }
 }
 
-function defineStyleForReload(mode) {
+function defineClassForReload(mode) {
     if (mode === modes.reload) {
-        return {
-            display: 'block'
-        }
+        return 'reload_visible';
     } else {
-        return {
-            display: 'none'
-        }
+        return 'reload_hidden';
     }
 }
 
@@ -80,12 +76,13 @@ function defineStyleForReload(mode) {
 const Remarks = function ({store}) {
     //получили текущее состояние
     const {remarks, selectedRemark, mode} = store.getState();
-    let styleForReload = defineStyleForReload(mode);
+    //let styleForReload = defineStyleForReload(mode);
+    let classForReload = defineClassForReload(mode);
     return (
         <div onTouchStart={touchStartHandler(store)}
              onTouchMove={touchMoveHandler(store)}
              onTouchEnd={touchEndHandler(store)} className="wrapper">
-            <ReloadPicture styleFor={styleForReload}/>
+            <ReloadPicture visibilityClass={classForReload}/>
             <Header />
             <main className="main">
                 <ul className="remarks">

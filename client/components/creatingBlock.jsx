@@ -5,20 +5,18 @@ import CreatingButton from './creatingButton.jsx';
 import RemarkForm from './remarkForm.jsx';
 import {modes} from '../reducer.jsx';
 
-function defineStyleTextBox(mode) {
-    let result = {};
+function defineClassForm(mode, nameForm) {
     if (mode === modes.creating) {
-        result['display'] = 'block';
+        return nameForm + '_visible';
     } else {
-        result['display'] = 'none';
+        return nameForm + '_hidden';
     }
-    return result;
 }
-
 
 export default ({store}) => {
     let {mode, newText} = store.getState();
-    let styleForForm = defineStyleTextBox(mode);
+    let classForm = 'redo-form';
+    let visibilityClass = defineClassForm(mode, classForm);
     let actions = {
         first: cancelAdding,
         second: addRemark
@@ -27,7 +25,7 @@ export default ({store}) => {
     return (
         <div>
             <CreatingButton store={store} />
-            <RemarkForm text={text} formClass="redo-form" nameForm="creating" styleFor={styleForForm}
+            <RemarkForm text={text} formClass={classForm} nameForm="creating" visibilityClass={visibilityClass}
                         path="/remarks/new" method="POST" actions={actions} store={store} />
         </div>
     )

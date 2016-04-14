@@ -12,23 +12,19 @@ function clickHandler(store) {
     }
 }
 
-function defineStyle(mode) {
+function defineClass(mode) {
     if (modes.creating === mode || modes.redo === mode) {
-        return {
-            display: 'none'
-        }
+        return 'new-remark_hidden new-remark';
     } else {
-        return {
-            display: 'block'
-        }
+        return 'new-remark_visible new-remark';
     }
 }
 
 export default ({store}) => {
     let {mode} = store.getState();
-    let styleForButton = defineStyle(mode);
+    let classForButton = defineClass(mode);
     return  (
-        <input type="submit" value="Создать новую" className="new-remark"
-               onClick={clickHandler(store)} style={styleForButton}/>
+        <input type="submit" value="Создать новую" className={classForButton}
+               onClick={clickHandler(store)} />
     )
 };

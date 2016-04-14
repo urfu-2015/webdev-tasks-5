@@ -20780,15 +20780,11 @@
 	    };
 	}
 	
-	function defineStyleForReload(mode) {
+	function defineClassForReload(mode) {
 	    if (mode === _reducer.modes.reload) {
-	        return {
-	            display: 'block'
-	        };
+	        return 'reload_visible';
 	    } else {
-	        return {
-	            display: 'none'
-	        };
+	        return 'reload_hidden';
 	    }
 	}
 	
@@ -20802,14 +20798,15 @@
 	    var remarks = _store$getState.remarks;
 	    var selectedRemark = _store$getState.selectedRemark;
 	    var mode = _store$getState.mode;
+	    //let styleForReload = defineStyleForReload(mode);
 	
-	    var styleForReload = defineStyleForReload(mode);
+	    var classForReload = defineClassForReload(mode);
 	    return _react2.default.createElement(
 	        'div',
 	        { onTouchStart: touchStartHandler(store),
 	            onTouchMove: touchMoveHandler(store),
 	            onTouchEnd: touchEndHandler(store), className: 'wrapper' },
-	        _react2.default.createElement(_reloadPicture2.default, { styleFor: styleForReload }),
+	        _react2.default.createElement(_reloadPicture2.default, { visibilityClass: classForReload }),
 	        _react2.default.createElement(_header2.default, null),
 	        _react2.default.createElement(
 	            'main',
@@ -20987,47 +20984,36 @@
 	    };
 	}
 	
-	function defineStyleRemark(selected, current, mode, diff) {
-	    var result = {};
+	function defineClassRemark(selected, current, mode) {
 	    if (selected === current) {
 	        switch (mode) {
 	            case _reducer.modes.delete:
-	                result['display'] = 'flex';
-	                result['transform'] = 'translateX(' + diff + ')';
-	                break;
+	                return 'remark_delete remark';
 	            case _reducer.modes.redo:
-	                result['display'] = 'none';
-	                break;
+	                return 'remark_hidden remark';
 	            case _reducer.modes.nan:
 	            default:
-	                result['display'] = 'flex';
-	                result['transform'] = 'translateX(0)';
+	                return 'remark_visible remark';
 	        }
 	    } else {
-	        result['display'] = 'flex';
-	        result['transform'] = 'translateX(0)';
+	        return 'remark_visible remark';
 	    }
-	    return result;
 	}
 	
-	function defineStyleTextBox(selected, current, mode) {
-	    var result = {};
+	function defineClassForm(selected, current, mode, nameForm) {
 	    if (selected === current && mode === _reducer.modes.redo) {
-	        result['display'] = 'flex';
+	        return nameForm + '_visible';
 	    } else {
-	        result['display'] = 'none';
+	        return nameForm + '_hidden';
 	    }
-	    return result;
 	}
 	
-	function defineStyleDeleteButton(selected, current, mode) {
-	    var result = {};
+	function defineClassDeleteButton(selected, current, mode) {
 	    if (selected === current && mode === _reducer.modes.delete) {
-	        result['display'] = 'inline-block';
+	        return 'delButton_visible';
 	    } else {
-	        result['display'] = 'none';
+	        return 'delButton_hidden';
 	    }
-	    return result;
 	}
 	
 	var Remark = function Remark(_ref) {
@@ -21044,9 +21030,9 @@
 	    var indexUpdatedRemark = _store$getState.indexUpdatedRemark;
 	
 	    text = newText !== undefined && index === indexUpdatedRemark ? newText : text;
-	    var styleForRemark = defineStyleRemark(selectedRemark, index, mode, diff);
-	    var styleForTextArea = defineStyleTextBox(selectedRemark, index, mode);
-	    var styleForDeleteButton = defineStyleDeleteButton(selectedRemark, index, mode);
+	    var classForForm = defineClassForm(selectedRemark, index, mode, 'redo-form');
+	    var classForRemark = defineClassRemark(selectedRemark, index, mode);
+	    var classForDeleteButton = defineClassDeleteButton(selectedRemark, index, mode);
 	    var actions = {
 	        first: _actions.cancelUpdating,
 	        second: _actions.updateRemark
@@ -21059,16 +21045,17 @@
 	            { className: 'remarkContainer_card' },
 	            _react2.default.createElement(
 	                'div',
-	                { className: 'remark', onTouchStart: touchStartHandler(store),
+	                { onTouchStart: touchStartHandler(store),
 	                    onTouchMove: touchMoveEvent(store, index),
 	                    onTouchEnd: touchEndHandler(store, index),
-	                    style: styleForRemark },
+	                    className: classForRemark },
 	                text
 	            ),
-	            _react2.default.createElement(_deleteButton2.default, { styleFor: styleForDeleteButton, store: store, index: index,
-	                isDeleted: selectedRemark === index, formClass: 'remark' })
+	            _react2.default.createElement(_deleteButton2.default, { store: store, index: index,
+	                isDeleted: selectedRemark === index, formClass: 'remark',
+	                visibilityClass: classForDeleteButton })
 	        ),
-	        _react2.default.createElement(_remarkForm2.default, { formClass: 'redo-form', nameForm: 'redo', styleFor: styleForTextArea,
+	        _react2.default.createElement(_remarkForm2.default, { formClass: 'redo-form', nameForm: 'redo', visibilityClass: classForForm,
 	            text: text, path: '/remarks/' + index, method: 'PUT', store: store, actions: actions })
 	    );
 	};
@@ -21158,23 +21145,24 @@
 	    var text = _ref.text;
 	    var formClass = _ref.formClass;
 	    var nameForm = _ref.nameForm;
-	    var styleFor = _ref.styleFor;
+	    var visibilityClass = _ref.visibilityClass;
 	    var path = _ref.path;
 	    var actions = _ref.actions;
 	    var method = _ref.method;
 	    var store = _ref.store;
 	
-	    var forSend = formClass + '_send';
+	    var forSend = formClass + '__send';
 	    var forFormClass = formClass + ' ' + nameForm;
-	    var forCancel = formClass + '_cancel';
-	    var forText = formClass + '_text';
-	    var forButtons = formClass + '_buttons';
+	    forFormClass += ' ' + visibilityClass;
+	    var forCancel = formClass + '__cancel';
+	    var forText = formClass + '__text';
+	    var forButtons = formClass + '__buttons';
 	    return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(
 	            'form',
-	            { className: forFormClass, name: nameForm, style: styleFor, method: method },
+	            { className: forFormClass, name: nameForm, method: method },
 	            _react2.default.createElement(
 	                'div',
 	                null,
@@ -21227,7 +21215,7 @@
 	}
 	
 	function clickHandler(store, isDeleted, index) {
-	    return function (event) {
+	    return function () {
 	        if (isDeleted) {
 	            removeRemark(index, store);
 	        }
@@ -21235,16 +21223,17 @@
 	}
 	
 	exports.default = function (_ref) {
-	    var styleFor = _ref.styleFor;
 	    var store = _ref.store;
 	    var isDeleted = _ref.isDeleted;
 	    var index = _ref.index;
 	    var formClass = _ref.formClass;
+	    var visibilityClass = _ref.visibilityClass;
 	
 	    var nameClass = formClass + '__delete';
+	    nameClass += ' ' + visibilityClass;
 	    return _react2.default.createElement(
 	        'button',
-	        { style: styleFor, onClick: clickHandler(store, isDeleted, index), className: nameClass },
+	        { onClick: clickHandler(store, isDeleted, index), className: nameClass },
 	        _react2.default.createElement('img', { src: '/images/trush.png', alt: 'Удаление' })
 	    );
 	};
@@ -21277,14 +21266,12 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function defineStyleTextBox(mode) {
-	    var result = {};
+	function defineClassForm(mode, nameForm) {
 	    if (mode === _reducer.modes.creating) {
-	        result['display'] = 'block';
+	        return nameForm + '_visible';
 	    } else {
-	        result['display'] = 'none';
+	        return nameForm + '_hidden';
 	    }
-	    return result;
 	}
 	
 	exports.default = function (_ref) {
@@ -21295,7 +21282,8 @@
 	    var mode = _store$getState.mode;
 	    var newText = _store$getState.newText;
 	
-	    var styleForForm = defineStyleTextBox(mode);
+	    var classForm = 'redo-form';
+	    var visibilityClass = defineClassForm(mode, classForm);
 	    var actions = {
 	        first: _actions.cancelAdding,
 	        second: _actions.addRemark
@@ -21305,7 +21293,7 @@
 	        'div',
 	        null,
 	        _react2.default.createElement(_creatingButton2.default, { store: store }),
-	        _react2.default.createElement(_remarkForm2.default, { text: text, formClass: 'redo-form', nameForm: 'creating', styleFor: styleForForm,
+	        _react2.default.createElement(_remarkForm2.default, { text: text, formClass: classForm, nameForm: 'creating', visibilityClass: visibilityClass,
 	            path: '/remarks/new', method: 'POST', actions: actions, store: store })
 	    );
 	};
@@ -21342,15 +21330,11 @@
 	    };
 	}
 	
-	function defineStyle(mode) {
+	function defineClass(mode) {
 	    if (_reducer.modes.creating === mode || _reducer.modes.redo === mode) {
-	        return {
-	            display: 'none'
-	        };
+	        return 'new-remark_hidden new-remark';
 	    } else {
-	        return {
-	            display: 'block'
-	        };
+	        return 'new-remark_visible new-remark';
 	    }
 	}
 	
@@ -21361,9 +21345,9 @@
 	
 	    var mode = _store$getState.mode;
 	
-	    var styleForButton = defineStyle(mode);
-	    return _react2.default.createElement('input', { type: 'submit', value: 'Создать новую', className: 'new-remark',
-	        onClick: clickHandler(store), style: styleForButton });
+	    var classForButton = defineClass(mode);
+	    return _react2.default.createElement('input', { type: 'submit', value: 'Создать новую', className: classForButton,
+	        onClick: clickHandler(store) });
 	};
 
 /***/ },
@@ -21385,12 +21369,13 @@
 	var pathToPicture = '/images/reload2.png';
 	
 	exports.default = function (_ref) {
-	    var styleFor = _ref.styleFor;
+	    var visibilityClass = _ref.visibilityClass;
 	
+	    visibilityClass += ' wheel reload_img';
 	    return _react2.default.createElement(
 	        'div',
 	        { className: 'reload' },
-	        _react2.default.createElement('img', { className: 'wheel reload_img', src: pathToPicture, alt: 'Перегрузка', style: styleFor })
+	        _react2.default.createElement('img', { src: pathToPicture, alt: 'Перегрузка', className: visibilityClass })
 	    );
 	};
 

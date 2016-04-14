@@ -15,18 +15,18 @@ function removeRemark(index, store) {
 }
 
 function clickHandler(store, isDeleted, index) {
-    return function (event) {
+    return function () {
         if (isDeleted) {
             removeRemark(index, store);
         }
     }
 }
 
-
-export default ({styleFor, store, isDeleted, index, formClass}) => {
+export default ({store, isDeleted, index, formClass, visibilityClass}) => {
     let nameClass = formClass + '__delete';
+    nameClass += ' ' + visibilityClass;
     return (
-        <button style={styleFor} onClick={clickHandler(store, isDeleted, index)} className={nameClass}>
+        <button onClick={clickHandler(store, isDeleted, index)} className={nameClass}>
             <img src="/images/trush.png" alt="Удаление" />
         </button>
     )

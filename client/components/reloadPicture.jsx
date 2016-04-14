@@ -3,10 +3,11 @@ import React from 'react';
 
 let pathToPicture = '/images/reload2.png';
 
-export default ({styleFor}) => {
+export default ({visibilityClass}) => {
+    visibilityClass += ' wheel reload_img';
     return (
         <div className="reload">
-            <img className="wheel reload_img" src={pathToPicture} alt="Перегрузка" style={styleFor} />
+            <img src={pathToPicture} alt="Перегрузка" className={visibilityClass} />
         </div>
     )
 }

@@ -12,10 +12,10 @@ Remarks.preload(
 );
 
 
-module.exports.getRemarks = function(req, res) {
+module.exports.getRemarks = function(req, res, next) {
     Remarks.getAll(function (err, data) {
         if (err != undefined) {
-            console.log(err);
+            next(err);
         }
         res.render('remark/remarks', {
             title: 'TODo-хИ' ,
@@ -31,10 +31,10 @@ module.exports.getRemarks = function(req, res) {
 
 };
 
-module.exports.getRemarksJSON = function(req, res) {
+module.exports.getRemarksJSON = function(req, res, next) {
     Remarks.getAll(function (err, data) {
         if (err != undefined) {
-            console.log(err);
+            next(err);
             res.status(500);
             res.send('');
         } else {
@@ -43,10 +43,10 @@ module.exports.getRemarksJSON = function(req, res) {
     })
 };
 
-module.exports.newRemark = function(req, res) {
+module.exports.newRemark = function(req, res, next) {
     Remarks.create(req.body.text, function (err, data) {
         if (err != undefined) {
-            console.log(err);
+            next(err);
             res.status(500);
             res.send();
             return;
@@ -55,10 +55,10 @@ module.exports.newRemark = function(req, res) {
     });
 };
 
-module.exports.redoRemark = function(req, res) {
+module.exports.redoRemark = function(req, res, next) {
     Remarks.redo(req.params.id, req.body.text, function (err, data) {
         if (err != undefined) {
-            console.log(err);
+            next(err);
             res.status(500);
             res.send();
             return;
@@ -67,16 +67,17 @@ module.exports.redoRemark = function(req, res) {
     });
 };
 
-module.exports.deleteRemark = function(req, res) {
+module.exports.deleteRemark = function(req, res, next) {
     Remarks.remove(req.params.id, function (err) {
         if (err != undefined) {
-            console.log(err);
+            next(err);
         } else {
             res.send({});
         }
     });
 };
 
-module .exports.changeNumber = function(req, res, netx) {
+
+module.exports.changeNumber = function(req, res, next) {
 
 };

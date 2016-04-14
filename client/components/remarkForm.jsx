@@ -26,15 +26,16 @@ function sendHandler(store, actionUnused, method, path, text) {
     }
 }
 
-export default ({text, formClass, nameForm, styleFor, path, actions, method, store}) => {
-    let forSend = formClass + '_send';
+export default ({text, formClass, nameForm, visibilityClass, path, actions, method, store}) => {
+    let forSend = formClass + '__send';
     let forFormClass = formClass + ' ' + nameForm;
-    let forCancel = formClass + '_cancel';
-    let forText = formClass + '_text';
-    let forButtons = formClass + '_buttons';
+    forFormClass += ' ' + visibilityClass;
+    let forCancel = formClass + '__cancel';
+    let forText = formClass + '__text';
+    let forButtons = formClass + '__buttons';
     return (
         <div>
-            <form className={forFormClass} name={nameForm} style={styleFor} method={method}>
+            <form className={forFormClass} name={nameForm} method={method}>
                 <div>
                     <textarea name="text" placeholder="Введите вашу заметку..." className={forText}
                         form={nameForm} defaultValue={text} />

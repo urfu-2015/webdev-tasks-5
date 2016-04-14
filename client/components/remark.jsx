@@ -72,55 +72,45 @@ function touchEndHandler(store, index) {
     }
 }
 
-function defineStyleRemark(selected, current, mode, diff) {
-    let result = {};
+
+function defineClassRemark(selected, current, mode) {
     if (selected === current) {
         switch (mode) {
             case modes.delete:
-                result['display'] = 'flex';
-                result['transform'] = 'translateX(' + diff + ')';
-                break;
+                return 'remark_delete remark';
             case modes.redo:
-                result['display'] = 'none';
-                break;
+                return 'remark_hidden remark';
             case modes.nan:
             default:
-                result['display'] = 'flex';
-                result['transform'] = 'translateX(0)';
+                return 'remark_visible remark';
         }
     } else {
-        result['display'] = 'flex';
-        result['transform'] = 'translateX(0)';
+        return 'remark_visible remark';
     }
-    return result;
 }
 
-function defineStyleTextBox(selected, current, mode) {
-    let result = {};
+function defineClassForm(selected, current, mode, nameForm) {
     if (selected === current && mode === modes.redo) {
-        result['display'] = 'flex';
+        return nameForm + '_visible';
     } else {
-        result['display'] = 'none';
+        return nameForm + '_hidden';
     }
-    return result;
 }
 
-function defineStyleDeleteButton(selected, current, mode) {
-    let result = {};
+function defineClassDeleteButton(selected, current, mode) {
     if (selected === current && mode === modes.delete) {
-        result['display'] = 'inline-block';
+        return 'delButton_visible';
     } else {
-        result['display'] = 'none';
+        return 'delButton_hidden';
     }
-    return result;
 }
 
 const Remark = ({text, store, index}) => {
     let {selectedRemark, mode, diff, newText, indexUpdatedRemark} = store.getState();
     text = (newText !== undefined && index === indexUpdatedRemark) ? newText : text;
-    let styleForRemark = defineStyleRemark(selectedRemark, index, mode, diff);
-    let styleForTextArea = defineStyleTextBox(selectedRemark, index, mode);
-    let styleForDeleteButton = defineStyleDeleteButton(selectedRemark, index, mode);
+    let classForForm = defineClassForm(selectedRemark, index, mode, 'redo-form');
+    let classForRemark = defineClassRemark(selectedRemark, index, mode);
+    let classForDeleteButton = defineClassDeleteButton(selectedRemark, index, mode);
     let actions = {
         first: cancelUpdating,
         second: updateRemark
@@ -128,14 +118,15 @@ const Remark = ({text, store, index}) => {
     return (
         <li className="remarkContainer">
             <div className="remarkContainer_card">
-                <div className="remark" onTouchStart={touchStartHandler(store)}
+                <div onTouchStart={touchStartHandler(store)}
                      onTouchMove={touchMoveEvent(store, index)}
                      onTouchEnd={touchEndHandler(store, index)}
-                     style={styleForRemark}>{text}</div>
-                <DeleteButton styleFor={styleForDeleteButton} store={store} index={index}
-                              isDeleted={selectedRemark === index} formClass="remark" />
+                     className={classForRemark}>{text}</div>
+                <DeleteButton store={store} index={index}
+                              isDeleted={selectedRemark === index} formClass="remark"
+                              visibilityClass={classForDeleteButton}/>
             </div>
-            <RemarkForm formClass="redo-form" nameForm="redo" styleFor={styleForTextArea}
+            <RemarkForm formClass="redo-form" nameForm="redo" visibilityClass={classForForm}
                         text={text} path={'/remarks/' + index} method="PUT" store={store} actions={actions} />
         </li>
         )
