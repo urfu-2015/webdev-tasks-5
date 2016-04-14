@@ -43,7 +43,7 @@ class Page extends Component {
         event.stopPropagation();
         this.movePoint = event.changedTouches[0];
         var shiftY = this.startPoint.y - this.movePoint.pageY;
-        if (shiftY < - 15) {
+        if (shiftY < - 20) {
             this.props.store.dispatch(MoveReload(shiftY));
         }
     }

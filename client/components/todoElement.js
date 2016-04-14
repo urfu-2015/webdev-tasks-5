@@ -56,7 +56,7 @@ class todoElement extends Component {
         var clickedElem = event.target;
         var listNumber = clickedElem.getAttribute('id').slice(4);
         var shiftX = this.startPoint.x - this.movePoint.pageX;
-        if (shiftX < 50) {
+        if (shiftX < 50 && Math.abs(shiftX) > 15) {
             this.props.store.dispatch(MoveDeleteTodo(listNumber, shiftX));
         }
     }

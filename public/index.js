@@ -20494,7 +20494,7 @@
 	            event.stopPropagation();
 	            this.movePoint = event.changedTouches[0];
 	            var shiftY = this.startPoint.y - this.movePoint.pageY;
-	            if (shiftY < -15) {
+	            if (shiftY < -20) {
 	                this.props.store.dispatch((0, _actions.MoveReload)(shiftY));
 	            }
 	        }
@@ -20953,7 +20953,9 @@
 	            var clickedElem = event.target;
 	            var listNumber = clickedElem.getAttribute('id').slice(4);
 	            var shiftX = this.startPoint.x - this.movePoint.pageX;
-	            if (shiftX < 50) {
+	            event.target.style.left = event.targetTouches[0].pageX + "px";
+	            event.target.style.top = event.targetTouches[0].pageY + "px";
+	            if (shiftX < 50 && Math.abs(shiftX) > 15) {
 	                this.props.store.dispatch((0, _actions.MoveDeleteTodo)(listNumber, shiftX));
 	            }
 	        }
