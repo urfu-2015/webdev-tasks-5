@@ -15,21 +15,19 @@ h1
     text-align: center;
 }
 
-.list
+.tasks
 {
     width: 100%;
     text-align: center;
 }
 
-.list__form
+.task__action_delete
 {
-    display: none;
     position: relative;
 }
 
-.list__fix
+.task__action_update
 {
-    display: none;
     position: relative;
     border: 1px solid #a0a0a0;
     width: 90%;
@@ -38,12 +36,12 @@ h1
     text-align: right;
 }
 
-.list__form_visible, .list__fix_visible
+.task__action_invisible
 {
-    display: block;
+    display: none;
 }
 
-.list__task
+.task__name
 {
     width: 90%;
     height: 20px;
@@ -56,22 +54,22 @@ h1
     transition: all .8s ease;
 }
 
-.list__task_shift
+.task__name_shift
 {
     transform: translateX(-50px);
 }
 
-.list__trash
+.task__trash
 {
     position: absolute;
     right: 10%;
-    display: none;
+    display: inline-block;
     height: 40px;
 }
 
 .refresh
 {
-    display: none;
+    display: inline-block;
     width: 100%;
     height: 40px;
     text-align: center;
@@ -83,18 +81,18 @@ h1
     height: 100%;
 }
 
-.list__trash_visible, .refresh_visible
+.task__trash_invisible, .refresh_invisible
 {
-    display: inline-block;
+    display: none;
 }
 
-.list__text, .list__saving
+.task__text, .task__save
 {
     display: inline-block;
     margin: 4px;
 }
 
-.list__text
+.task__text
 {
     width: 95%;
 }

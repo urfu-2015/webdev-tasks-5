@@ -3,54 +3,80 @@
 const Task = require('../models/task');
 
 exports.list = (req, res) => {
-    res.render('index', {
-        tasks: Task.getAllTasks()
-    });
+    var tasks = Task.getAllTasks();
+    if (req.query.exclude) {
+        var excluded = req.query.exclude.split(",").map(elem => parseInt(elem, 10));
+        tasks = tasks.filter((elem) => {
+            return excluded.indexOf(elem.id) === -1;
+        })
+    }
+    res.json(tasks);
 };
 
 exports.addTask = (req, res) => {
-    Task.addTask(req.body.task);
+    var text = Object.keys(req.body)[0];
+    if (Object.keys(req.body).length === 0) {
+        res.status(400).json({
+            code: 400, 
+            message: "Task is empty"
+        });
+        return;
+    }
+
+    var id = Task.addTask(text);
+    // res.status(201).json({
+    //     code: 201,
+    //     message: "Task created",
+    //     id: id
+    // });
     res.redirect('/');
 };
 
 exports.deleteTask = (req, res) => {
-    var index = parseInt(Object.keys(req.body)[0], 10);
-    if (!isNaN(index)) {
-        Task.deleteTask(index);
+    var id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+        res.status(400).json({
+            code: 400, 
+            message: "Task id is incorrect"
+        });
+        return;
     }
-    res.redirect('/');
+
+    var deleted = Task.deleteTask(id);
+    if (deleted) {
+        res.status(200).json({
+            code: 200,
+            message: "Task deleted"
+        });
+    } else {
+        res.status(404).json({
+            code: 404, 
+            message: "Task " + id + " not found"
+        });
+    }
 };
 
 exports.updateTask = (req, res) => {
-    var keys = Object.keys(req.body);
-    if (keys.length !== 0) {
-        var key = keys[0];
-        var indexAndText = key.split(',');
-        Task.updateTask(indexAndText[0], indexAndText[1]);
+    var id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+        res.status(400).json({
+            code: 400, 
+            message: "Task id is incorrect"
+        });
+        return;
     }
-    res.render('index', {
-        tasks: Task.getAllTasks()
-    });
-};
 
-exports.refresh = (req, res) => {
-    var texts = Object.keys(req.body)[0];
-    var oldTasks = [];
-    var index = texts.indexOf(',');
-    if (index !== -1) {
-        while (index !== -1) {
-            var text = texts.substring(0, index);
-            oldTasks.push(text);
-            texts = texts.substring(index + 1, texts.length);
-            index = texts.indexOf(',');
-        }
+    var text = Object.keys(req.body)[0];
+    var updated = Task.updateTask(id, text);
+    if (updated) {
+        res.status(200).json({
+            code: 200,
+            message: "Task updated"
+        });
+    } else {
+        res.status(404).json({
+            code: 404, 
+            message: "Task " + id + " not found"
+        });
     }
-    oldTasks.push(texts);
-    var tasks = Task.getAllTasks();
-    if (oldTasks.length !== tasks.length) {
-        tasks = Task.getSortingTasks(oldTasks);
-    }
-    res.render('index', {
-        tasks: tasks
-    });
 };

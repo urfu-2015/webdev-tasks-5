@@ -1,109 +1,112 @@
 'use strict';
 
-var saveButtons = document.getElementsByClassName('list__saving');
-saveButtons = Array.prototype.slice.call(saveButtons);
-for (var i = 0; i < saveButtons.length; i++) {
-    saveButtons[i].addEventListener('touchstart', function(event) {
-        var fix = this.parentElement;
-        var task = fix.parentElement;
-        var form = task.children[0];
-        form.classList.add('list__form_visible');
-        fix.classList.remove('list__fix_visible');
-        var index = 0;
-        var list = task.parentElement;
-        for (var i = 0; i < list.children.length; i++) {
-            if (list.children[i] === task) {
-                index = i;
-                break;
-            }
-        }
-        var body = index + ',' + fix.children[0].value;
-        var options = {
-            method: 'post',
-            body: body
-        };
-        sendRequest('/updates', options);
-    }, false);
-}
+var start;
+var end;
+var tasks = document.querySelector('.tasks');
 
-var tasks = document.getElementsByClassName('list__task');
-tasks = Array.prototype.slice.call(tasks);
-for (var i = 0; i < tasks.length; i++) {
-    var start;
-    var end;
-    tasks[i].addEventListener('touchstart', function(event) {
-        event.stopPropagation();
-        start = event.changedTouches[0];
-    }, false);
-    tasks[i].addEventListener('touchend', function(event) {
-        event.stopPropagation();
-        end = event.changedTouches[0];
-        var trash = this.parentElement.children[1];
-        var distanceX = Math.abs(end.pageX - start.pageX);
-        if (distanceX > 20) {
-            if (end.pageX < start.pageX) {
-                this.classList.add('list__task_shift');
-                trash.classList.add('list__trash_visible');
-            }
-            if (end.pageX > start.pageX) {
-                this.classList.remove('list__task_shift');
-                trash.classList.remove('list__trash_visible');
-            }
-        } else {
-            var form = this.parentElement;
-            var fix = form.parentElement.children[1];
-            form.classList.remove('list__form_visible');
-            fix.classList.add('list__fix_visible');
-        }
-    }, false);
-}
+tasks.addEventListener('touchstart', function(event) {
+    var targetClassList = Array.prototype.slice.call(event.target.classList);
+    event.stopPropagation();
+    start = event.changedTouches[0];
+    if (targetClassList.indexOf('task__save') !== -1) {
+        saveText(event.target);
+    }
+    if (targetClassList.indexOf('task__trash') !== -1) {
+        deleteTask(event.target);
+    }
+}, false);
+
+tasks.addEventListener('touchend', function(event) {
+    event.stopPropagation();
+    end = event.changedTouches[0];
+    var targetClassList = Array.prototype.slice.call(event.target.classList);
+    if (targetClassList.indexOf('task__name') !== -1) {
+        shiftOrChangeForm(event.target);
+    }
+}, false);
 
 var globalStart;
 var globalEnd;
+
 document.addEventListener('touchstart', function(event) {
     event.stopPropagation();
     globalStart = event.changedTouches[0];
 }, false);
+
 document.addEventListener('touchend', function(event) {
     globalEnd = event.changedTouches[0];
-    var refresh = document.getElementsByClassName('refresh')[0];
-    if (globalEnd.pageY - globalStart.pageY > 20) {
-        document.body.classList.add('body_shift_down');
-        refresh.classList.add('refresh_visible');
-        var list = getListTasks();
-        var cb = function() {
-            refresh.classList.remove('refresh_visible');
-            document.body.classList.remove('body_shift_down');
-        };
-        var options = {
-            method: 'post',
-            body: list.join()
-        };
-        sendRequest('/', options, cb);
+    var targetClassList = Array.prototype.slice.call(event.target.classList);
+    if (targetClassList.indexOf('form__button') !== -1) {
+        addTask(event.target);
+    } else {
+        if (globalEnd.pageY - globalStart.pageY > 20) {
+            var refresh = document.getElementsByClassName('refresh')[0];
+            document.body.classList.add('body_shift_down');
+            refresh.classList.remove('refresh_invisible');
+            var cb = function() {
+                refresh.classList.add('refresh_invisible');
+                document.body.classList.remove('body_shift_down');
+            };
+            var options = {
+                method: 'get'
+            };
+            sendRequest('/', options, cb);
+        }
     }
 }, false);
 
-var trashs = document.getElementsByClassName('list__trash');
-trashs = Array.prototype.slice.call(trashs);
-for (var i = 0; i < trashs.length; i++) {
-    trashs[i].addEventListener('touchstart', function(event) {
-        event.preventDefault();
-        var task = this.parentElement.parentElement;
-        var list = task.parentElement;
-        var index = 0;
-        for (var i = 0; i < list.children.length; i++) {
-            if (list.children[i] === task) {
-                index = i;
-                break;
-            }
+function saveText(target) {
+    var updateForm = target.parentElement;
+    var task = updateForm.parentElement;
+    var deleteForm = task.querySelector('.task__action_delete');
+    deleteForm.classList.remove('task__action_invisible');
+    updateForm.classList.add('task__action_invisible');
+    var taskId = task.dataset.id;
+    var options = {
+        method: 'put',
+        body: updateForm.querySelector('.task__text').value
+    };
+    sendAction('/api/tasks/' + taskId, options);
+}
+
+function shiftOrChangeForm(target) {
+    var trash = target.parentElement.children[1];
+    var distanceX = Math.abs(end.pageX - start.pageX);
+    if (distanceX > 20) {
+        if (end.pageX < start.pageX) {
+            target.classList.add('task__name_shift');
+            trash.classList.remove('task__trash_invisible');
         }
-        task.style.display = 'none';
-        var options = {
-            method: 'post',
-            body: index.toString()
-        };
-        sendRequest('/deletions', options);
-    }, false);
+        if (end.pageX > start.pageX) {
+            target.classList.remove('task__name_shift');
+            trash.classList.add('task__trash_invisible');
+        }
+    } else {
+        var deleteForm = target.parentElement;
+        var updateForm = deleteForm.parentElement.querySelector(".task__action_update");
+        deleteForm.classList.add('task__action_invisible');
+        updateForm.classList.remove('task__action_invisible');
+    }
+}
+
+function deleteTask(target) {
+    var task = target.parentElement.parentElement;
+    var tasks = task.parentElement;
+    task.style.display = 'none';
+    var taskId = task.dataset.id;
+    var options = {
+        method: 'delete',
+    };
+    sendAction('/api/tasks/' + taskId, options);
+}
+
+function addTask(target) {
+    var form = target.parentElement;
+    var options = {
+        method: 'post',
+        body: form.querySelector('.form__text').value
+    };
+    sendRequest('/api/tasks', options);
 }
 
 function sendRequest(url, options, cb) {
@@ -114,18 +117,27 @@ function sendRequest(url, options, cb) {
         })
         .then(function(body) {
             document.body.innerHTML = body;
+            if (cb) {
+                cb();
+            }
         })
-        .then(cb)
-        .catch(console.error);
+        .catch(function(error) {
+            console.log(error);
+        });
 }
 
-function getListTasks() {
-    var texts = [];
-    var list = document.getElementsByClassName('list')[0];
-    for (var i = 0; i < list.children.length; i++) {
-        var task = list.children[i];
-        var text = task.children[1].children[0].value;
-        texts.push(text);
-    }
-    return texts;
+function sendAction(url, options) {
+    options['headers'] = {'Content-type': 'application/x-www-form-urlencoded'};
+    fetch(url, options)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(json) {
+            if (json.code !== 200 && json.code !== 201) {
+                console.log('code: ' + json.code + ', ' + json.message);
+            }
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
 }
