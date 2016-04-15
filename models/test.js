@@ -1,7 +1,7 @@
 'use strict'
 const MongoClient = require('mongodb').MongoClient;
 const tasksModel = require('./tasks');
-const mongoUri = 'mongodb://polinakoval:web12345@ds011800.mlab.com:11800/polinakoval'
+const mongoUri = 'mongodb://polinakoval:web12345@ds011800.mlab.com:11800/polinakoval';
 let connection;
 let taskUp = {
     "todo": "updatrre",
@@ -13,8 +13,7 @@ MongoClient.connect(mongoUri, (err, db) => {
     } else {
         connection = db;
         let task = tasksModel(connection);
-        task.update(taskUp).then(result => {
-            //console.log(result);
+        task.changeOrder({newNum: 2, oldNum: 1}).then(result => {
             connection.close();
         });
     }

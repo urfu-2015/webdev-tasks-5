@@ -1,7 +1,7 @@
 'use strict';
 
 const MongoClient = require('mongodb').MongoClient;
-const mongoUri = 'mongodb://polinakoval:web12345@ds011800.mlab.com:11800/polinakoval'
+const mongoUri = 'mongodb://polinakoval:web12345@ds011800.mlab.com:11800/polinakoval';
 module.exports = () => {
     let connection;
     return (req, res, next) => {

@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "webpack && node ./bin/www",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "test": "npm run lint",
+    "lint": "jscs ."
   },
   "dependencies": {
     "autoprefixer": "^6.3.5",
@@ -31,7 +33,10 @@
     "webpack": "^1.12.14",
     "whatwg-fetch": "^0.11.0"
   },
-    "engines": {
+  "engines": {
     "node": "4.4.0"
+  },
+  "devDependencies": {
+    "jscs": "^3.0.1"
   }
 }

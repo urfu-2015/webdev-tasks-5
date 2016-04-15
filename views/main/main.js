@@ -23,7 +23,7 @@ function render() {
     clearStyles();
     ReactDom.render(
         <Main commonStaff={commonStaff} handler={handler}/>,
-        document.getElementById('root'), function() {
+        document.getElementById('root'), function () {
         setTimeout(loader, 500, false);
     });
 }
@@ -32,13 +32,8 @@ function saveTask(event) {
     var task = createTaskObj(event);
     commonStaff.edited = -2;
     if (task.orderNum === '-1') {
-        if (task.todo.length) {
-            addTask(task);
-        } else {
-            render();
-        }
+        addTask(task);
     } else {
-        commonStaff.tasks[task.orderNum].change = false;
         updateTask(task);
     }
 }
@@ -46,14 +41,15 @@ function saveTask(event) {
 function reorder(oldNum, newNum) {
     var params = createPOSTparams({oldNum, newNum});
     fetch('/changeOrder', params)
-    .then(() => {
-        console.log('order change');
-        refresh();
-    })
+    .then(() => refresh())
     .catch(err => console.log(err));
 }
 
 function addTask(task) {
+    if (!task.todo.length) {
+        render();
+        return;
+    }
     var params = createPOSTparams(task);
     fetch('/addTask', params)
     .then(response => response.json())
@@ -84,9 +80,7 @@ function removeTask(event) {
     var task = createTaskObj(event);
     var params = createPOSTparams(task);
     fetch('/removeTask', params)
-    .then(() => {
-        refresh();
-    })
+    .then(() => refresh())
     .catch(err => console.log(err));
 }
 
@@ -123,7 +117,7 @@ function refresh() {
     loader(true);
     clearStyles();
     fetch('/getAll')
-    .then(response =>  response.json())
+    .then(response => response.json())
     .then(data => {
         commonStaff.tasks = data.allTasks;
         commonStaff.edited = -2;
@@ -134,7 +128,7 @@ function refresh() {
 
 function clearStyles() {
     var elems = document.getElementsByClassName("task");
-    for(var i =0;i < elems.length; i++) {
+    for (var i = 0; i < elems.length; i++) {
         elems[i].firstElementChild.removeAttribute('style');
         elems[i].lastElementChild.removeAttribute('style');
     }
@@ -143,13 +137,13 @@ function clearStyles() {
 function loader(display) {
     var loader = document.getElementsByClassName('loading')[0];
     if (display) {
-        loader.style.display = "block";
+        loader.style.display = 'block';
     } else {
-        loader.style.display ="none";
+        loader.style.display = 'none';
     }
 }
 
-document.addEventListener('touchstart', function(event) {
+document.addEventListener('touchstart', function (event) {
     if (event.targetTouches.length > 1) {
         return;
     }
@@ -158,9 +152,8 @@ document.addEventListener('touchstart', function(event) {
     commonStaff.start.y = event.changedTouches[0].pageY;
 }, false);
 
-document.addEventListener('touchend' , function(event) {
+document.addEventListener('touchend', function (event) {
     if (check.isDownSwipe(commonStaff.start, event)) {
         refresh();
     }
-}, false) 
-
+}, false);

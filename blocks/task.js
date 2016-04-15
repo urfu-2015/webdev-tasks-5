@@ -12,45 +12,49 @@ export default ({task, commonStaff, handler}) => {
         event.preventDefault();
         commonStaff.start.x = event.changedTouches[0].pageX;
         commonStaff.start.y = event.changedTouches[0].pageY;
-        if (commonStaff.reoder) return;
+        if (commonStaff.reoder) {
+            return;
+        }
         timeout = setTimeout(dragAndDrop, 1500, event.target);
     }
 
     function todoTouchEnd(event) {
-        clearTimeout(timeout)
-        if (commonStaff.reoder) return;
-        var num = event.target.getAttribute("data-num");
+        clearTimeout(timeout);
+        if (commonStaff.reoder) {
+            return;
+        }
+        var num = event.target.getAttribute('data-num');
         if (check.isTap(commonStaff.start, event, commonStaff.ldelay)) {
             commonStaff.edited = num;
             commonStaff.render();
         }
-        if(!commonStaff.tasks[num].remove) {
-            event.target.nextElementSibling.style.right = -130 +'px';
+        if (commonStaff.deleted !== num) {
+            event.target.nextElementSibling.style.right = `${-130}px`;
             event.target.style.left = 0;
-        } else {
-            commonStaff.onEvent = true;
         }
     }
 
     function todoTouchMove(event) {
-        clearTimeout(timeout)
-        if (commonStaff.reoder) return;
-        var num = event.target.getAttribute("data-num");        
+        clearTimeout(timeout);
+        if (commonStaff.reoder) {
+            return;
+        }
+        var num = event.target.getAttribute('data-num');
         if (commonStaff.edited != -2 || commonStaff.deleted != num) {
             commonStaff.edited = -2;
             commonStaff.render();
             commonStaff.deleted = num;
         }
         var x = Number(event.changedTouches[0].pageX);
-        var delta = (Number(commonStaff.start.x) - x)/2;
+        var delta = (Number(commonStaff.start.x) - x) / 2;
         var todo = event.target;
         todo.style.left = getNumInBorder(-130, 0, -delta) + 'px';
         var removeRight = getNumInBorder(-130, 0, -130 + delta);
         todo.nextElementSibling.style.right = removeRight + 'px';
         if (removeRight === 0) {
-            commonStaff.tasks[num].remove = true;
+            commonStaff.deleted = num;
         } else {
-            commonStaff.tasks[num].remove = false;
+            commonStaff.deleted = -2;
         }
     }
 
@@ -81,14 +85,14 @@ export default ({task, commonStaff, handler}) => {
         var posY = event.changedTouches[0].pageY - 30;
         this.style.top = getNumInBorder(200, max, posY) + 'px';
         var newNum = getNumFromPosition(event.changedTouches[0].pageY);
-        taskWithMargin.style.margin = "10px 0";  
+        taskWithMargin.style.margin = "10px 0";
         taskWithMargin = document.getElementsByClassName('task')[newNum];
         taskWithMargin.style.margin = "120px 0 0";
     }
 
     function getNumFromPosition(posY) {
-        var newNum =  Math.floor(posY / 150) - 1;
-        newNum = getNumInBorder(0 ,commonStaff.tasks.length - 1, newNum);
+        var newNum = Math.floor(posY / 150) - 1;
+        newNum = getNumInBorder(0, commonStaff.tasks.length - 1, newNum);
         return newNum;
     }
 
@@ -100,7 +104,7 @@ export default ({task, commonStaff, handler}) => {
         var newNum = getNumFromPosition(event.changedTouches[0].pageY);
         var oldNum = Number(this.getAttribute("data-num"));
         this.className = 'task';
-        changeLocalOrder(oldNum,newNum);
+        changeLocalOrder(oldNum, newNum);
         commonStaff.reoder = false;
         taskWithMargin.style.margin = "10px 0";
         taskWithMargin = null;
@@ -115,13 +119,13 @@ export default ({task, commonStaff, handler}) => {
         var text = tasks[oldNum].firstElementChild.innerHTML;
         if (oldNum < newNum) {
             for (var i = oldNum; i < newNum; i++) {
-                tasks[i].firstElementChild.innerHTML = 
-                    tasks[i+1].firstElementChild.innerHTML;
+                tasks[i].firstElementChild.innerHTML =
+                    tasks[i + 1].firstElementChild.innerHTML;
             }
         } else {
-            for(var i = oldNum; i > newNum; i--) {
-                tasks[i].firstElementChild.innerHTML = 
-                    tasks[i-1].firstElementChild.innerHTML;
+            for (var i = oldNum; i > newNum; i--) {
+                tasks[i].firstElementChild.innerHTML =
+                    tasks[i - 1].firstElementChild.innerHTML;
             }
         }
         tasks[newNum].firstElementChild.innerHTML = text;
@@ -140,5 +144,5 @@ export default ({task, commonStaff, handler}) => {
                 onClick={handler.remove}>
             </div>
         </div>
-    )
+    );
 };
