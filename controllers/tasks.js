@@ -17,8 +17,8 @@ exports.getAll = (req, res) => {
 };
 
 exports.postOne = (req, res) => {
-    var id = tasks[tasks.length - 1] ? tasks[tasks.length - 1].id + 1 : 0;
-    tasks.push({
+    var id = tasks[0] ? tasks[0].id + 1 : 0;
+    tasks.unshift({
         id,
         date: (new Date).getTime(),
         text: req.body.text
@@ -31,7 +31,7 @@ exports.patchOne = (req, res) => {
         if (tasks[i].id === parseInt(req.params.id)) {
             tasks[i].date = (new Date).getTime();
             tasks[i].text = req.body.text;
-            res.status(200).json({id: tasks[i].id});
+            res.status(200).send();
             break;
         }
     }
