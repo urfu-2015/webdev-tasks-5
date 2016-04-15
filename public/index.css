@@ -1,0 +1,104 @@
+body
+{
+    width: 100%;
+    margin: 0;
+    transition: all .8s ease;
+}
+
+.body_shift_down
+{
+    transform: translateY(30px);
+}
+
+h1
+{
+    text-align: center;
+}
+
+.tasks
+{
+    width: 100%;
+    text-align: center;
+}
+
+.task__action_delete
+{
+    position: relative;
+}
+
+.task__action_update
+{
+    position: relative;
+    border: 1px solid #a0a0a0;
+    width: 90%;
+    margin: auto;
+    margin-bottom: 4px;
+    text-align: right;
+}
+
+.task__action_invisible
+{
+    display: none;
+}
+
+.task__name
+{
+    width: 90%;
+    height: 20px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #a0a0a0;
+    text-align: center;
+    color: #fff;
+    display: inline-block;
+    transition: all .8s ease;
+}
+
+.task__name_shift
+{
+    transform: translateX(-50px);
+}
+
+.task__trash
+{
+    position: absolute;
+    right: 10%;
+    display: inline-block;
+    height: 40px;
+}
+
+.refresh
+{
+    display: inline-block;
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    margin: 0;
+}
+
+.refresh__img
+{
+    height: 100%;
+}
+
+.task__trash_invisible, .refresh_invisible
+{
+    display: none;
+}
+
+.task__text, .task__save
+{
+    display: inline-block;
+    margin: 4px;
+}
+
+.task__text
+{
+    width: 95%;
+}
+
+.form
+{
+    text-align: center;
+    margin: 5px;
+}
