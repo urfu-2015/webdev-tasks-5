@@ -1,7 +1,10 @@
 'use strict';
 
 const MongoClient = require('mongodb').MongoClient;
-const mongoUri = 'mongodb://polinakoval:web12345@ds011800.mlab.com:11800/polinakoval';
+const config = require('fs').readFileSync('config.json', 'utf-8');
+const dbConfig = JSON.parse(config).db;
+const mongoUri = `mongodb://${dbConfig.login}:${dbConfig.password}` +
+    `@${dbConfig.host}:${dbConfig.port}/${dbConfig.name}`;
 module.exports = () => {
     let connection;
     return (req, res, next) => {
