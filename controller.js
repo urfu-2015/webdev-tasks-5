@@ -20,19 +20,22 @@ module.exports.create = (req, res) => {
         };
         const note = new Task(data);
         note.save();
+        const tasks = Task.findAll();
+        data = {tasks};
+        res.send(Object.assign(data, req.commonData));
+    } else {
+        res.sendStatus(422);
     }
-    const tasks = Task.findAll();
-    data = {tasks};
-    res.send(Object.assign(data, req.commonData));
 };
 
 module.exports.update = (req, res) => {
+    console.log(req.body);
     if (req.body.newText != '') {
         Task.update(req.body.oldText, req.body.newText);
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(422);
     }
-    const tasks = Task.findAll();
-    var data = {tasks};
-    res.sendStatus(200);
 };
 
 module.exports.delete = (req, res) => {

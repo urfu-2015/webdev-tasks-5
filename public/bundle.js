@@ -1131,136 +1131,119 @@ function render(tasks) {
     var template = require('./index.hbs');
     var elem = document.getElementById('todo-block');
     elem.innerHTML = template({tasks});
-    var tasks = document.getElementsByClassName('todo-list__task');
-    Array.prototype.forEach.call(tasks, (elem, index, array) => addListenerToSpan(elem));
-    tasks = document.getElementsByClassName('todo-list__element');
-    Array.prototype.forEach.call(tasks, (elem, index, array) => addListenersToLi(elem));
 }
 
-function addListenerToButton(elem, text) {
-    elem.addEventListener('click', function (event) {
-        var body = 'text=' + text;
-        var xhr = new XMLHttpRequest();
-        xhr.open('DELETE', '/', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send(body);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                render(JSON.parse(xhr.responseText).tasks)
-            }
-        };
-    }, false);
+function sendXhr(method, body, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, '/', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            callback(xhr.responseText);
+        }
+    };
+    xhr.send(body);
 }
+
+document.body.addEventListener('touchstart', function (event) {
+    var target = event.target;
+    if (target.classList.contains('todo-list__deletion-button')) {
+        var text = target.value;
+        var body = 'text=' + text;
+        sendXhr('DELETE', body, function (data) {
+            render(JSON.parse(data).tasks)
+        });
+    }
+    if (target.classList.contains('todo-list__text-to-create')) {
+        target.focus();
+    }
+    if (target.classList.contains('todo-list__task')) {
+        if (event.targetTouches.length == 1) {
+            var input = document.createElement('input');
+            input.className = 'todo-list__task-input';
+            input.type = 'text';
+            current = target.innerHTML;
+            input.value = target.innerHTML;
+            target.parentNode.replaceChild(input, target);
+            input.focus();
+        }
+    }
+    if (target.classList.contains('todo-list__task-input')) {
+        if (event.targetTouches.length == 1) {
+            var span = document.createElement('span');
+            span.className = 'todo-list__task';
+            span.innerHTML = target.value;
+            var body = 'oldText=' + current +
+                '&newText=' + target.value;
+            sendXhr('PUT', body, function () {
+                target.parentNode.replaceChild(span, target);
+            });
+        }
+    }
+}, false);
 
 function addListenerToCreationButton(elem) {
-    elem.addEventListener('click', function (event) {
+    elem.addEventListener('touchstart', function (event) {
         var creationInput = document.getElementsByClassName('todo-list__text-to-create');
         var text = creationInput[0].value;
         var body = 'message=' + text;
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send(body);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                render(JSON.parse(xhr.responseText).tasks)
-            }
-        };
+        sendXhr('POST', body, function (data) {
+                render(JSON.parse(data).tasks)
+            });
     }, false);
 }
 
 var creationButton = document.getElementsByClassName('todo-list__creation-button');
 addListenerToCreationButton(creationButton[0]);
 
-function addListenerToSpan(elem) {
-    elem.addEventListener('touchstart', function (event) {
-        if (event.targetTouches.length == 1) {
-            var input = document.createElement('input');
-            input.className = 'todo-list__task-input';
-            input.type = 'text';
-            current = elem.innerHTML;
-            input.value = elem.innerHTML;
-            addListenerToInput(input);
-            elem.parentNode.replaceChild(input, elem);
-        }
-    }, false);
-}
-
-var tasks = document.getElementsByClassName('todo-list__task');
-Array.prototype.forEach.call(tasks, (elem, index, array) => addListenerToSpan(elem));
-
-function addListenerToInput(elem) {
-    elem.addEventListener('touchstart', function (event) {
-        if (event.targetTouches.length == 1) {
-            var span = document.createElement('span');
-            span.className = 'todo-list__task';
-            span.innerHTML = elem.value;
-            var body = 'oldText=' + current +
-                '&newText=' + elem.value;
-            var xhr = new XMLHttpRequest();
-            xhr.open('PUT', '/', true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send(body);
-            addListenerToSpan(span);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    elem.parentNode.replaceChild(span, elem);
-                }
-            };
-        }
-    }, false);
-}
-
-var taskInputs = document.getElementsByClassName('todo-list__task-input');
-Array.prototype.forEach.call(taskInputs, (elem, index, array) => addListenerToInput(elem));
-
 var startPoint = {};
 var nowPoint;
 var ldelay;
 
-tasks = document.getElementsByClassName('todo-list__element');
-Array.prototype.forEach.call(tasks, (elem, index, array) => addListenersToLi(elem));
-
-function addListenersToLi(elem) {
-    elem.addEventListener('touchstart', function (event) {
-        //event.preventDefault();
-        event.stopPropagation();
+document.body.addEventListener('touchstart', function (event) {
+    var target = event.target;
+    if (target.classList.contains('todo-list__element')) {
+        //event.stopPropagation();
         startPoint.x = event.changedTouches[0].pageX;
         startPoint.y = event.changedTouches[0].pageY;
         ldelay = new Date();
-    }, false);
+    }
+}, false);
 
-    elem.addEventListener('touchmove', function (event) {
-        event.preventDefault();
-        //event.stopPropagation();
+document.body.addEventListener('touchmove', function (event) {
+    event.preventDefault();
+    //event.stopPropagation();
+    var target = event.target;
+    if (target.classList.contains('todo-list__element')) {
         var otk = {};
         nowPoint = event.changedTouches[0];
         otk.x = nowPoint.pageX - startPoint.x;
         var span;
         if (Math.abs(otk.x) > 100) {
-            if (otk.x < 0 && elem.firstElementChild.nodeName == 'SPAN') {
+            if (otk.x < 0 && target.firstElementChild.nodeName == 'SPAN') {
                 var button = document.createElement('button');
-                button.value = elem.firstElementChild.innerHTML;
+                button.value = target.firstElementChild.innerHTML;
                 button.innerHTML = 'Удалить';
-                addListenerToButton(button, elem.firstElementChild.innerHTML);
-                span = elem.firstElementChild;
-                elem.replaceChild(button, span);
+                button.className = 'todo-list__deletion-button';
+                //addListenerToButton(button, target.firstElementChild.innerHTML);
+                span = target.firstElementChild;
+                target.replaceChild(button, span);
             }
-            if (otk.x > 0 && elem.firstElementChild.nodeName == 'BUTTON') {
+            if (otk.x > 0 && target.firstElementChild.nodeName == 'BUTTON') {
                 span = document.createElement('span');
                 span.className = 'todo-list__task';
-                span.innerHTML = elem.firstElementChild.value;
-                button = elem.firstElementChild;
-                elem.replaceChild(span, button);
-                addListenerToSpan(span);
+                span.innerHTML = target.firstElementChild.value;
+                button = target.firstElementChild;
+                target.replaceChild(span, button);
+                //addListenerToSpan(span);
             }
         }
-    }, false);
-}
+    }
+}, false);
 
 document.body.addEventListener('touchstart', function (event) {
-    //event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault();
+    //event.stopPropagation();
     startPoint.x = event.changedTouches[0].pageX;
     startPoint.y = event.changedTouches[0].pageY;
     ldelay = new Date();
@@ -1279,16 +1262,10 @@ document.body.addEventListener('touchmove', function (event) {
                 img.src = 'loader.gif';
                 img.className = 'loader';
                 document.body.insertBefore(img, document.body.firstChild);
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', '/', true);
-                xhr.setRequestHeader('Accept', 'TODOhi app');
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        document.getElementsByClassName('loader')[0].remove();
-                        render(JSON.parse(xhr.responseText).tasks);
-                    }
-                };
-                xhr.send();
+                sendXhr('GET', {}, function (data) {
+                    document.getElementsByClassName('loader')[0].remove();
+                    render(JSON.parse(data).tasks);
+                });
             }
         }
     }

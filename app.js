@@ -1,16 +1,17 @@
-const express = require('express');
+var express = require('express');
 var bodyParser = require('body-parser');
-const app = express();
+var app = express();
 var path = require('path');
-var hbs = hbs = require('hbs');
+var hbs = require('hbs');
+var projectPath = path.join(__dirname, 'public');
 
 app.set('views', './views');
 app.set('view engine', 'hbs');
-hbs.registerPartials(path.join(__dirname, 'public'));
+hbs.registerPartials(projectPath);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(projectPath));
 
 app.use((req, res, next) => {
     req.commonData = {

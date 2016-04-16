@@ -1,37 +1,29 @@
 'use strict';
 
-var memoryStorage = [];
+var memoryStorage = {};
 
 class Task {
     constructor(props) {
         this.text = props.text;
-        this.createdAt = props.createdAt;
     }
 
     save() {
-        memoryStorage.push(this);
+        memoryStorage[this.text] = Date.now();
     }
 
     static findAll() {
-        return memoryStorage;
+        return Object.keys(memoryStorage).map(function (key) {
+            return {'text': key};
+        });
     }
 
-    static update(text, newText) {
-        for (var i = 0; i < memoryStorage.length; i++) {
-            if (memoryStorage[i].text == text) {
-                memoryStorage[i].text = newText;
-                break;
-            }
-        }
+    static update(oldText, newText) {
+        delete memoryStorage[oldText];
+        memoryStorage[newText] = Date.now();
     }
 
     static deleteTask(text) {
-        for (var i = 0; i < memoryStorage.length; i++) {
-            if (memoryStorage[i].text == text) {
-                memoryStorage.splice(i, 1);
-                break;
-            }
-        }
+        delete memoryStorage[text];
     }
 }
 new Task({

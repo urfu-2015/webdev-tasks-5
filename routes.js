@@ -6,8 +6,4 @@ module.exports = function (app) {
     app.post('/', controller.create);
     app.delete('/', controller.delete);
     app.put('/', controller.update);
-    app.all('*', (req, res) => {
-        console.log(req.url);
-        res.sendStatus(404);
-    });
 };
