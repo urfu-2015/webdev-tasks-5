@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>TODO-хи</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type='text/javascript' src='/scripts/bundle.js'></script>
+  </head>
+  <body>
+    <img src="/images/loading.gif" class="loading-image" height="70">
+	<div class="task-list">
+        <div class="task-list__append-zone">       
+        </div>
+        Добавить:
+        <div class="task-item">
+            <div class="task-item__editor">
+				<textarea class="task-item__editor__area add-item-area"></textarea>
+                <br><button class="task-item__add-button">Добавить</button>
+			</div>    
+        </div>
+	</div>
+    <div class="template task-template">
+		<div class="task-item task-item_edit_false task-item_delete_false">
+			<div class="task-item__name">
+			</div>
+			<div class="task-item__editor">
+				<textarea class="task-item__editor__area">
+				</textarea>
+                <br><button class="task-item__save-button">Сохранить</button>
+			</div>
+            <div class="task-item__delete-task">
+                <img 
+                src="/images/delete.png"
+                width="30" 
+                height="30"
+                >
+            </div>
+		</div>
+	</div>
+  </body>
+</html>
