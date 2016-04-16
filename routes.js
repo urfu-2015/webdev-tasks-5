@@ -3,10 +3,10 @@
 const notes = require('./controllers/notes');
 
 module.exports = function (app) {
-    app.get('/list', notes.list);
-    app.post('/update', notes.update);
-    app.post('/remove', notes.remove);
-    app.post('/', notes.create);
+    app.get('/notes', notes.list);
+    app.put('/notes', notes.update);
+    app.delete('/notes', notes.remove);
+    app.post('/notes', notes.create);
 
     /* eslint no-unused-vars: 0 */
     /* eslint max-params: [2, 4] */

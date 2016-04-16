@@ -13,7 +13,7 @@ header
 
 img
 {
-    width: 100px;
+    width: 80px;
 }
 
 .notes
@@ -65,7 +65,8 @@ form
     margin-top: 25px;
 }
 
-input
+input,
+button
 {
     display: block;
     margin: 2%;

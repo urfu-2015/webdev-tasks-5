@@ -20,18 +20,17 @@ class Note {
         return memoryStorage;
     }
 
-    static remove(text) {
+    static remove(createdAt) {
         memoryStorage.forEach((obj, i, memoryStorage) => {
-            if (obj.text === text) {
-                memoryStorage.splice(i);
+            if (obj.createdAt === createdAt) {
+                memoryStorage.splice(i, 1);
             }
         });
     }
 
-    static update(oldText, newText) {
+    static update(createdAt, newText) {
         memoryStorage.forEach((obj, i, memoryStorage) => {
-            if (obj.text === oldText) {
-                console.log(obj.text);
+            if (obj.createdAt === createdAt) {
                 obj.text = newText;
             }
         });
