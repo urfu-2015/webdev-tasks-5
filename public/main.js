@@ -56,7 +56,11 @@
 	
 	var _redux = __webpack_require__(159);
 	
-	var _todos = __webpack_require__(170);
+	var _fetchJSONHelper = __webpack_require__(170);
+	
+	var _fetchJSONHelper2 = _interopRequireDefault(_fetchJSONHelper);
+	
+	var _todos = __webpack_require__(171);
 	
 	var _todos2 = _interopRequireDefault(_todos);
 	
@@ -64,11 +68,13 @@
 	
 	var _reducers = __webpack_require__(177);
 	
+	var _reducers2 = _interopRequireDefault(_reducers);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	__webpack_require__(178);
 	
-	var store = (0, _redux.createStore)(_reducers.todoApp);
+	var store = (0, _redux.createStore)(_reducers2.default);
 	
 	function render() {
 	    _reactDom2.default.render(_react2.default.createElement(_todos2.default, { store: store }), document.getElementById('root'));
@@ -78,9 +84,7 @@
 	
 	setTimeout(function () {
 	    render();
-	    fetch('/todos/all', { method: 'get' }).then(function (response) {
-	        return response.json();
-	    }).then(function (data) {
+	    (0, _fetchJSONHelper2.default)('/todos/all', 'get').then(function (data) {
 	        store.dispatch((0, _actions.getTodos)(data.todos));
 	    });
 	}, 500);
@@ -20437,6 +20441,40 @@
 
 /***/ },
 /* 170 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	function getHeaders(method, data) {
+	    var headers = {};
+	    if (data) {
+	        headers = {
+	            headers: new Headers({ 'Content-type': 'application/json' }),
+	            method: method,
+	            body: JSON.stringify(data)
+	        };
+	    } else {
+	        headers = {
+	            headers: new Headers({ 'Content-type': 'application/json' }),
+	            method: method
+	        };
+	    }
+	    return headers;
+	}
+	
+	exports.default = function (url, method) {
+	    var data = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+	
+	    return fetch(url, getHeaders(method, data)).then(function (response) {
+	        return response.json();
+	    });
+	};
+
+/***/ },
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20449,7 +20487,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _todoItem = __webpack_require__(171);
+	var _todoItem = __webpack_require__(172);
 	
 	var _todoItem2 = _interopRequireDefault(_todoItem);
 	
@@ -20492,7 +20530,7 @@
 	});
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20505,9 +20543,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _eventsLogic = __webpack_require__(172);
-	
-	var _eventsLogic2 = _interopRequireDefault(_eventsLogic);
+	var _eventsLogic = __webpack_require__(173);
 	
 	var _deleteButton = __webpack_require__(175);
 	
@@ -20524,8 +20560,8 @@
 	            _react2.default.createElement(
 	                'div',
 	                { className: 'todo-item__elem',
-	                    onTouchStart: (0, _eventsLogic2.default)(this.props.store).onTouchStart,
-	                    onTouchEnd: (0, _eventsLogic2.default)(this.props.store, this.props.selectedTodoId).onTouchEnd },
+	                    onTouchStart: _eventsLogic.onTouchStart,
+	                    onTouchEnd: (0, _eventsLogic.onTouchEndWrapper)(this.props.store, this.props.selectedTodoId) },
 	                this.props.editingTodoId === this.props.id ? _react2.default.createElement(
 	                    'form',
 	                    null,
@@ -20555,7 +20591,7 @@
 	});
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20563,8 +20599,10 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.onTouchStart = onTouchStart;
+	exports.onTouchEndWrapper = onTouchEndWrapper;
 	
-	var _fetchJSONHelper = __webpack_require__(173);
+	var _fetchJSONHelper = __webpack_require__(170);
 	
 	var _fetchJSONHelper2 = _interopRequireDefault(_fetchJSONHelper);
 	
@@ -20578,104 +20616,80 @@
 	var finalPoint;
 	var selectedId;
 	
-	exports.default = function (store, selectedTodoId) {
-	    return {
-	        onTouchStart: function onTouchStart(event) {
-	            event.preventDefault();
+	function onTouchStart(event) {
+	    event.preventDefault();
 	
-	            startTime = new Date();
-	            initialPoint = event.changedTouches[0];
-	        },
+	    startTime = new Date();
+	    initialPoint = event.changedTouches[0];
+	}
 	
-	        onTouchEnd: function onTouchEnd(event) {
-	            event.preventDefault();
+	function onTouchEndWrapper(store, selectedTodoId) {
+	    return function (event) {
+	        event.preventDefault();
 	
-	            endTime = new Date();
-	            finalPoint = event.changedTouches[0];
+	        endTime = new Date();
+	        finalPoint = event.changedTouches[0];
 	
-	            var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
-	            var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
+	        var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
+	        var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
 	
-	            // ТАП
-	            if (initialPoint.pageX === finalPoint.pageX && initialPoint.pageY === finalPoint.pageY && endTime - startTime < 300) {
-	                if (event.target.getAttribute('class') === 'todo-item__elem') {
-	                    selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	                    store.dispatch((0, _actions.editTodo)(selectedId));
-	                }
-	
-	                if (event.target.getAttribute('id') === 'editInput') {
-	                    event.target.focus();
-	                }
-	
-	                if (event.target.getAttribute('class') === 'todo-edit__save-button') {
-	                    var editId = parseInt(event.target.parentNode.parentNode.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	
-	                    var editText = document.getElementById('editInput').value;
-	
-	                    if (editText !== '') {
-	                        fetch('/todos/edit', (0, _fetchJSONHelper2.default)('post', {
-	                            id: editId,
-	                            editText: editText
-	                        })).then(function (response) {
-	                            return response.json();
-	                        }).then(function (data) {
-	                            store.dispatch((0, _actions.updateTodo)(data.id, data.editText));
-	                        });
-	                    }
-	                }
+	        // ТАП
+	        if (initialPoint.pageX === finalPoint.pageX && initialPoint.pageY === finalPoint.pageY && endTime - startTime < 300) {
+	            if (event.target.getAttribute('class') === 'todo-item__elem') {
+	                selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	                store.dispatch((0, _actions.editTodo)(selectedId));
 	            }
 	
-	            // СВАЙП'ы влево/вправо
-	            if (xAbs > 20 || yAbs > 20) {
-	                if (xAbs > yAbs) {
-	                    if (finalPoint.pageX < initialPoint.pageX) {
-	                        // СВАЙП left
-	                        selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	                        store.dispatch((0, _actions.selectTodo)(selectedId));
-	                    } else {
-	                        // СВАЙП right
-	                        selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
-	                        if (selectedTodoId === selectedId) {
-	                            store.dispatch((0, _actions.unselectTodo)(selectedId));
-	                        }
-	                    }
-	                } else {
-	                    // СВАЙП вниз (Обновление) + анимашка
-	                    /* eslint no-lonely-if: 0 */
-	                    if (finalPoint.pageY > initialPoint.pageY) {
-	                        document.getElementById('root').innerHTML = '<img ' + 'id="loadGif" ' + 'class="loader" ' + 'src="/loader__anim.gif" ' + 'alt="loading">';
+	            if (event.target.getAttribute('id') === 'editInput') {
+	                event.target.focus();
+	            }
 	
-	                        setTimeout(function () {
-	                            fetch('/todos/all', { method: 'get' }).then(function (response) {
-	                                return response.json();
-	                            }).then(function (data) {
-	                                store.dispatch((0, _actions.getTodos)(data.todos));
-	                            });
-	                        }, 500);
+	            if (event.target.getAttribute('class') === 'todo-edit__save-button') {
+	                var editId = parseInt(event.target.parentNode.parentNode.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	
+	                var editText = document.getElementById('editInput').value;
+	
+	                if (editText !== '') {
+	                    (0, _fetchJSONHelper2.default)('/todos/edit', 'post', {
+	                        id: editId,
+	                        editText: editText
+	                    }).then(function (data) {
+	                        store.dispatch((0, _actions.updateTodo)(data.id, data.editText));
+	                    });
+	                }
+	            }
+	        }
+	
+	        // СВАЙП'ы влево/вправо
+	        if (xAbs > 20 || yAbs > 20) {
+	            if (xAbs > yAbs) {
+	                if (finalPoint.pageX < initialPoint.pageX) {
+	                    // СВАЙП left
+	                    selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	                    store.dispatch((0, _actions.selectTodo)(selectedId));
+	                } else {
+	                    // СВАЙП right
+	                    selectedId = parseInt(event.target.parentNode.getAttribute('id').replace(/\D/g, ''), 10);
+	                    if (selectedTodoId === selectedId) {
+	                        store.dispatch((0, _actions.unselectTodo)(selectedId));
 	                    }
+	                }
+	            } else {
+	                // СВАЙП вниз (Обновление) + анимашка
+	                /* eslint no-lonely-if: 0 */
+	                if (finalPoint.pageY > initialPoint.pageY) {
+	                    document.getElementById('root').innerHTML = '<img ' + 'id="loadGif" ' + 'class="loader" ' + 'src="/loader__anim.gif" ' + 'alt="loading">';
+	
+	                    setTimeout(function () {
+	                        (0, _fetchJSONHelper2.default)('/todos/all', 'get').then(function (data) {
+	                            store.dispatch((0, _actions.getTodos)(data.todos));
+	                        });
+	                    }, 500);
 	                }
 	            }
 	        }
 	    };
-	};
-
-/***/ },
-/* 173 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	exports.default = function (method, data) {
-	    return {
-	        method: method,
-	        headers: new Headers({ 'Content-type': 'application/json' }),
-	        body: JSON.stringify(data)
-	    };
-	};
+	}
 
 /***/ },
 /* 174 */
@@ -20750,7 +20764,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _fetchJSONHelper = __webpack_require__(173);
+	var _fetchJSONHelper = __webpack_require__(170);
 	
 	var _fetchJSONHelper2 = _interopRequireDefault(_fetchJSONHelper);
 	
@@ -20765,9 +20779,7 @@
 	
 	        event.preventDefault();
 	
-	        fetch('/todos/delete', (0, _fetchJSONHelper2.default)('delete', { delId: this.props.selectedTodoId })).then(function (response) {
-	            return response.json();
-	        }).then(function (data) {
+	        (0, _fetchJSONHelper2.default)('/todos/delete', 'delete', { delId: this.props.selectedTodoId }).then(function (data) {
 	            _this.props.store.dispatch((0, _actions.deleteTodo)(data.delId));
 	        });
 	    },
@@ -20790,7 +20802,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _fetchJSONHelper = __webpack_require__(173);
+	var _fetchJSONHelper = __webpack_require__(170);
 	
 	var _fetchJSONHelper2 = _interopRequireDefault(_fetchJSONHelper);
 	
@@ -20808,9 +20820,7 @@
 	        var newTodoText = this.refs.newTodoText.value;
 	
 	        if (newTodoText !== '') {
-	            fetch('/todos/add', (0, _fetchJSONHelper2.default)('put', { text: newTodoText })).then(function (response) {
-	                return response.json();
-	            }).then(function (data) {
+	            (0, _fetchJSONHelper2.default)('/todos/add', 'put', { text: newTodoText }).then(function (data) {
 	                _this.props.store.dispatch((0, _actions.addTodo)(data));
 	                _this.refs.newTodoText.value = '';
 	            });
@@ -20845,13 +20855,19 @@
 
 	'use strict';
 	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
 	var initialState = {
 	    todos: [],
 	    selectedTodoId: null,
 	    editingTodoId: null
 	};
 	
-	exports.todoApp = function () {
+	exports.default = function () {
 	    var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
 	    var action = arguments[1];
 	
@@ -20863,11 +20879,8 @@
 	                editingTodoId: state.editingTodoId
 	            };
 	        case 'ADD_TODO':
-	            // Через чэйнинг не работает :<
-	            var tempVar = state.todos.concat();
-	            tempVar.unshift(action.todo);
 	            return {
-	                todos: tempVar,
+	                todos: [action.todo].concat(_toConsumableArray(state.todos)),
 	                selectedTodoId: null,
 	                editingTodoId: null
 	            };

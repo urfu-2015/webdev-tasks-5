@@ -4,10 +4,12 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import {createStore} from 'redux';
 
+import fetchJSONHelper from '../../../client/fetchJSONHelper';
+
 import Todo from '../../../client/components/todos';
 
 import {getTodos} from '../../../client/actions';
-import {todoApp} from '../../../client/reducers';
+import todoApp from '../../../client/reducers';
 
 const store = createStore(todoApp);
 
@@ -22,11 +24,8 @@ store.subscribe(render);
 
 setTimeout(() => {
     render();
-    fetch('/todos/all', {method: 'get'})
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            store.dispatch(getTodos(data.todos));
-        });
+    fetchJSONHelper('/todos/all', 'get')
+    .then(data => {
+        store.dispatch(getTodos(data.todos));
+    });
 }, 500);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import eventsLogic from '../eventsLogic';
+import {onTouchStart, onTouchEndWrapper} from '../eventsLogic';
 
 import DeleteButton from './deleteButton';
 
@@ -9,9 +9,9 @@ export default React.createClass({
         return (
             <div id={"todo_" + this.props.id} className="todo-item">
                 <div className="todo-item__elem"
-                     onTouchStart={eventsLogic(this.props.store).onTouchStart}
+                     onTouchStart={onTouchStart}
                      onTouchEnd={
-                        eventsLogic(this.props.store, this.props.selectedTodoId).onTouchEnd
+                     onTouchEndWrapper(this.props.store, this.props.selectedTodoId)
                     }>
                     {
                         this.props.editingTodoId === this.props.id ?

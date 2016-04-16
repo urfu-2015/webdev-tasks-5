@@ -11,12 +11,7 @@ export default React.createClass({
         var newTodoText = this.refs.newTodoText.value;
 
         if (newTodoText !== '') {
-            fetch('/todos/add',
-                fetchJSONHelper('put', {text: newTodoText})
-            )
-            .then(response => {
-                return response.json();
-            })
+            fetchJSONHelper('/todos/add', 'put', {text: newTodoText})
             .then(data => {
                 this.props.store.dispatch(addTodo(data));
                 this.refs.newTodoText.value = '';

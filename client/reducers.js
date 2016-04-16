@@ -4,7 +4,7 @@ const initialState = {
     editingTodoId: null
 };
 
-exports.todoApp = (state = initialState, action) => {
+export default (state = initialState, action) => {
     switch (action.type) {
         case 'GET_TODOS':
             return {
@@ -13,11 +13,8 @@ exports.todoApp = (state = initialState, action) => {
                 editingTodoId: state.editingTodoId
             };
         case 'ADD_TODO':
-            // Через чэйнинг не работает :<
-            var tempVar = state.todos.concat();
-            tempVar.unshift(action.todo);
             return {
-                todos: tempVar,
+                todos: [action.todo, ...state.todos],
                 selectedTodoId: null,
                 editingTodoId: null
             };

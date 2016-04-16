@@ -8,12 +8,7 @@ export default React.createClass({
     onClick(event) {
         event.preventDefault();
 
-        fetch('/todos/delete',
-            fetchJSONHelper('delete', {delId: this.props.selectedTodoId})
-        )
-        .then(response => {
-            return response.json();
-        })
+        fetchJSONHelper('/todos/delete', 'delete', {delId: this.props.selectedTodoId})
         .then(data => {
             this.props.store.dispatch(deleteTodo(data.delId));
         });
