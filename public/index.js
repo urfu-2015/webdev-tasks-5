@@ -24,7 +24,7 @@ document.body.addEventListener('touchstart', function (event) {
         var text = target.value;
         var body = 'text=' + text;
         sendXhr('DELETE', body, function (data) {
-            render(JSON.parse(data).tasks)
+            render(JSON.parse(data).tasks);
         });
     }
     if (target.classList.contains('todo-list__text-to-create')) {
@@ -61,7 +61,7 @@ function addListenerToCreationButton(elem) {
         var text = creationInput[0].value;
         var body = 'message=' + text;
         sendXhr('POST', body, function (data) {
-                render(JSON.parse(data).tasks)
+                render(JSON.parse(data).tasks);
             });
     }, false);
 }

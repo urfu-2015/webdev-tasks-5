@@ -13,7 +13,7 @@ class Task {
 
     static findAll() {
         return Object.keys(memoryStorage).map(function (key) {
-            return {'text': key};
+            return {text: key};
         });
     }
 
