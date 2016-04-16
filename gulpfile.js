@@ -6,7 +6,11 @@ const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 
 gulp.task('react', function () {
-    gulp.src('public/scripts/index.jsx')
+    return gulp.src([
+        'public/scripts/index.jsx',
+        'public/scripts/tasklist.jsx',
+        'public/scripts/taskitem.jsx'
+    ])
     .pipe(babel({
             presets: ['react']
     }))
@@ -18,16 +22,16 @@ var uglifyOrder = [
     'public/scripts/react-dom.js',
     'public/scripts/classlib.js',
     'public/scripts/xhr.js',
+    'public/scripts/taskitem.js',
+    'public/scripts/tasklist.js',
     'public/scripts/taphandler.js',
     'public/scripts/taskhandler.js',
     'public/scripts/index.js'
 ];
 
-gulp.task('uglify', function () {
-    gulp.src(uglifyOrder)
+gulp.task('uglify', ['react'], function () {
+    return gulp.src(uglifyOrder)
     .pipe(concat('bundle.js'))
-    .pipe(gulp.dest('public/scripts'))
-    .pipe(uglify())
     .pipe(gulp.dest('public/scripts'));
 });
 

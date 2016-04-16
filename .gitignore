@@ -29,3 +29,6 @@ node_modules
 # Debug log from npm
 npm-debug.log
 /public/scripts/bundle.js
+/public/scripts/index.js
+/public/scripts/tasklist.js
+/public/scripts/taskitem.js

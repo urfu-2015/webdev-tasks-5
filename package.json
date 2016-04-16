@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "uglifyjs": "uglifyjs ./public/scripts/classlib.js ./public/scripts/xhr.js ./public/scripts/taskhandler.js ./public/scripts/index.js -o ./public/scripts/bundle.js",
-    "start": "gulp && node ./bin/www"
+    "start": "gulp && node ./bin/www",
+    "lint": "jscs ."
   },
   "dependencies": {
     "babel-preset-react": "^6.5.0",
@@ -21,5 +22,8 @@
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
     "uglify-js": "^2.6.2"
+  },
+  "devDependencies": {
+    "jscs": "^2.2.1"
   }
 }
