@@ -6,7 +6,8 @@ import {resetUpdater, stopRotate} from './updater';
 
 export const swipeLeft = (target) => {
     if (!target) return;
-    target.style.transform = 'translateX(-' + 20 + '%)';
+    var swipeOffsetValueX = -20;
+    target.style.transform = `translateX(${swipeOffsetValueX}%)`;
 };
 
 export const swipeDown = (store, finalPoint) => {

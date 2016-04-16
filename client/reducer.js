@@ -1,12 +1,11 @@
 const initialState = {
-    notes: [],
-    saveForm: false,
-    selectedNote: null
+    notes: []
 };
 
 exports.noteApp = (state, action) => {
     state = state || initialState;
     var newNotes;
+    console.log(action.type, state);
 
     switch (action.type) {
         case 'GET_NOTES':

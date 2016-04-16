@@ -15,7 +15,7 @@ function xhrRequest (method, puth, hundler, body) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState != 4) return;
         if (xhr.status != 200) {
-            alert(xhr.status + ': ' + xhr.statusText);
+            alert(`${xhr.status}:${ xhr.statusText}`);
         } else {
             hundler(JSON.parse(xhr.response));
         }
@@ -40,7 +40,7 @@ export const updateOrder = (store) => {
     var divsNotes = [...document.querySelectorAll('.container__item')];
     divsNotes.forEach(function (name) {
         resetTransform(name);
-        body += '&name_' + divsNotes.indexOf(name) + "=" + encodeURIComponent(name.childNodes[0].innerHTML);
+        body += `&name_${divsNotes.indexOf(name)}=${encodeURIComponent(name.childNodes[0].innerHTML)}`;
     });
     body = body.slice(1);
 
@@ -51,7 +51,7 @@ export const updateOrder = (store) => {
 };
 
 export const create = (store, note) => {
-    var body = 'name=' + encodeURIComponent(note);
+    var body = `name=${encodeURIComponent(note)}`;
 
     xhrRequest('POST', '/add-note', (response) => {
         var action = addNote(response.name);
@@ -68,7 +68,7 @@ export const save = (textSaveItem, store) => {
         return;
     }
 
-    var body = 'name=' + encodeURIComponent(textSaveItem) + '&changeNote=' + encodeURIComponent(text);
+    var body = `name=${encodeURIComponent(textSaveItem)}&changeNote=${encodeURIComponent(text)}`;
 
     xhrRequest('PUT', '/change-note', function (response) {
         var action = changeNote(textSaveItem, response.name);
@@ -76,9 +76,10 @@ export const save = (textSaveItem, store) => {
     }, body);
 };
 
-export const deleteItem = (target, successHandler) => {
+export const deleteItem = (target, store, successHandler) => {
     var name = target.childNodes[0].innerText;
-    var body = 'name=' + encodeURIComponent(name);
+    var body = `name=${encodeURIComponent(name)}`;
+    console.log(name);
 
     xhrRequest('DELETE', 'delete-note', (response) => {
         var action = deleteNote(response.name);

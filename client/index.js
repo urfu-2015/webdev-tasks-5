@@ -12,7 +12,7 @@ import {getNotes, addNote, deleteNote, callSaveForm, resetSaveForm, changeNote, 
 import {noteApp} from './reducer';
 
 import {swipeLeft, swipeDown} from './actions/swipe';
-import {resetDel, createDel, handlerDelete} from './actions/del-item';
+import {resetDel, createDel, handlerDelete, moveDel} from './actions/del-item';
 import {renderSave, resetSave} from './actions/save-item';
 import {initShift, shift, finishShift} from './actions/replace';
 import {resetTransform, setTransformX, setTransformY} from './actions/transforms';
@@ -57,6 +57,7 @@ function replace() {
 }
 
 document.querySelector('.delete').addEventListener('touchstart', handlerDelete, false);
+document.querySelector('.delete').addEventListener('orientationchange', moveDel, false);
 
 document.addEventListener('touchstart', function (event) {
     if (event.targetTouches.length === 1) {
@@ -70,7 +71,7 @@ document.addEventListener('touchstart', function (event) {
             resetDel();
         }
 
-        if (finalPoint) {
+        if (finalPoint && !touch.target.closest('.delete')) {
             resetTransform(finalPoint.target.closest('.container__item'));
         }
 
@@ -118,7 +119,7 @@ document.addEventListener('touchmove', (event) => {
 
 document.addEventListener('touchend', (event) => {
     clearTimeout(longTouch);
-    resetTransform(startPoint.target.closest('.container__item'));
+    //resetTransform(startPoint.target.closest('.container__item'));
     let target = event.changedTouches[0].target;
     countMove = 0;
 
@@ -133,9 +134,9 @@ document.addEventListener('touchend', (event) => {
         if (target.closest('.container__item') &&
             startPoint.pageX - finalPoint.pageX > target.closest('.container__item').offsetWidth * 0.2) {
             swipeLeft(target.closest('.container__item'));
-            createDel(target.closest('.container__item'));
+            createDel(target.closest('.container__item'), store);
         } else {
-            resetTransform(finalPoint.target.closest('.container__item'));
+            //resetTransform(finalPoint.target.closest('.container__item'));
             if (finalPoint.pageY - startPoint.pageY >= 50) {
                 swipeDown(store, finalPoint);
                 startRotate();

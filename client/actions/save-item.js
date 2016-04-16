@@ -16,7 +16,7 @@ export const renderSave = (target, store) => {
 
 export const resetSave = (touch, store) => {
     if (document.querySelector('.save') && !touch.target.closest('.save')) {
-        let action = getNotes(store.getState().notes);
+        var action = getNotes(store.getState().notes);
         store.dispatch(action);
     }
 };

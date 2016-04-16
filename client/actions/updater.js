@@ -1,10 +1,12 @@
+const sizeOfUpdater = 50;
+
 export const shiftUpdater = (value) => {
     if (value > 50) return;
-    document.body.style.marginTop = -50 + value + 'px';
+    document.body.style.marginTop = `${-sizeOfUpdater + value}px`;
 };
 
 export const resetUpdater = () => {
-    document.body.style.marginTop = -50 + 'px';
+    document.body.style.marginTop = `${-sizeOfUpdater}px`;
 };
 
 export const startRotate = () => {
