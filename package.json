@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "jscs ."
+    "lint": "jscs .",
+    "start": "node ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,9 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Dodo888/webdev-tasks-5/issues"
+  },
+  "engines": {
+    "node": "4.4.0"
   },
   "homepage": "https://github.com/Dodo888/webdev-tasks-5#readme",
   "dependencies": {
