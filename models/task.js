@@ -35,7 +35,7 @@ new Task({
 }).save();
 
 new Task({
-    text: 'To  eat'
+    text: 'To eat'
 }).save();
 
 module.exports = Task;

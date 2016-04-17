@@ -1133,12 +1133,12 @@ function render(tasks) {
     elem.innerHTML = template({tasks});
 }
 
-function sendXhr(method, body, callback) {
+function sendXhr(method, address, body, callback) {
     var xhr = new XMLHttpRequest();
-    xhr.open(method, '/', true);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.open(method, address, true);
+    xhr.setRequestHeader('Content-type', 'application/json');
     xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
+        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 204)) {
             callback(xhr.responseText);
         }
     };
@@ -1149,33 +1149,30 @@ document.body.addEventListener('touchstart', function (event) {
     var target = event.target;
     if (target.classList.contains('todo-list__deletion-button')) {
         var text = target.value;
-        var body = 'text=' + text;
-        sendXhr('DELETE', body, function (data) {
-            render(JSON.parse(data).tasks)
+        var body = JSON.stringify({text: text});
+        sendXhr('DELETE', '/', body, function (data) {
+            target.parentNode.parentNode.removeChild(target.parentNode);
         });
     }
     if (target.classList.contains('todo-list__text-to-create')) {
         target.focus();
     }
-    if (target.classList.contains('todo-list__task')) {
-        if (event.targetTouches.length == 1) {
-            var input = document.createElement('input');
-            input.className = 'todo-list__task-input';
-            input.type = 'text';
-            current = target.innerHTML;
-            input.value = target.innerHTML;
-            target.parentNode.replaceChild(input, target);
-            input.focus();
-        }
+    if (target.classList.contains('todo-list__task') && event.targetTouches.length == 1) {
+        var input = document.createElement('input');
+        input.className = 'todo-list__task-input';
+        input.type = 'text';
+        current = target.innerHTML;
+        input.value = target.innerHTML;
+        target.parentNode.replaceChild(input, target);
+        input.focus();
     }
     if (target.classList.contains('todo-list__task-input')) {
         if (event.targetTouches.length == 1) {
             var span = document.createElement('span');
             span.className = 'todo-list__task';
             span.innerHTML = target.value;
-            var body = 'oldText=' + current +
-                '&newText=' + target.value;
-            sendXhr('PUT', body, function () {
+            var body = JSON.stringify({oldText: current, newText: target.value});
+            sendXhr('PUT', '/', body, function () {
                 target.parentNode.replaceChild(span, target);
             });
         }
@@ -1186,9 +1183,12 @@ function addListenerToCreationButton(elem) {
     elem.addEventListener('touchstart', function (event) {
         var creationInput = document.getElementsByClassName('todo-list__text-to-create');
         var text = creationInput[0].value;
-        var body = 'message=' + text;
-        sendXhr('POST', body, function (data) {
-                render(JSON.parse(data).tasks)
+        var body = JSON.stringify({message: text});
+        var li = document.createElement('li');
+        li.className = 'todo-list__element';
+        li.innerHTML = '<span class="todo-list__task">' + text + '</span>';
+        sendXhr('POST', '/', body, function (data) {
+                document.getElementsByClassName('todo-list')[0].appendChild(li);
             });
     }, false);
 }
@@ -1215,12 +1215,12 @@ document.body.addEventListener('touchmove', function (event) {
     //event.stopPropagation();
     var target = event.target;
     if (target.classList.contains('todo-list__element')) {
-        var otk = {};
+        var displacement = {};
         nowPoint = event.changedTouches[0];
-        otk.x = nowPoint.pageX - startPoint.x;
+        displacement.x = nowPoint.pageX - startPoint.x;
         var span;
-        if (Math.abs(otk.x) > 100) {
-            if (otk.x < 0 && target.firstElementChild.nodeName == 'SPAN') {
+        if (Math.abs(displacement.x) > 100) {
+            if (displacement.x < 0 && target.firstElementChild.nodeName == 'SPAN') {
                 var button = document.createElement('button');
                 button.value = target.firstElementChild.innerHTML;
                 button.innerHTML = 'Удалить';
@@ -1229,7 +1229,7 @@ document.body.addEventListener('touchmove', function (event) {
                 span = target.firstElementChild;
                 target.replaceChild(button, span);
             }
-            if (otk.x > 0 && target.firstElementChild.nodeName == 'BUTTON') {
+            if (displacement.x > 0 && target.firstElementChild.nodeName == 'BUTTON') {
                 span = document.createElement('span');
                 span.className = 'todo-list__task';
                 span.innerHTML = target.firstElementChild.value;
@@ -1252,17 +1252,17 @@ document.body.addEventListener('touchstart', function (event) {
 document.body.addEventListener('touchmove', function (event) {
     event.preventDefault();
     //event.stopPropagation();
-    var otk = {};
+    var displacement = {};
     nowPoint = event.changedTouches[0];
-    otk.y = nowPoint.pageY - startPoint.y;
-    if (Math.abs(otk.y) > 100) {
-        if (otk.y > 0) {
+    displacement.y = nowPoint.pageY - startPoint.y;
+    if (Math.abs(displacement.y) > 100) {
+        if (displacement.y > 0) {
             if (document.body.firstElementChild.nodeName != 'IMG') {
                 var img = document.createElement('img');
                 img.src = 'loader.gif';
                 img.className = 'loader';
                 document.body.insertBefore(img, document.body.firstChild);
-                sendXhr('GET', {}, function (data) {
+                sendXhr('GET', '/json', {}, function (data) {
                     document.getElementsByClassName('loader')[0].remove();
                     render(JSON.parse(data).tasks);
                 });
