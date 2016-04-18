@@ -1,0 +1,6 @@
+<form class="todo-list__form todo-list__form_hidden {% if not item %}todo-list__form-add{% endif %}"
+      method="post" action="/">
+        <textarea class="todo-list__textarea {% if item %}todo-list__edit{% endif %}"
+                  title="edit-item" name="text">{% if item %}{{ item.todo }}{% endif %}</textarea>
+    <button class="todo-list__submit" type="submit">Сохранить</button>
+</form>

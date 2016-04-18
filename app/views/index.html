@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO'хи</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <link href='https://fonts.googleapis.com/css?family=Neucha&subset=latin,cyrillic' rel='stylesheet'
+          type='text/css'>
+</head>
+<body>
+    <header>
+        <h1>TODO'хи</h1>
+    </header>
+    <main class="main">
+        <article class="todo-list">
+            {% if todoList %}
+                {% for item in todoList %}
+                    <section class="todo-list__item">
+                        <div class="todo-list__text">{{ item.todo }}</div>
+                        <div class="todo-list__delete"></div>
+                        {% include './form.html' with item %}
+                    </section>
+                {% endfor %}
+            {% endif %}
+            <button class="todo-list__add-button" type="button">Добавить</button>
+            {% include './form.html' %}
+        </article>
+    </main>
+    <script src="index.js"></script>
+</body>
+</html>

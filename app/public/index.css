@@ -1,0 +1,49 @@
+body
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Neucha, sans-serif;
+    font-size: 18px;
+}
+
+.todo-list
+{
+    text-align: center;
+}
+
+.todo-list__item
+{
+    display: flex;
+    justify-content: center;
+    max-width: 500px;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #000;
+    background-color: #fef873;
+}
+
+.todo-list__delete
+{
+    display: none;
+    width: 100%;
+    background: url("Recycle_bin.png") no-repeat;
+    background-size: contain;
+}
+
+button
+{
+    font-family: Neucha, sans-serif;
+    font-size: 18px;
+}
+
+.todo-list__form_visible
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.todo-list__form_hidden
+{
+    display: none;
+}
