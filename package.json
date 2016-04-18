@@ -1,0 +1,14 @@
+{
+  "name": "todo-list",
+  "version": "1.0.0",
+  "main": "app.js",
+  "private": true,
+  "dependencies": {
+    "body-parser": "~1.13.2",
+    "express": "~4.13.1",
+    "jscs": "2.2.1",
+    "swig": "^1.4.2"  },
+  "engines": {
+    "node": "4.4.0"
+  }
+}
