@@ -66,8 +66,107 @@
 
 	var sendRequest = __webpack_require__(167).sendRequest;
 
+	var taskList = null;
 	document.prevEvent = null;
+
+	var isTaskEvent = function isTaskEvent(evt) {
+	    if (evt.target.className.indexOf('task') !== -1) {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	};
+
+	var getTaskNumber = function getTaskNumber(evt) {
+	    return evt.target.className.match(/task_num_(-?\d+)/);
+	};
+
+	var submitTask = function submitTask(taskNum) {
+	    var taskText = document.querySelector('.task__text.' + taskNum[0]);
+	    if (taskNum[1] === '-1') {
+	        var method = 'POST';
+	        var path = '/tasks';
+	        var cb = function cb(xhr) {
+	            taskList.setState({
+	                tappedTask: null,
+	                swipedTask: null,
+	                editingTask: false
+	            });
+	            setTimeout(function () {
+	                taskList.props.tasks.unshift({
+	                    id: JSON.parse(xhr.responseText).id,
+	                    text: taskText.value
+	                });
+	                taskList.setState({ addingTask: false });
+	            }, 300);
+	        };
+	    } else {
+	        var method = 'PATCH';
+	        var path = '/tasks/' + taskNum[1];
+	        var cb = function cb(xhr) {
+	            taskList.setState(taskList.getInitialState());
+	        };
+	    }
+	    sendRequest({ text: taskText.value }, { method: method, path: path }, cb);
+	};
+
+	var deleteTask = function deleteTask(taskNum) {
+	    var options = {
+	        method: 'DELETE',
+	        path: '/tasks/' + taskNum[1]
+	    };
+	    var cb = function cb(xhr) {
+	        var tasksData = taskList.props.tasks;
+	        for (var i = 0; i < tasksData.length; i++) {
+	            if (tasksData[i].id.toString() === taskNum[1]) {
+	                taskList.props.tasks.splice(i, 1);
+	                break;
+	            }
+	        }
+	        taskList.setState(taskList.getInitialState());
+	    };
+	    sendRequest(null, options, cb);
+	};
+
+	var onTaskTap = function onTaskTap(evt) {
+	    var taskNum = getTaskNumber(evt);
+	    if (evt.target.className.indexOf('task__btn') !== -1) {
+	        if (taskList.state.tappedTask) {
+	            submitTask(taskNum);
+	            return;
+	        }
+	        if (taskList.state.swipedTask) {
+	            deleteTask(taskNum);
+	            return;
+	        }
+	    }
+	    taskList.setState({ tappedTask: taskNum[1] });
+	    setTimeout(function () {
+	        taskList.setState({ editingTask: true });
+	    }, 300);
+	};
+
+	var onTaskSwipe = function onTaskSwipe(evt) {
+	    var taskNum = getTaskNumber(evt);
+	    taskList.setState({ swipedTask: taskNum[1] });
+	    setTimeout(function () {
+	        taskList.setState({ editingTask: true });
+	    }, 300);
+	};
+
+	var onScroll = function onScroll(evt) {
+	    refreshSign.setState({ shown: true });
+	    getTasks(function () {
+	        setTimeout(function () {
+	            refreshSign.setState({ shown: false });
+	        }, 300);
+	    });
+	};
+
 	document.addEventListener('touchstart', function (evt) {
+	    if (document.prevEvent && isTaskEvent(evt) && isTaskEvent(document.prevEvent) && getTaskNumber(evt)[1] !== getTaskNumber(document.prevEvent)[1]) {
+	        taskList.setState(taskList.getInitialState());
+	    }
 	    document.prevEvent = evt;
 	});
 	document.addEventListener('touchmove', function (evt) {
@@ -78,18 +177,26 @@
 	        var diffY = currTouch.pageY - prevTouch.pageY;
 	        var touchesDiff = Math.sqrt(diffX * diffX + diffY * diffY);
 	        var sine = Math.abs(diffX) / touchesDiff;
-	        if (sine <= 0.5) {
-	            refreshSign.setState({ shown: true });
-	            getTasks(function () {
-	                setTimeout(function () {
-	                    refreshSign.setState({ shown: false });
-	                }, 300);
-	            });
+	        if (sine <= 0.5 && diffY > 0) {
+	            onScroll(evt);
+	        }
+	        if (sine === 1 && diffX > 0 && isTaskEvent(evt)) {
+	            onTaskSwipe(evt);
 	        }
 	    }
 	    document.prevEvent = evt;
 	});
 	document.addEventListener('touchend', function (evt) {
+	    if (document.prevEvent.type === 'touchstart') {
+	        if (isTaskEvent(evt)) {
+	            onTaskTap(evt);
+	        } else {
+	            taskList.setState(taskList.getInitialState());
+	        }
+	        if (evt.target.classList.contains('addition-btn')) {
+	            taskList.setState({ addingTask: true });
+	        }
+	    }
 	    document.prevEvent = evt;
 	});
 
@@ -99,7 +206,7 @@
 	    var _cb = function _cb(xhr) {
 	        var resJSON = JSON.parse(xhr.responseText);
 	        document.date = new Date(xhr.getResponseHeader('Date'));
-	        _reactDom2.default.render(_react2.default.createElement(_tasklist2.default, { tasks: resJSON.tasks }), document.querySelector('.root'));
+	        taskList = _reactDom2.default.render(_react2.default.createElement(_tasklist2.default, { tasks: resJSON.tasks }), document.querySelector('.root'));
 	        cb ? cb() : null;
 	    };
 	    sendRequest(null, { method: 'GET', path: '/tasks' }, _cb);
@@ -20080,55 +20187,75 @@
 
 	var sendRequest = __webpack_require__(167).sendRequest;
 
-	var taskList = null;
-	var taskAdditionField = null;
+	var TaskList = _react2.default.createClass({
+	    displayName: 'TaskList',
+
+	    getInitialState: function getInitialState() {
+	        return {
+	            tappedTask: null,
+	            swipedTask: null,
+	            addingTask: false,
+	            editingTask: false
+	        };
+	    },
+	    render: function render() {
+	        var _this = this;
+
+	        return _react2.default.createElement(
+	            'div',
+	            { 'class': 'task-list' },
+	            _react2.default.createElement(TaskAdditionField, { taskList: this }),
+	            this.props.tasks.map(function (task) {
+	                return _react2.default.createElement(Task, { taskList: _this, task: task, key: task.id + task.text });
+	            }),
+	            _react2.default.createElement(TaskAdditionButton, null)
+	        );
+	    }
+	});
 
 	var Task = _react2.default.createClass({
 	    displayName: 'Task',
 
 	    getInitialState: function getInitialState() {
 	        return {
-	            tapped: false,
-	            swiped: false,
 	            shifted: false,
 	            text: this.props.task.text
 	        };
 	    },
 	    render: function render() {
+	        var isTapped = this.props.taskList.state.tappedTask === this.props.task.id.toString();
+	        var isSwiped = this.props.taskList.state.swipedTask === this.props.task.id.toString();
 	        var button = null;
-	        var textFieldClass = "task__text task__text_shiftable";
+	        var taskClassName = "task task_num_" + this.props.task.id;
+	        var textFieldClassName = "task__text task__text_shiftable task_num_" + this.props.task.id;
 
-	        if (this.state.tapped || this.state.swiped) {
-	            textFieldClass += ' task__text_shifted';
-	            var buttonClassName = "task__btn";
-	            this.state.shifted ? buttonClassName += " task__btn_shown" : null;
+	        if (isTapped || isSwiped) {
+	            textFieldClassName += ' task__text_shifted';
+	            var buttonClassName = "task__btn task_num_" + this.props.task.id;
+	            var imageClassName = "task__btn-image task_num_" + this.props.task.id;
+	            this.props.taskList.state.editingTask ? buttonClassName += " task__btn_shown" : null;
 	            var imageSrc = null;
-	            this.state.tapped ? imageSrc = "images/ok.png" : null;
-	            this.state.swiped ? imageSrc = "images/delete.png" : null;
+	            isTapped ? imageSrc = "images/ok.png" : null;
+	            isSwiped ? imageSrc = "images/delete.png" : null;
 	            button = _react2.default.createElement(
 	                'div',
 	                { className: buttonClassName },
-	                _react2.default.createElement('img', { className: 'task__btn-image', src: imageSrc })
+	                _react2.default.createElement('img', { className: imageClassName, src: imageSrc })
 	            );
-	            if (!this.state.shifted) {
-	                setTimeout(function () {
-	                    this.setState({ shifted: true });
-	                }.bind(this), 300);
-	            }
 	        }
 
-	        var textField = _react2.default.createElement('textarea', {
-	            className: textFieldClass,
-	            readOnly: true,
-	            value: this.state.text
-	        });
-
-	        if (this.state.shifted) {
+	        if (!this.props.taskList.state.editingTask) {
+	            var textField = _react2.default.createElement('textarea', {
+	                className: textFieldClassName,
+	                readOnly: true,
+	                value: this.state.text
+	            });
+	        } else {
 	            var changeHandler = function (evt) {
 	                this.setState({ text: evt.target.value });
 	            }.bind(this);
-	            textField = _react2.default.createElement('textarea', {
-	                className: textFieldClass,
+	            var textField = _react2.default.createElement('textarea', {
+	                className: textFieldClassName,
 	                autoFocus: true,
 	                value: this.state.text,
 	                onChange: changeHandler
@@ -20138,87 +20265,26 @@
 	        return _react2.default.createElement(
 	            'div',
 	            {
-	                className: 'task',
-	                onTouchStart: this.handleTouchStart,
-	                onTouchEnd: this.handleTouchEnd,
-	                onTouchMove: this.handleTouchMove
+	                className: taskClassName,
+	                name: this.props.task.id
 	            },
 	            textField,
 	            button
 	        );
+	    }
+	});
+
+	var TaskAdditionField = _react2.default.createClass({
+	    displayName: 'TaskAdditionField',
+
+	    getInitialState: function getInitialState() {
+	        return null;
 	    },
-	    handleTouchStart: function handleTouchStart(evt) {
-	        if (evt.target.classList.contains('task__btn-image') && this.state.tapped) {
-	            if (this.props.name || this.props.name === 0) {
-	                var method = 'PATCH';
-	                var path = '/tasks/' + this.props.name;
-	            } else {
-	                var method = 'POST';
-	                var path = '/tasks';
-	            }
-	            var newTaskText = this.state.text;
-	            var cb = function (xhr) {
-	                this.props.task.text = newTaskText;
-	                this.setState(this.getInitialState());
-	                if (method === 'POST') {
-	                    taskList.props.tasks.unshift({
-	                        id: JSON.parse(xhr.responseText).id,
-	                        text: newTaskText
-	                    });
-	                    taskAdditionField = null;
-	                    setTimeout(function () {
-	                        taskList.forceUpdate();
-	                    }, 300);
-	                }
-	            }.bind(this);
-	            sendRequest({ text: this.state.text }, { method: method, path: path }, cb);
-	            return;
-	        }
-	        if (evt.target.classList.contains('task__btn-image') && this.state.swiped) {
-	            var cb = function (xhr) {
-	                for (var i = 0; i < taskList.props.tasks.length; i++) {
-	                    var task = taskList.props.tasks[i];
-	                    if (task.id === this.props.name) {
-	                        taskList.props.tasks.splice(i, 1);
-	                        taskList.forceUpdate();
-	                        break;
-	                    }
-	                }
-	            }.bind(this);
-	            sendRequest(null, {
-	                method: 'DELETE',
-	                path: '/tasks/' + this.props.name
-	            }, cb);
-	            return;
-	        }
-	        this.prevEvent = evt.nativeEvent;
-	    },
-	    handleTouchEnd: function handleTouchEnd(evt) {
-	        if (this.prevEvent.type === 'touchstart') {
-	            this.setState({ tapped: true });
-	            document.addEventListener('touchstart', this.handleTouchLeave);
-	        }
-	        this.prevEvent = evt.nativeEvent;
-	    },
-	    handleTouchMove: function handleTouchMove(evt) {
-	        if (this.prevEvent.type === 'touchmove') {
-	            var currTouch = evt.touches[0];
-	            var prevTouch = this.prevEvent.touches[0];
-	            var diffX = prevTouch.pageX - currTouch.pageX;
-	            var diffY = currTouch.pageY - prevTouch.pageY;
-	            var touchesDiff = Math.sqrt(diffX * diffX + diffY * diffY);
-	            var sine = Math.abs(diffX) / touchesDiff;
-	            if (sine === 1) {
-	                this.setState({ swiped: true });
-	                document.addEventListener('touchstart', this.handleTouchLeave);
-	            }
-	        }
-	        this.prevEvent = evt.nativeEvent;
-	    },
-	    handleTouchLeave: function handleTouchLeave(evt) {
-	        if (this.prevEvent.target.parentNode !== evt.target.parentNode || !evt.target.classList.contains('task__text')) {
-	            this.setState(this.getInitialState());
-	            document.removeEventListener('touchstart', this.handleTouchLeave);
+	    render: function render() {
+	        if (this.props.taskList.state.addingTask) {
+	            return _react2.default.createElement(Task, { taskList: this.props.taskList, task: { id: '-1', text: '' } });
+	        } else {
+	            return null;
 	        }
 	    }
 	});
@@ -20230,41 +20296,9 @@
 	        return _react2.default.createElement(
 	            'div',
 	            {
-	                className: 'addition-btn',
-	                onTouchStart: this.handleTouchStart,
-	                onTouchEnd: this.handleTouchEnd
+	                className: 'addition-btn'
 	            },
 	            'Добавить'
-	        );
-	    },
-	    handleTouchStart: function handleTouchStart(evt) {
-	        this.prevEvent = evt.nativeEvent;
-	    },
-	    handleTouchEnd: function handleTouchEnd(evt) {
-	        if (this.prevEvent.type === 'touchstart') {
-	            taskAdditionField = _react2.default.createElement(Task, { task: { text: '' }, name: '' });
-	            taskList.forceUpdate();
-	        }
-	        this.prevEvent = evt.nativeEvent;
-	    }
-	});
-
-	var TaskList = _react2.default.createClass({
-	    displayName: 'TaskList',
-
-	    getInitialState: function getInitialState() {
-	        taskList = this;
-	        return null;
-	    },
-	    render: function render() {
-	        return _react2.default.createElement(
-	            'div',
-	            { 'class': 'task-list' },
-	            taskAdditionField,
-	            this.props.tasks.map(function (task) {
-	                return _react2.default.createElement(Task, { task: task, key: task.id + task.text, name: task.id });
-	            }),
-	            _react2.default.createElement(TaskAdditionButton, null)
 	        );
 	    }
 	});
@@ -20290,10 +20324,11 @@
 	    data ? xhr.send(JSON.stringify(data)) : xhr.send();
 
 	    var successCode = null;
-	    options.method === 'GET' ? successCode = 200 : null;
-	    options.method === 'POST' ? successCode = 201 : null;
-	    options.method === 'PATCH' ? successCode = 200 : null;
-	    options.method === 'DELETE' ? successCode = 200 : null;
+	    if (new Set(['GET', 'PATCH', 'DELETE']).has(options.method)) {
+	        successCode = 200;
+	    } else {
+	        options.method === 'POST' ? successCode = 201 : null;
+	    }
 
 	    xhr.onreadystatechange = function () {
 	        if (xhr.readyState !== 4) {

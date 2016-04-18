@@ -12,10 +12,11 @@ module.exports.sendRequest = function(data, options, cb) {
     data ? xhr.send(JSON.stringify(data)) : xhr.send();
 
     var successCode = null;
-    options.method === 'GET' ? successCode = 200: null;
-    options.method === 'POST' ? successCode = 201: null;
-    options.method === 'PATCH' ? successCode = 200: null;
-    options.method === 'DELETE' ? successCode = 200: null;
+    if (new Set(['GET', 'PATCH', 'DELETE']).has(options.method)) {
+        successCode = 200;
+    } else {
+        options.method === 'POST' ? successCode = 201: null;
+    }
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState !== 4) {
