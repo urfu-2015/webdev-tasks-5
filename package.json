@@ -15,7 +15,6 @@
     "lint": "npm-run-all lint:*",
     "start": "NODE_ENV=development node app.js",
     "test": "mocha --recursive tests",
-    "precommit": "npm-run-all lint:* && npm test",
     "prepush": "npm-run-all lint:* && npm test",
     "production": "webpack --config webpack.config.js && node app.js"
   },
