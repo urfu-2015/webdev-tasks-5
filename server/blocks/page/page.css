@@ -1,0 +1,14 @@
+body
+{
+    font-family: Arial, sans-serif;
+    margin: 0 auto;
+    width: 300px;
+}
+
+.off-events {
+    pointer-events: none;
+}
+
+.text-center {
+    text-align: center;
+}
