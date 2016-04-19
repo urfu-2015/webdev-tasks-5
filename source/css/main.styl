@@ -1,0 +1,123 @@
+body
+    margin 0
+    min-height 100vh
+
+.header
+    padding 20px 0 20px 0
+    display flex
+    justify-content center
+    width 100%
+
+    &__title
+        font-size 40px
+
+.create-block
+    padding-top 30px
+    display flex
+    flex-direction column
+
+    .text
+        display block
+        border 1px solid black
+        width 80%
+        resize none
+        box-sizing border-box
+        align-self center
+
+    .button
+        display block
+        box-sizing border-box
+        align-self flex-end
+        border 1px solid black
+        margin-top 10px
+        margin-right 10%
+        width 40%
+        height 80px
+
+.back
+    position absolute
+    top 0
+    left 0
+    height 60px
+    width 100%
+    background-color grey
+    z-index -1
+
+.content
+    background-color white
+    position relative
+    top 0px
+    z-index 1
+
+    &_slide-up
+        transition-property: top;
+        transition-duration: .3s;
+
+.todo-list
+    display flex
+    flex-direction column
+    width 100%
+    align-items center
+
+    item-height = 40px
+
+    &__edit-block
+        width 100%
+        display flex
+        justify-content center
+        align-items center
+        padding-bottom 20px
+
+        .edit
+            flex-basis 80%
+            height (item-height*3)
+            box-sizing border-box
+            border 2px solid black
+            display flex
+            flex-direction column
+            justify-content space-around
+            align-items center
+
+            .text
+                width 90%
+                border 1px solid black
+
+            .button
+                display block
+
+    &__item-block
+        width 100%
+        height item-height
+        display flex
+        justify-content center
+        align-items  center
+        padding-bottom 20px
+
+        .item
+            position relative
+            left (item-height/2)
+            height item-height
+            z-index 2
+            flex-basis 80%
+            box-sizing border-box
+            border 2px solid black
+            display flex
+            justify-content center
+            align-items  center
+            background-color white
+            transition-property all
+            transition-duration 0.5s
+
+            &--swiped
+                transform translateX(-(item-height))
+
+        .button
+            position relative
+            right (item-height/2)
+            z-index 0
+            display block
+            height item-height
+            width item-height
+            background-color red
+            box-sizing border-box
+            border 1px solid black
