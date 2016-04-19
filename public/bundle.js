@@ -1223,7 +1223,9 @@ document.body.addEventListener('touchend', function (event) {
         var displacement = {};
         nowPoint = event.changedTouches[0];
         displacement.x = nowPoint.pageX - startPoint.x;
-        if (Math.abs(displacement.x) < 100 && target.firstElementChild.nodeName == 'SPAN') {
+        displacement.y = nowPoint.pageY - startPoint.y;
+        if (Math.abs(displacement.x) < 100 && Math.abs(displacement.y) < 30
+            && target.firstElementChild.nodeName == 'SPAN') {
             var input = document.createElement('input');
             input.className = 'todo-list__task-input';
             input.type = 'text';
@@ -1232,7 +1234,8 @@ document.body.addEventListener('touchend', function (event) {
             target.replaceChild(input, target.firstElementChild);
             input.focus();
         }
-        if (Math.abs(displacement.x) < 100 && target.firstElementChild.nodeName == 'BUTTON') {
+        if (Math.abs(displacement.x) < 100 && Math.abs(displacement.y) < 30
+            && target.firstElementChild.nodeName == 'BUTTON') {
             var text = target.firstElementChild.value;
             var body = JSON.stringify({text: text});
             sendXhr('DELETE', '/', body, function (data) {
