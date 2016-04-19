@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "npm run build && node ./bin/www",
     "lint:js": "node_modules/eslint .",
     "watch:css": "stylus -w ./styles/botton.styl -o ./public/stylesheet/style.css",
     "css:pre": "stylus styles/*.styl > public/stylesheet/style.css",

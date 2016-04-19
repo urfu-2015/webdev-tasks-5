@@ -9,10 +9,11 @@ const poststylus = require('poststylus');
 
 
 module.exports = {
-    context: path.join(__dirname, 'server', 'bundles'),
+    context: path.join(__dirname, 'server'),
     entry: {
-        remarks: './remark/remarks.jsx',
-        index: './index/index.jsx'
+        remarks: './bundles/remark/remarks.jsx',
+        index: './bundles/index/index.jsx',
+        pictures: './pictures'
     },
     devtool: 'source-map',
     output: {
@@ -31,6 +32,10 @@ module.exports = {
                 test: /\.jsx$/,
                 loader: 'babel',
                 exclude: /node_modules/
+            },
+            {
+                test: /\.png$|\.ico$/,
+                loader: 'file-loader?name=[name].[ext]'
             }
         ]
     },

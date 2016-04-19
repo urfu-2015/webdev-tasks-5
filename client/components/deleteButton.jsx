@@ -27,7 +27,7 @@ export default ({store, isDeleted, index, formClass, visibilityClass}) => {
     nameClass += ' ' + visibilityClass;
     return (
         <button onClick={clickHandler(store, isDeleted, index)} className={nameClass}>
-            <img src="/images/trush.png" alt="Удаление" />
+            <img src="/trush.png" alt="Удаление" />
         </button>
     )
 }

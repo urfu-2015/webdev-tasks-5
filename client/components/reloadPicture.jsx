@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-let pathToPicture = '/images/reload2.png';
+let pathToPicture = '/reload2.png';
 
 export default ({visibilityClass}) => {
     visibilityClass += ' wheel reload_img';
