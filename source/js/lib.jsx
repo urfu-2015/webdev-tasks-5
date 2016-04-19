@@ -1,53 +1,45 @@
-function onReadyStateChange(xhr, callback) {
-    return function () {
+function makeRequest(method, path, data, isJsonRequest, isJsonResponse, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, path);
+    if (isJsonRequest) {
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        data = JSON.stringify(data);
+    }
+    xhr.onreadystatechange = () => {
         if (xhr.readyState !== 4) {
             return;
         }
         if (Math.floor(xhr.status / 100) != 2) {
             return callback(xhr.status);
         }
-        callback(null, xhr.responseText)
+        var result = isJsonResponse ? JSON.parse(xhr.responseText) : xhr.responseText;
+        callback(null, result);
     };
+    xhr.send(data);
 }
 
 export function createTodo(text, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/todo');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = onReadyStateChange(xhr, (err, responseText) => {
-        var res = JSON.parse(responseText);
-        callback(err, res.id);
+    makeRequest('POST', '/todo', {text}, true, true, (err, result) => {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, result.id);
     });
-    xhr.send(JSON.stringify({text}));
 }
 
 export function getTodosList(callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/todos');
-    xhr.onreadystatechange = onReadyStateChange(xhr, (err, responseText) => {
-        var res = JSON.parse(responseText);
-        callback(err, res.todos);
+    makeRequest('GET', '/todos', '', false, true, (err, result) => {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, result.todos);
     });
-    xhr.send();
 }
 
-
 export function deleteTodo(id, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('DELETE', '/todo');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = onReadyStateChange(xhr, (err, responseText) => {
-        callback(err);
-    });
-    xhr.send(JSON.stringify({id}));
+    makeRequest('DELETE', '/todo',{id}, true, false, callback);
 }
 
 export function updateTodo(id, text, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('PUT', '/todo');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = onReadyStateChange(xhr, (err, responseText) => {
-        callback(err);
-    });
-    xhr.send(JSON.stringify({id, text}));
+    makeRequest('PUT', '/todo', {id, text}, true, false, callback);
 }
