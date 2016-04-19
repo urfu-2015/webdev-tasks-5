@@ -17,7 +17,7 @@ module.exports = {
     },
     devtool: 'source-map',
     output: {
-        path: path.join(__dirname, 'server', 'public'),
+        path: path.join(__dirname, 'public'),
         filename: '[name].js',
         sourceMapFilename: '[name].map',
         publicPath: '/server/'
@@ -28,6 +28,7 @@ module.exports = {
                 test: /\.styl$/,
                 loader: ExtractTextPlagin.extract('css-loader!stylus-loader')
             },
+
             {
                 test: /\.jsx$/,
                 loader: 'babel',
