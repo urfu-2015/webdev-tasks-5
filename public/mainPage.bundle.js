@@ -140,18 +140,22 @@
 	            return;
 	        }
 	    }
-	    taskList.setState({ tappedTask: taskNum[1] });
-	    setTimeout(function () {
-	        taskList.setState({ editingTask: true });
-	    }, 300);
+	    if (!taskList.state.tappedTask && !taskList.state.swipedTask) {
+	        taskList.setState({ tappedTask: taskNum[1] });
+	        setTimeout(function () {
+	            taskList.setState({ editingTask: true });
+	        }, 300);
+	    }
 	};
 
 	var onTaskSwipe = function onTaskSwipe(evt) {
-	    var taskNum = getTaskNumber(evt);
-	    taskList.setState({ swipedTask: taskNum[1] });
-	    setTimeout(function () {
-	        taskList.setState({ editingTask: true });
-	    }, 300);
+	    if (!taskList.state.tappedTask && !taskList.state.swipedTask) {
+	        var taskNum = getTaskNumber(evt);
+	        taskList.setState({ swipedTask: taskNum[1] });
+	        setTimeout(function () {
+	            taskList.setState({ editingTask: true });
+	        }, 300);
+	    }
 	};
 
 	var onScroll = function onScroll(evt) {
@@ -169,6 +173,7 @@
 	    }
 	    document.prevEvent = evt;
 	});
+
 	document.addEventListener('touchmove', function (evt) {
 	    if (document.prevEvent.type === 'touchmove') {
 	        var currTouch = evt.touches[0];
@@ -186,6 +191,7 @@
 	    }
 	    document.prevEvent = evt;
 	});
+
 	document.addEventListener('touchend', function (evt) {
 	    if (document.prevEvent.type === 'touchstart') {
 	        if (isTaskEvent(evt)) {
@@ -20226,17 +20232,17 @@
 	        var isTapped = this.props.taskList.state.tappedTask === this.props.task.id.toString();
 	        var isSwiped = this.props.taskList.state.swipedTask === this.props.task.id.toString();
 	        var button = null;
-	        var taskClassName = "task task_num_" + this.props.task.id;
-	        var textFieldClassName = "task__text task__text_shiftable task_num_" + this.props.task.id;
+	        var taskClassName = 'task task_num_' + this.props.task.id;
+	        var textFieldClassName = 'task__text task__text_shiftable task_num_' + this.props.task.id;
 
 	        if (isTapped || isSwiped) {
 	            textFieldClassName += ' task__text_shifted';
-	            var buttonClassName = "task__btn task_num_" + this.props.task.id;
-	            var imageClassName = "task__btn-image task_num_" + this.props.task.id;
-	            this.props.taskList.state.editingTask ? buttonClassName += " task__btn_shown" : null;
+	            var buttonClassName = 'task__btn task_num_' + this.props.task.id;
+	            var imageClassName = 'task__btn-image task_num_' + this.props.task.id;
+	            this.props.taskList.state.editingTask ? buttonClassName += ' task__btn_shown' : null;
 	            var imageSrc = null;
-	            isTapped ? imageSrc = "images/ok.png" : null;
-	            isSwiped ? imageSrc = "images/delete.png" : null;
+	            isTapped ? imageSrc = 'images/ok.png' : null;
+	            isSwiped ? imageSrc = 'images/delete.png' : null;
 	            button = _react2.default.createElement(
 	                'div',
 	                { className: buttonClassName },
@@ -20244,13 +20250,7 @@
 	            );
 	        }
 
-	        if (!this.props.taskList.state.editingTask) {
-	            var textField = _react2.default.createElement('textarea', {
-	                className: textFieldClassName,
-	                readOnly: true,
-	                value: this.state.text
-	            });
-	        } else {
+	        if (isTapped && this.props.taskList.state.editingTask) {
 	            var changeHandler = function (evt) {
 	                this.setState({ text: evt.target.value });
 	            }.bind(this);
@@ -20259,6 +20259,12 @@
 	                autoFocus: true,
 	                value: this.state.text,
 	                onChange: changeHandler
+	            });
+	        } else {
+	            var textField = _react2.default.createElement('textarea', {
+	                className: textFieldClassName,
+	                readOnly: true,
+	                value: this.state.text
 	            });
 	        }
 

@@ -6,15 +6,15 @@ module.exports = {
     entry: './mainPage.js',
     output: {
         path: path.join(__dirname, 'public'),
-        filename: "mainPage.bundle.js"
+        filename: 'mainPage.bundle.js'
     },
     module: {
         loaders: [
-          {
-            test: /\.js$/,
-            loader: 'babel',
-            exclude: /node_modules/
-          }
+            {
+                test: /\.js$/,
+                loader: 'babel',
+                exclude: /node_modules/
+            }
         ]
     }
-}
+};

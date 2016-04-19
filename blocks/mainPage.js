@@ -8,7 +8,7 @@ const sendRequest = require('../public/scripts/xml-http.js').sendRequest;
 var taskList = null;
 document.prevEvent = null;
 
-var isTaskEvent = function(evt) {
+var isTaskEvent = function (evt) {
     if (evt.target.className.indexOf('task') !== -1) {
         return true;
     } else {
@@ -16,22 +16,22 @@ var isTaskEvent = function(evt) {
     }
 };
 
-var getTaskNumber = function(evt) {
+var getTaskNumber = function (evt) {
     return evt.target.className.match(/task_num_(-?\d+)/);
 };
 
-var submitTask = function(taskNum) {
+var submitTask = function (taskNum) {
     var taskText = document.querySelector('.task__text.' + taskNum[0]);
     if (taskNum[1] === '-1') {
         var method = 'POST';
         var path = '/tasks';
-        var cb = function(xhr) {
+        var cb = function (xhr) {
             taskList.setState({
                 tappedTask: null,
                 swipedTask: null,
                 editingTask: false
             });
-            setTimeout(function() {
+            setTimeout(function () {
                 taskList.props.tasks.unshift({
                     id: JSON.parse(xhr.responseText).id,
                     text: taskText.value
@@ -42,19 +42,19 @@ var submitTask = function(taskNum) {
     } else {
         var method = 'PATCH';
         var path = '/tasks/' + taskNum[1];
-        var cb = function(xhr) {
+        var cb = function (xhr) {
             taskList.setState(taskList.getInitialState());
         };
     }
     sendRequest({text: taskText.value}, {method, path}, cb);
 };
 
-var deleteTask = function(taskNum) {
+var deleteTask = function (taskNum) {
     var options = {
         method: 'DELETE',
         path: '/tasks/' + taskNum[1]
     };
-    var cb = function(xhr) {
+    var cb = function (xhr) {
         var tasksData = taskList.props.tasks;
         for (var i = 0; i < tasksData.length; i++) {
             if (tasksData[i].id.toString() === taskNum[1]) {
@@ -67,7 +67,7 @@ var deleteTask = function(taskNum) {
     sendRequest(null, options, cb);
 };
 
-var onTaskTap = function(evt) {
+var onTaskTap = function (evt) {
     var taskNum = getTaskNumber(evt);
     if (evt.target.className.indexOf('task__btn') !== -1) {
         if (taskList.state.tappedTask) {
@@ -79,30 +79,40 @@ var onTaskTap = function(evt) {
             return;
         }
     }
-    taskList.setState({tappedTask: taskNum[1]});
-    setTimeout(function() {
-        taskList.setState({editingTask: true});
-    }, 300);
+    if (
+        !taskList.state.tappedTask &&
+        !taskList.state.swipedTask
+    ) {
+        taskList.setState({tappedTask: taskNum[1]});
+        setTimeout(function () {
+            taskList.setState({editingTask: true});
+        }, 300);
+    }
 };
 
-var onTaskSwipe = function(evt) {
-    var taskNum = getTaskNumber(evt);
-    taskList.setState({swipedTask: taskNum[1]})
-    setTimeout(function() {
-        taskList.setState({editingTask: true});
-    }, 300);
+var onTaskSwipe = function (evt) {
+    if (
+        !taskList.state.tappedTask &&
+        !taskList.state.swipedTask
+    ) {
+        var taskNum = getTaskNumber(evt);
+        taskList.setState({swipedTask: taskNum[1]});
+        setTimeout(function () {
+            taskList.setState({editingTask: true});
+        }, 300);
+    }
 };
 
-var onScroll = function(evt) {
+var onScroll = function (evt) {
     refreshSign.setState({shown: true});
-    getTasks(function() {
-        setTimeout(function() {
+    getTasks(function () {
+        setTimeout(function () {
             refreshSign.setState({shown: false});
         }, 300);
     });
 };
 
-document.addEventListener('touchstart', function(evt){
+document.addEventListener('touchstart', function (evt) {
     if (
         document.prevEvent &&
         isTaskEvent(evt) &&
@@ -114,7 +124,7 @@ document.addEventListener('touchstart', function(evt){
     document.prevEvent = evt;
 });
 
-document.addEventListener('touchmove', function(evt){
+document.addEventListener('touchmove', function (evt) {
     if (document.prevEvent.type === 'touchmove') {
         var currTouch = evt.touches[0];
         var prevTouch = document.prevEvent.touches[0];
@@ -139,7 +149,7 @@ document.addEventListener('touchmove', function(evt){
     document.prevEvent = evt;
 });
 
-document.addEventListener('touchend', function(evt){
+document.addEventListener('touchend', function (evt) {
     if (document.prevEvent.type === 'touchstart') {
         if (isTaskEvent(evt)) {
             onTaskTap(evt);
@@ -156,10 +166,13 @@ document.addEventListener('touchend', function(evt){
 var refreshSign = ReactDom.render(<RefreshSign />, document.querySelector('.page-top'));
 
 function getTasks(cb) {
-    var _cb = function(xhr) {
+    var _cb = function (xhr) {
         var resJSON = JSON.parse(xhr.responseText);
         document.date = new Date(xhr.getResponseHeader('Date'));
-        taskList = ReactDom.render(<TaskList tasks = {resJSON.tasks} />, document.querySelector('.root'));
+        taskList = ReactDom.render(
+            <TaskList tasks = {resJSON.tasks} />,
+            document.querySelector('.root')
+        );
         cb ? cb() : null;
     };
     sendRequest(null, {method: 'GET', path: '/tasks'}, _cb);

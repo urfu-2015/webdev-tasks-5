@@ -1,5 +1,5 @@
 
-module.exports.sendRequest = function(data, options, cb) {
+module.exports.sendRequest = function (data, options, cb) {
     var xhr = new XMLHttpRequest();
     xhr.open(options.method, options.path);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -15,7 +15,7 @@ module.exports.sendRequest = function(data, options, cb) {
     if (new Set(['GET', 'PATCH', 'DELETE']).has(options.method)) {
         successCode = 200;
     } else {
-        options.method === 'POST' ? successCode = 201: null;
+        options.method === 'POST' ? successCode = 201 : null;
     }
 
     xhr.onreadystatechange = function () {
@@ -26,4 +26,4 @@ module.exports.sendRequest = function(data, options, cb) {
             cb(xhr);
         }
     };
-}
+};

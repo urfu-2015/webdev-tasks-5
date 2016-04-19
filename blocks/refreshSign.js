@@ -9,7 +9,7 @@ var RefreshSign = React.createClass({
             shown: false
         };
     },
-    render: function() {
+    render: function () {
         var signClassName = 'refresh-sign';
         var imageClassName = 'refresh-sign__image';
         if (this.state.shown) {
