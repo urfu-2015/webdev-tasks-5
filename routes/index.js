@@ -28,7 +28,7 @@ router.post('/todo', function (req, res) {
         db.collection('todos').insertOne({text})
         .then((result) => {
             if (!result.insertedCount) {
-                return res.status(404);
+                return res.status(500);
             }
             res.status(201);
             res.json({
@@ -44,8 +44,7 @@ router.put('/todo', function (req, res) {
 
     connect((err, db) => {
         db.collection('todos').updateOne({_id: id}, {text: newText});
-        res.status(204);
-        res.send();
+        res.status(204).send();
     });
 });
 
@@ -55,8 +54,10 @@ router.delete('/todo', function (req, res) {
         db.collection('todos').remove({_id: id})
         .then((commandResult) => {
             var removed = commandResult.result.n;
-            res.status(!err && removed ? 204 : 404);
-            res.send();
+            if (err) {
+                return res.status(500);
+            }
+            res.status(removed ? 204 : 400).send();
         });
     });
 });
@@ -65,7 +66,7 @@ router.get('/todos', function (req, res) {
     connect((err, db) => {
         db.collection('todos').find().toArray((err, todosList) => {
             if (err) {
-                return res.status(404);
+                return res.status(500);
             }
             todosList = todosList.map((todo) => {
                 return {
