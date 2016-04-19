@@ -25,8 +25,9 @@ router.get('/', function (req, res) {
 router.post('/todo', function (req, res) {
     var text = req.body.text;
     connect((err, db) => {
-        db.collection('todos').insertOne({text}, (err, result) => {
-            if (err) {
+        db.collection('todos').insertOne({text})
+        .then((result) => {
+            if (!result.insertedCount) {
                 return res.status(404);
             }
             res.status(201);
@@ -51,7 +52,8 @@ router.put('/todo', function (req, res) {
 router.delete('/todo', function (req, res) {
     var id = ObjectID(req.body.id);
     connect((err, db) => {
-        db.collection('todos').remove({_id: id}, (err, commandResult) => {
+        db.collection('todos').remove({_id: id})
+        .then((commandResult) => {
             var removed = commandResult.result.n;
             res.status(!err && removed ? 204 : 404);
             res.send();
