@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="{{ meta.charset }}">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+    <link rel="stylesheet" type="text/css" href="/index.css">
+</head>
+<body>
+    <div id="todo-block">
+        {{> index }}
+    </div>
+    <div>
+        <input type="text" name="message" class="todo-list__text-to-create">
+        <input type="button" value="Добавить" class="todo-list__creation-button">
+    </div>
+    <script src="/bundle.js" class="script"></script>
+</body>
+</html>

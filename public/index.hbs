@@ -1,0 +1,11 @@
+{{#if tasks.length}}
+    <ul class="todo-list">
+        {{#each tasks}}
+            <li class="todo-list__element">
+                <span class="todo-list__task">{{text}}</span>
+            </li>
+        {{/each}}
+    </ul>
+{{^}}
+    <p>No tasks!</p>
+{{/if}}
