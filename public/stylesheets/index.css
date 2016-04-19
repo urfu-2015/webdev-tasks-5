@@ -13,7 +13,7 @@ h1
 .task
 {
     width: 70%;
-    height: 100px;
+    height: 50px;
     margin: 0 auto;
     margin-bottom: 10px;
     position: relative;
@@ -21,10 +21,9 @@ h1
 
 .task__text
 {
-    font-size: 30px;
     border: 1px solid gray;
     vertical-align: middle;
-    line-height: 100px;
+    line-height: 50px;
     float: left;
     position: absolute;
     white-space: nowrap;
@@ -43,25 +42,24 @@ h1
 
 .task__text_shifted
 {
-    transform: translate(-100px, 0);
+    transform: translate(-50px, 0);
 }
 
 .addition-btn
 {
-    font-size: 30px;
-    height: 100px;
+    height: 50px;
     width: 50%;
     border: 1px solid gray;
     margin: 0 auto;
     text-align: center;
     vertical-align: middle;
-    line-height: 100px;
+    line-height: 50px;
 }
 
 .task__btn
 {
-    width: 100px;
-    height: 100px;
+    width: 50px;
+    height: 50px;
     margin-right: 0;
     float: right;
     position: relative;
