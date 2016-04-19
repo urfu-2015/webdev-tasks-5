@@ -29,7 +29,6 @@ module.exports.create = (req, res) => {
 };
 
 module.exports.update = (req, res) => {
-    console.log(req.body.newText);
     if (req.body.newText != '') {
         Task.update(req.body.oldText, req.body.newText);
         res.sendStatus(204);
