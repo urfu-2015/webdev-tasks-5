@@ -1,0 +1,41 @@
+text_height = 50px
+button_height = 20px
+paddings = 5px
+common_height = paddings * 2 + text_height + button_height
+
+.redo-form {
+  display: flex;
+  flex-direction: column;
+  border: solid 1px gray;
+  margin: 0;
+  padding: 0 paddings;
+  height: common_height;
+  background-color: #f8f8f8;
+
+  &__text {
+    width: 100%;
+    height: text_height;
+    resize: none;
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: row;
+  }
+
+  &__cancel
+  &__send {
+    height: button_height;
+  }
+
+  &_visible {
+    display: block;
+  }
+
+  &_hidden {
+    display: none;
+  }
+}

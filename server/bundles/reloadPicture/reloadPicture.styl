@@ -1,0 +1,26 @@
+.reload {
+  text-align: center;
+  &_visible {
+    display: block;
+  }
+  &_hidden {
+    display: none;
+  }
+}
+
+
+.wheel {
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+@keyframes spin {
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(360deg);
+  }
+}
