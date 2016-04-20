@@ -8,7 +8,7 @@ exports.getAll = (req, res) => {
             }
             return false;
         });
-        _tasks.length > 0 ?
+        _tasks.length ?
             res.status(200).json({tasks: _tasks}) :
             res.status(304).send();
     } else {

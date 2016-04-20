@@ -17,7 +17,7 @@ var RefreshSign = React.createClass({
             imageClassName += ' refresh-sign__image_shown';
         }
         return (
-            <div className={signClassName}>
+            <div className = {signClassName}>
                 <img src = 'images/refresh.gif' className = {imageClassName} />
             </div>
         );

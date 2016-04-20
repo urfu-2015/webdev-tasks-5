@@ -13,10 +13,21 @@ var TaskList = React.createClass({
     render: function () {
         return (
             <div class='task-list'>
-                <TaskAdditionField taskList = {this} />
+                <TaskAdditionField
+                    isTapped = {this.state.tappedTask === '-1'}
+                    isSwiped = {this.state.swipedTask === '-1'}
+                    addingTask = {this.state.addingTask}
+                    editingTask = {this.state.editingTask}
+                />
                 {
                     this.props.tasks.map(task => (
-                        <Task taskList = {this} task = {task} key = {task.id + task.text} />
+                        <Task
+                            isTapped = {this.state.tappedTask === task.id.toString()}
+                            isSwiped = {this.state.swipedTask === task.id.toString()}
+                            editingTask = {this.state.editingTask}
+                            task = {task}
+                            key = {task.id + task.text}
+                        />
                     ))
                 }
                 <TaskAdditionButton />
@@ -33,31 +44,28 @@ var Task = React.createClass({
         };
     },
     render: function () {
-        var isTapped = this.props.taskList.state.tappedTask === this.props.task.id.toString();
-        var isSwiped = this.props.taskList.state.swipedTask === this.props.task.id.toString();
         var button = null;
         var taskClassName = 'task task_num_' + this.props.task.id;
         var textFieldClassName = 'task__text task__text_shiftable task_num_' + this.props.task.id;
 
-        if (isTapped || isSwiped) {
+        if (this.props.isTapped || this.props.isSwiped) {
             textFieldClassName += ' task__text_shifted';
             var buttonClassName = 'task__btn task_num_' + this.props.task.id;
             var imageClassName = 'task__btn-image task_num_' + this.props.task.id;
-            this.props.taskList.state.editingTask ?
+            this.props.editingTask ?
                 buttonClassName += ' task__btn_shown' :
                 null;
             var imageSrc = null;
-            isTapped ? imageSrc = 'images/ok.png' : null;
-            isSwiped ? imageSrc = 'images/delete.png' : null;
+            imageSrc = this.props.isTapped ? 'images/ok.png' : 'images/delete.png';
             button =
-                <div className={buttonClassName}>
-                    <img className={imageClassName} src={imageSrc} />
+                <div className = {buttonClassName}>
+                    <img className = {imageClassName} src = {imageSrc} />
                 </div>;
         }
 
         if (
-            isTapped &&
-            this.props.taskList.state.editingTask
+            this.props.isTapped &&
+            this.props.editingTask
         ) {
             var changeHandler = function (evt) {
                 this.setState({text: evt.target.value});
@@ -95,9 +103,14 @@ var TaskAdditionField = React.createClass({
         return null;
     },
     render: function () {
-        if (this.props.taskList.state.addingTask) {
+        if (this.props.addingTask) {
             return (
-                <Task taskList = {this.props.taskList} task = {{id: '-1', text: ''}} />
+                <Task
+                    isTapped = {this.props.isTapped}
+                    isSwiped = {this.props.isSwiped}
+                    editingTask = {this.props.editingTask}
+                    task = {{id: '-1', text: ''}}
+                />
             );
         } else {
             return null;
