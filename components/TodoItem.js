@@ -34,6 +34,7 @@ class TodoItem extends Component {
     }
 
     handleTouchStart(event) {
+        // TODO: Tap по корзине, а не swipe
         // console.log(event.currentTarget);
         // console.log(event.target);
         //event.stopPropagation();
