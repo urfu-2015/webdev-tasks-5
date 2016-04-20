@@ -1,21 +1,4 @@
-function naiveSort(linkedList) {
-    var sortedList = [];
-    var index = 0;
-    var previousItemId = null;
-
-    while (sortedList.length < linkedList.length) {
-        var current = linkedList[index];
-        if (current.prev === previousItemId) {
-            previousItemId = current._id;
-            sortedList.push(current);
-            index = 0;
-        } else {
-            index += 1;
-        }
-    }
-
-    return sortedList.reverse();
-}
+var listSort = require('./sort.js');
 
 function request(method, url, data, callback) {
     var xhr = new XMLHttpRequest();
@@ -42,51 +25,30 @@ function request(method, url, data, callback) {
 
 module.exports.getAll = function (callback) {
     request('GET', '/todos', undefined, function (err, data) {
-        if (err) {
-            console.error(err);
-        } else {
-            sortData = naiveSort(data);
-            callback(sortData);
-        }
+        err ? console.error(err) : callback(listSort(data));
     });
 };
 
 module.exports.add = function (data, callback) {
     request('POST', '/todos', data, function (err, data) {
-        if (err) {
-            console.error(err);
-        } else {
-            callback(data);
-        }
+        err ? console.error(err) : callback(data);
     });
 };
 
 module.exports.update = function (data, callback) {
     request('PATCH', '/todos/' + data._id, data, function (err, data) {
-        if (err) {
-            console.error(err);
-        } else {
-            callback(data);
-        }
+        err ? console.error(err) : callback(data);
     });
 };
 
 module.exports.reorder = function (data, callback) {
     request('PATCH', '/todos/' + data.moveId + '/reorder', data, function (err, data) {
-        if (err) {
-            console.error(err);
-        } else {
-            callback(naiveSort(data));
-        }
+        err ? console.error(err) : callback(listSort(data));
     });
 };
 
 module.exports.delete = function (data, callback) {
     request('DELETE', '/todos/' + data._id, data, function (err, data) {
-        if (err) {
-            console.error(err);
-        } else {
-            callback(data);
-        }
+        err ? console.error(err) : callback(data);
     });
 };

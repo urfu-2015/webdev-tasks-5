@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     context: path.join(__dirname, 'bundles'),
     entry: {
-        index: './index.jsx'
+        index: './TodoList.jsx'
     },
     output: {
         path: path.join(__dirname, 'public', 'javascripts'),
