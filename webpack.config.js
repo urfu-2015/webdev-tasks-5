@@ -36,7 +36,7 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('[name].css'),
-        new webpack.optimize.UglifyJsPlugin()
+        //new webpack.optimize.UglifyJsPlugin()
     ],
     postcss: () => {
         return [autoprefixer, cssnano];

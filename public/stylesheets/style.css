@@ -28,6 +28,18 @@
     display: none;
 }
 
+.todo-list__item--editing .todo-list__item_text {
+    display: none;
+}
+
+.todo-list__item--editing .todo-list__item_input {
+    display: block;
+}
+
+.todo-list__item--trashing .todo-list__item_trash{
+    display: block;
+}
+
 .todo-form {
 
 }
@@ -61,9 +73,13 @@
     line-height: 38px;
 }
 
-.preload {
+.todo-list--preload {
     width: 200px;
     height: auto;
     margin: 0 auto;
     display: none;
+}
+
+.todo-list--update .todo-list--preload {
+    display: block;
 }

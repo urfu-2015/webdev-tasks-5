@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
-import Todo from '../../../client/bundles/todo/todo';
+import TodoList from '../../../client/bundles/todo/todo';
 
 var rootEl = document.getElementById('root');
 
@@ -17,10 +17,7 @@ var update = ()=> {
 
             function render() {
                 ReactDom.render(
-                    <Todo
-                        todos={todos}
-                    />,
-
+                    <TodoList />,
                     rootEl
                 );
             }

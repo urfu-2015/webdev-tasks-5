@@ -1,151 +1,172 @@
 import React from 'react';
 import Header from '../header/header.js';
 import Footer from '../footer/footer.js';
-
-var initialPoint;
-var finalPoint;
-
+import Todo from  './todoItem';
+import ReactDom from 'react-dom';
+import classNames from 'classnames';
+//var initialPoint;
+//var finalPoint;
+//
 var initialUpdatePoint;
 var finalUpdatePoint;
-
-const TodoItem = ({text, todo_id}) => (
-    <section id={todo_id} className="todo-list__item" onTouchStart={onTouchStart}
-             onTouchEnd={viewTrash}>
-        <div className="todo-list__item_text">
-            {text}
-        </div>
-        <input className="todo-list__item_input" defaultValue={text}
-               onBlur={updateTodo}/>
-        <img src="/images/trash.png" className="todo-list__item_trash" onTouchStart={delTodoTap}/>
-    </section>
-);
-function onTouchStart(event) {
-    event.preventDefault();
-    initialPoint = event.changedTouches[0];
-}
-function viewTrash(event) {
-    var element = event.currentTarget;
-    event.preventDefault();
-    finalPoint = event.changedTouches[0];
-    var xAbs = Math.abs(initialPoint.pageX - finalPoint.pageX);
-    var yAbs = Math.abs(initialPoint.pageY - finalPoint.pageY);
-    if (xAbs === 0 && yAbs === 0) {
-        if (event.target.tagName.toLowerCase() != "img") {
-            var todo_input = element.querySelector('.todo-list__item_input');
-            var todo_text = element.querySelector('.todo-list__item_text');
-            todo_text.style = 'display:none';
-            todo_input.style = 'display:block';
-            todo_input.focus();
+var root = React.createElement('div');
+module.exports = React.createClass({
+    getInitialState: function () {
+        return {
+            data: [],
+            update: true,
+            editing: false,
+            trashing: false
         }
-    } else if (xAbs > 20 || yAbs > 20) {
-        var todo_trash = element.querySelector('.todo-list__item_trash');
-        if (xAbs > yAbs) {
-            if (finalPoint.pageX < initialPoint.pageX) {
-                todo_trash.style = 'display:block';
-                /*СВАЙП ВЛЕВО*/
-            }
-            else {
-                todo_trash.style = 'display:none';
-                /*СВАЙП ВПРАВО*/
-            }
-        }
-    }
+    },
+    loadTodosFromServer: function () {
+        var self = this;
+        self.setState({update: true});
+        fetch('/api/v1/todo').then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                self.setState({data: data});
+                self.setState({update: false});
+            });
+    },
+    createTodo: function (todo) {
 
-}
-function updateTodo(event) {
-    var todo_input = event.target;
-    var parentElement = todo_input.parentElement;
-    var formData = new FormData();
-    formData.append('todo', todo_input.value);
-    fetch('/api/v1/todo/' + parentElement.id, {
-        method: 'PUT',
-        body: formData
-    }).then(window.update);
-    var todo_div = parentElement.querySelector('.todo-list__item_text');
-    todo_input.style = 'display:none';
-    todo_div.style = 'display:block';
-}
+        var formData = new FormData();
+        var todos = this.state.data;
+        var self = this;
+        formData.append('todo', todo);
+        var newTodo = {id: todos.length, todo: todo};
+        todos.unshift(newTodo);
+        fetch('/api/v1/todo/', {
+            method: 'POST',
+            body: formData
+        }).then(function () {
+            self.setState({data: todos});
+        });
+    },
+    onTodoUpdate: function (todo) {
+        var todos = this.state.data;
 
-function tapTodo(event) {
-    if (event.targetTouches.length == 1) {
-
-        var parentElement = element.parentElement.parentElement;
-
-        console.log(element);
-        console.log(parentElement);
-
-    }
-}
-
-function delTodoTap(event) {
-    if (event.targetTouches.length == 1) {
-        var element = event.target;
-        var parentElement = element.parentElement;
-
-        fetch('/api/v1/todo/' + parentElement.id, {
+        var index = todos.map(function (item) {
+            return item.id
+        }).indexOf(todo.id);
+        todos[index] = todo;
+        var formData = new FormData();
+        formData.append('todo', todo.todo);
+        formData.append('id', todo.id);
+        formData.append('dateUpdate', todo.dateUpdate);
+        formData.append('dateCreate', todo.dateCreate);
+        var self = this;
+        fetch('/api/v1/todo/' + index, {
+            method: 'PUT',
+            body: formData
+        }).then(function () {
+            self.setState({data: todos});
+            self.setState({editing: false});
+        });
+    },
+    onTodoDestroy: function (todo_id) {
+        var self = this;
+        var todos = this.state.data;
+        var index = todos.map(function (item) {
+            return item.id
+        }).indexOf(parseInt(todo_id));
+        fetch('/api/v1/todo/' + index, {
             method: 'DELETE'
-        }).then(window.update);
-    }
-}
-
-function onSubmitTodoForm(event) {
-    event.preventDefault();
-    fetch('/api/v1/todo/', {
-        method: 'POST',
-        body: new FormData(event.target)
-    }).then(window.update);
-    return false;
-}
-
-const TodoForm = (todos) => (
-    <form onSubmit={onSubmitTodoForm} className="todo-form">
-        <input type="text" name="todo" className="todo-form__input"/>
-        <input type="submit" className="todo-form__button" value="Добавить todo"/>
-    </form>
-);
-
-function updateTouchStart(event) {
-    //event.preventDefault();
-    initialUpdatePoint = event.changedTouches[0];
-}
-
-function updateTouchEnd(event) {
-
-    //event.stopPropagation();
-    finalUpdatePoint = event.changedTouches[0];
-    var xAbs = Math.abs(initialUpdatePoint.pageX - finalUpdatePoint.pageX);
-    var yAbs = Math.abs(initialUpdatePoint.pageY - finalUpdatePoint.pageY);
-    var element = event.currentTarget;
-    if (xAbs > 20 || yAbs > 20) {
-        if (xAbs < yAbs) {
-            event.preventDefault();
-            if (finalUpdatePoint.pageY > initialUpdatePoint.pageY) {
-                var preload_img = event.currentTarget.querySelector('.preload');
-                preload_img.style = 'display: block';
-                setTimeout(
-                    function () {
-                        window.update();
-                        preload_img.style = 'display: none';
-                    }
-                    , 2000);
+        }).then(function () {
+            todos.splice(index, 1);
+            self.setState({data: todos});
+        });
+    },
+    updateTouchStart: function (event) {
+        //event.preventDefault();
+        initialUpdatePoint = event.changedTouches[0];
+    },
+    updateTouchEnd: function (event) {
+        var self = this;
+        //event.stopPropagation();
+        finalUpdatePoint = event.changedTouches[0];
+        var xAbs = Math.abs(initialUpdatePoint.pageX - finalUpdatePoint.pageX);
+        var yAbs = Math.abs(initialUpdatePoint.pageY - finalUpdatePoint.pageY);
+        var element = event.currentTarget;
+        if (xAbs > 20 || yAbs > 20) {
+            if (xAbs < yAbs) {
+                event.preventDefault();
+                self.setState({update: true});
+                if (finalUpdatePoint.pageY > initialUpdatePoint.pageY) {
+                    setTimeout(function () {
+                        self.loadTodosFromServer();
+                    }, 2000);
+                }
             }
         }
+    },
+
+//},
+    componentDidMount: function () {
+        this.loadTodosFromServer();
+    },
+    edit: function () {
+        this.setState({editing: true});
+    },
+    trash: function (trashing) {
+        this.setState({trashing: trashing});
+    },
+    render: function () {
+        return (
+            <div
+                onTouchStart={this.updateTouchStart} onTouchEnd={this.updateTouchEnd} className={classNames({
+                    'todo-list--update': this.state.update
+                })}
+            >
+                <img src="/images/loading.gif" className="todo-list--preload"/>
+                <div className="todo-list">
+                    {this.state.data.map(function (todo, i) {
+                        var onTodoDestroy = this.onTodoDestroy;
+
+                        var onTodoUpdate = this.onTodoUpdate;
+                        return (
+                            <Todo
+                                key={todo.id}
+                                id={todo.id}
+                                todo={todo.todo}
+                                dateCreate={todo.dateCreate}
+                                dateUpdate={todo.dateUpdate}
+                                onTodoUpdate={onTodoUpdate}
+                                onTodoDestroy={onTodoDestroy}
+                                editing={this.state.editing}
+                                trashing={this.state.trashing}
+                                onEdit={this.edit.bind(this, todo)}
+                                onTrash={this.trash.bind(this, todo)}
+                            />
+                        );
+                    }, this)}
+                </div>
+                <TodoForm onTodoSubmit={this.createTodo}/>
+            </div>
+        );
     }
-}
+});
 
-export default ({todos}) => (
-    <div onTouchStart={updateTouchStart} onTouchEnd={updateTouchEnd}>
-        <img src="/images/loading.gif" className="preload"/>
-        <div className="todo-list">
-            {todos.map(todo => (
 
-                <TodoItem
-                    text={todo.todo}
-                    todo_id={todo.id}
-                />
-            ))}
+var TodoForm = React.createClass({
+    handleSubmit: function (e) {
+        e.preventDefault();
+        var taskInput = ReactDom.findDOMNode(this.refs.todo);
+        var taskValue = taskInput.value.trim();
+        if (taskValue !== '') {
+            this.props.onTodoSubmit(taskValue);
+            taskInput.value = '';
+        }
 
-        </div>
-        <TodoForm />
-    </div>
-)
+    },
+    render: function () {
+        return (
+            <form onSubmit={this.handleSubmit} className="todo-input">
+                <input type="text" className="todo-form__input" ref="todo"/>
+                <input type="submit" className="todo-form__button" value="Добавить todo"/>
+            </form>
+        );
+    }
+});
