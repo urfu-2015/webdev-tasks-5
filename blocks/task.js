@@ -9,7 +9,7 @@ export default ({task, commonStaff, handler}) => {
         if (event.targetTouches.length > 1) {
             return;
         }
-        event.preventDefault();
+        //event.preventDefault();
         commonStaff.start.x = event.changedTouches[0].pageX;
         commonStaff.start.y = event.changedTouches[0].pageY;
         if (commonStaff.reoder) {
@@ -65,11 +65,12 @@ export default ({task, commonStaff, handler}) => {
         }
         var parent = task.parentNode;
         parent.className = 'task_big';
-        parent.style.top = commonStaff.start.y - 30 + 'px';
+        parent.style.top = commonStaff.start.y - 100 + 'px';
         parent.style.zIndex = 100;
         parent.addEventListener('touchmove', changePosition, false);
         parent.addEventListener('touchend', savePosition, false);
         taskWithMargin = parent.nextElementSibling;
+        taskWithMargin.style.margin = "120px 0 0";
         commonStaff.reoder = true;
     }
 
