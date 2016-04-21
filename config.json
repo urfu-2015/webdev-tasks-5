@@ -1,0 +1,9 @@
+{
+    "db": {
+        "host": "ds011800.mlab.com",
+        "port": "11800",
+        "login": "polinakoval",
+        "password": "web12345",
+        "name": "polinakoval"
+    }
+}
