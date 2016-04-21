@@ -18,7 +18,7 @@ body {
     vertical-align: middle;
     line-height: 128px;
     text-align: center;
-   // transition: margin 0.5s;
+    transition: margin 0.5s;
     height: 128px;
     font-size : 50px;
     margin: 10px 0;
@@ -31,9 +31,10 @@ body {
     border-radius: 20px;
 }
 
-.task[data-num='-1'] {
+.addButton {
     background-color: inherit;
     border: none;
+    transition: margin 0;
 }
 
 .task_big {

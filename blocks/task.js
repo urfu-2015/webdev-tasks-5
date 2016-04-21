@@ -1,6 +1,7 @@
 import React from 'react';
 import SaveForm from './saveForm';
 import ReactDom from 'react-dom';
+
 var check = require('../lib/checkTouch');
 export default ({task, commonStaff, handler}) => {
     var timeout;
@@ -70,7 +71,7 @@ export default ({task, commonStaff, handler}) => {
         parent.addEventListener('touchmove', changePosition, false);
         parent.addEventListener('touchend', savePosition, false);
         taskWithMargin = parent.nextElementSibling;
-        taskWithMargin.style.margin = "120px 0 0";
+        taskWithMargin.style.margin = "154px 0 0";
         commonStaff.reoder = true;
     }
 
@@ -88,7 +89,7 @@ export default ({task, commonStaff, handler}) => {
         var newNum = getNumFromPosition(event.changedTouches[0].pageY);
         taskWithMargin.style.margin = "10px 0";
         taskWithMargin = document.getElementsByClassName('task')[newNum];
-        taskWithMargin.style.margin = "120px 0 0";
+        taskWithMargin.style.margin = "154px 0 0";
     }
 
     function getNumFromPosition(posY) {

@@ -6,7 +6,7 @@ export default ({commonStaff}) => {
         commonStaff.render();
     }
     return (
-        <div className="task" data-num="-1">
+        <div className="task addButton" data-num="-1">
             <button className="task__add" onClick={addButtonClick}>Add task</button>
         </div>
     );
