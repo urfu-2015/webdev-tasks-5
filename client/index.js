@@ -119,7 +119,6 @@ document.addEventListener('touchmove', (event) => {
 
 document.addEventListener('touchend', (event) => {
     clearTimeout(longTouch);
-    //resetTransform(startPoint.target.closest('.container__item'));
     let target = event.changedTouches[0].target;
     countMove = 0;
 
@@ -136,7 +135,9 @@ document.addEventListener('touchend', (event) => {
             swipeLeft(target.closest('.container__item'));
             createDel(target.closest('.container__item'), store);
         } else {
-            //resetTransform(finalPoint.target.closest('.container__item'));
+            if (!target.closest('.delete')) {
+                resetTransform(finalPoint.target.closest('.container__item'));
+            }
             if (finalPoint.pageY - startPoint.pageY >= 50) {
                 swipeDown(store, finalPoint);
                 startRotate();

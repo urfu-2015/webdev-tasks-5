@@ -20,7 +20,7 @@ exports.noteApp = (state, action) => {
 
         case 'DELETE_NOTE':
             newNotes = state.notes.slice();
-            newNotes.splice(state.notes.indexOf(this), 1);
+            newNotes.splice(state.notes.indexOf(action.note), 1);
 
             return {
                 notes: newNotes

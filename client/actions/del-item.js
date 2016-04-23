@@ -1,6 +1,7 @@
 'use strict';
 
 import {deleteItem} from '../client-request';
+import {resetTransform} from './transforms';
 
 var target = null;
 var store;
@@ -10,13 +11,14 @@ export const resetDel = () => {
     del.style.display = 'none';
     del.style.top = 0;
     del.style.left = 0;
-    target = null;
 };
 
 export const handlerDelete = (event) => {
     event.stopPropagation();
     deleteItem(target, store, () => {
         resetDel();
+        resetTransform(target);
+        target = null;
     });
 };
 
@@ -29,7 +31,6 @@ export const createDel = (targetItem, currStore) => {
 };
 
 export const moveDel = () => {
-
     var delOffsetLeft = target.offsetWidth * 0.8 + target.offsetLeft;
     if (!target) return;
     var del = document.querySelector('.delete');
