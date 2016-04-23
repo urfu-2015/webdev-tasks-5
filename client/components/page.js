@@ -36,7 +36,7 @@ class Page extends Component {
         
         // Если свайп сверху вниз, обновляем страничку
         
-        if (nowPoint.pageY > this.startPoint.y + 73) {
+        if (nowPoint.pageY > this.startPoint.y + 73 && !this.props.isDelete) {
             this.props.store.dispatch(ShowReloadTodos());
         } else if (nowPoint.pageY > this.startPoint.y) {
             this.props.store.dispatch(HideReload());
@@ -47,7 +47,7 @@ class Page extends Component {
         event.stopPropagation();
         this.movePoint = event.changedTouches[0];
         var shiftY = this.startPoint.y - this.movePoint.pageY;
-        if (shiftY < - 10) {
+        if (shiftY < - 10 && !this.props.isDelete) {
             this.props.store.dispatch(MoveReload(shiftY));
         }
     }
@@ -63,7 +63,7 @@ class Page extends Component {
         return (
             <div>
                 <Reloader isReloader={reloadTodos} store={this.props.store} shiftY={shiftY} beforeReload={beforeReload} />
-                    <TodoList todos={todos} selectedTodo={selectedTodo} swipedTodo={swipedTodo} store={this.props.store} shiftX={shiftX}/>
+                    <TodoList isReloader={reloadTodos} todos={todos} selectedTodo={selectedTodo} swipedTodo={swipedTodo} store={this.props.store} shiftY = {shiftY} shiftX={shiftX}/>
                 <AddButton store={this.props.store} />
             </div>
         )

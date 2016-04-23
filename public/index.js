@@ -20486,7 +20486,7 @@
 	
 	            // Если свайп сверху вниз, обновляем страничку
 	
-	            if (nowPoint.pageY > this.startPoint.y + 73) {
+	            if (nowPoint.pageY > this.startPoint.y + 73 && !this.props.isDelete) {
 	                this.props.store.dispatch((0, _actions.ShowReloadTodos)());
 	            } else if (nowPoint.pageY > this.startPoint.y) {
 	                this.props.store.dispatch((0, _actions.HideReload)());
@@ -20498,7 +20498,7 @@
 	            event.stopPropagation();
 	            this.movePoint = event.changedTouches[0];
 	            var shiftY = this.startPoint.y - this.movePoint.pageY;
-	            if (shiftY < -10) {
+	            if (shiftY < -10 && !this.props.isDelete) {
 	                this.props.store.dispatch((0, _actions.MoveReload)(shiftY));
 	            }
 	        }
@@ -20526,7 +20526,7 @@
 	                'div',
 	                null,
 	                _react2.default.createElement(_reloader2.default, { isReloader: reloadTodos, store: this.props.store, shiftY: shiftY, beforeReload: beforeReload }),
-	                _react2.default.createElement(_todoList2.default, { todos: todos, selectedTodo: selectedTodo, swipedTodo: swipedTodo, store: this.props.store, shiftX: shiftX }),
+	                _react2.default.createElement(_todoList2.default, { isReloader: reloadTodos, todos: todos, selectedTodo: selectedTodo, swipedTodo: swipedTodo, store: this.props.store, shiftY: shiftY, shiftX: shiftX }),
 	                _react2.default.createElement(_addButton2.default, { store: this.props.store })
 	            );
 	        }
@@ -20897,9 +20897,11 @@
 	
 	exports.default = function (_ref) {
 	    var todos = _ref.todos;
+	    var isReloader = _ref.isReloader;
 	    var selectedTodo = _ref.selectedTodo;
 	    var swipedTodo = _ref.swipedTodo;
 	    var store = _ref.store;
+	    var shiftY = _ref.shiftY;
 	    var shiftX = _ref.shiftX;
 	    return _react2.default.createElement(
 	        'div',
@@ -20910,9 +20912,11 @@
 	                id: i,
 	                key: i,
 	                value: todo,
+	                isReloader: isReloader,
 	                isChange: i == selectedTodo,
 	                isDelete: i == swipedTodo,
 	                shiftX: shiftX,
+	                shiftY: shiftY,
 	                store: store
 	            });
 	        })
@@ -21001,7 +21005,9 @@
 	            var shiftX = this.startPoint.x - this.movePoint.pageX;
 	            event.target.style.left = event.targetTouches[0].pageX + "px";
 	            event.target.style.top = event.targetTouches[0].pageY + "px";
-	            this.props.store.dispatch((0, _actions.MoveDeleteTodo)(listNumber, shiftX));
+	            if (Math.abs(this.props.shiftY) < Math.abs(this.props.shiftX)) {
+	                this.props.store.dispatch((0, _actions.MoveDeleteTodo)(listNumber, shiftX));
+	            }
 	        }
 	    }, {
 	        key: 'onTouchEnd',
@@ -21018,9 +21024,9 @@
 	
 	            // Если был ШортТач
 	
-	            if (shift.x == 0 && shift.y == 0) {
+	            if (shift.x == 0 && shift.y == 0 && this.props.isDelete) {
+	                console.log("no here");
 	                // одиночный тач (по картинке корзины) - удаление
-	                console.log("here");
 	                var clickedElem = event.target;
 	                var idClickedElem = clickedElem.getAttribute('id');
 	                var idType = idClickedElem.substr(0, 3);
@@ -21032,12 +21038,12 @@
 	            } else {
 	
 	                var endTime = new Date();
-	
+	                console.log("h1");
 	                if (event.changedTouches[0].pageX == this.startPoint.x && event.changedTouches[0].pageY == this.startPoint.y && endTime.getTime() - this.startTime.getTime() > 20) {
 	                    // тач на месте - предлагаем изменить блок
 	                    if (event.target.tagName !== 'INPUT') {
 	                        // если тыкаем по диву, а не по форме
-	
+	                        console.log("no");
 	                        this.props.store.dispatch((0, _actions.SelectTodo)(listNumber));
 	                        event.preventDefault();
 	                    }
@@ -21084,7 +21090,6 @@
 	            var store = _props.store;
 	
 	            if (isDelete) {
-	                console.log(10 + Math.abs(shiftX) + 'px');
 	                this.leftImageStyle = {
 	                    paddingLeft: Math.abs(shiftX) + 'px'
 	                };

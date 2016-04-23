@@ -47,7 +47,9 @@ class todoElement extends Component {
         var shiftX = this.startPoint.x - this.movePoint.pageX;
         event.target.style.left = event.targetTouches[0].pageX + "px";
         event.target.style.top = event.targetTouches[0].pageY + "px";
-        this.props.store.dispatch(MoveDeleteTodo(listNumber, shiftX));
+        if (Math.abs(this.props.shiftY) < Math.abs(this.props.shiftX)) {
+            this.props.store.dispatch(MoveDeleteTodo(listNumber, shiftX));
+        }
     }
 
     onTouchEnd(event) {
@@ -63,9 +65,9 @@ class todoElement extends Component {
 
         // Если был ШортТач
 
-        if (shift.x == 0 && shift.y == 0) {
+        if (shift.x == 0 && shift.y == 0 && this.props.isDelete) {
+            console.log("no here");
             // одиночный тач (по картинке корзины) - удаление
-            console.log("here");
             var clickedElem = event.target;
             var idClickedElem = clickedElem.getAttribute('id');
             var idType = idClickedElem.substr(0, 3);
@@ -74,14 +76,14 @@ class todoElement extends Component {
                 this.props.store.dispatch(DeleteTodo(numberId));
             }
         } else {
-
+            
             var endTime = new Date();
-
+            console.log("h1");
             if (event.changedTouches[0].pageX == this.startPoint.x &&
                 event.changedTouches[0].pageY == this.startPoint.y &&
                 (endTime.getTime() - this.startTime.getTime()) > 20) { // тач на месте - предлагаем изменить блок
                 if (event.target.tagName !== 'INPUT') { // если тыкаем по диву, а не по форме
-
+                    console.log("no");
                     this.props.store.dispatch(SelectTodo(listNumber));
                     event.preventDefault();
                 }
