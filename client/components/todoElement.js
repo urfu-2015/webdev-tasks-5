@@ -37,17 +37,6 @@ class todoElement extends Component {
         this.startPoint.y = event.changedTouches[0].pageY;
 
         this.startTime = new Date();
-        
-        if (event.targetTouches.length == 1) {
-            // одиночный тач (по картинке корзины) - удаление
-            var clickedElem = event.target;
-            var idClickedElem = clickedElem.getAttribute('id');
-            var idType = idClickedElem.substr(0, 3);
-            if (idType == 'img' || idType == 'del') { // если тач по картинке или по блоку с картинкой
-                var numberId = idClickedElem.slice(-1 * idClickedElem.length + 3); // берем все после первых 3 цифр
-                this.props.store.dispatch(DeleteTodo(numberId));
-            }
-        }
     }
     
     onTouchMove(event) {
@@ -58,9 +47,7 @@ class todoElement extends Component {
         var shiftX = this.startPoint.x - this.movePoint.pageX;
         event.target.style.left = event.targetTouches[0].pageX + "px";
         event.target.style.top = event.targetTouches[0].pageY + "px";
-        if (shiftX < 50 && Math.abs(shiftX) > 15) {
-            this.props.store.dispatch(MoveDeleteTodo(listNumber, shiftX));
-        }
+        this.props.store.dispatch(MoveDeleteTodo(listNumber, shiftX));
     }
 
     onTouchEnd(event) {
@@ -76,22 +63,40 @@ class todoElement extends Component {
 
         // Если был ШортТач
 
-        var endTime=new Date();
-        if(event.changedTouches[0].pageX == this.startPoint.x &&
-            event.changedTouches[0].pageY == this.startPoint.y &&
-            (endTime.getTime()-this.startTime.getTime()) > 20) { // тач на месте - предлагаем изменить блок
-            if (event.target.tagName !== 'INPUT') { // если тыкаем по диву, а не по форме
+        if (shift.x == 0 && shift.y == 0) {
+            // одиночный тач (по картинке корзины) - удаление
+            console.log("here");
+            var clickedElem = event.target;
+            var idClickedElem = clickedElem.getAttribute('id');
+            var idType = idClickedElem.substr(0, 3);
+            if (idType == 'img' || idType == 'del') { // если тач по картинке или по блоку с картинкой
+                var numberId = idClickedElem.slice(-1 * idClickedElem.length + 3); // берем все после первых 3 цифр
+                this.props.store.dispatch(DeleteTodo(numberId));
+            }
+        } else {
 
-                this.props.store.dispatch(SelectTodo(listNumber));
-                event.preventDefault();
+            var endTime = new Date();
+
+            if (event.changedTouches[0].pageX == this.startPoint.x &&
+                event.changedTouches[0].pageY == this.startPoint.y &&
+                (endTime.getTime() - this.startTime.getTime()) > 20) { // тач на месте - предлагаем изменить блок
+                if (event.target.tagName !== 'INPUT') { // если тыкаем по диву, а не по форме
+
+                    this.props.store.dispatch(SelectTodo(listNumber));
+                    event.preventDefault();
+                }
             }
         }
+
         // Если свайп влево, показываем картинку удаления
+
         if(Math.abs(shift.x) > 40) {
             if(shift.x < 0 && Math.abs(shift.y) < 50){
                 this.props.store.dispatch(ShowDeleteTodo(listNumber));
             }
+
             // Если свайп вправо, закрываем картинку
+
             if(shift.x > 0 && Math.abs(shift.y) < 50)
             {
                 this.props.store.dispatch(HideDeleteTodo());
@@ -113,9 +118,12 @@ class todoElement extends Component {
 
     render () {
         const {id, value, isChange, isDelete, shiftX, store} = this.props;
-        if (shiftX != 0 && isDelete) {
+        if (isDelete) {
+            this.leftImageStyle = {
+                paddingLeft: Math.abs(shiftX) + 'px'
+            };
             this.deleteInlineStyle = {
-                marginLeft: Math.min(Math.max(15 - shiftX, 0), 30) + "px",
+                marginLeft: Math.min(Math.max(15 - shiftX, 0), 0) + "px",
                 marginRight: 0 + "px"
             };
             if (shiftX > 0) {
@@ -123,9 +131,10 @@ class todoElement extends Component {
                     minWidth: 50 + 2 * shiftX + 'px'
                 };
             } else {
+                
                 if (this.getById('del' + id)) {
                     this.trashInlineStyle = {
-                        minWidth: this.getById('del' + id).clientWidth + shiftX + 'px'
+                        minWidth: this.getById('del' + id).clientWidth + (1/10 * shiftX) + 'px'
                     };
                 }
             }
@@ -147,8 +156,8 @@ class todoElement extends Component {
                     }
                 </div>
                 {isDelete ?
-                    <div className="delete" id={"del"+id} onTouchStart={this.onTouchStart} style={this.trashInlineStyle}>
-                        <img id={"img"+id} src="trash.png" className="image-delete" />
+                    <div className="delete" id={"del"+id} onTouchEnd={this.onTouchEnd} style={this.trashInlineStyle}>
+                        <img id={"img"+id} src="trash.png" className="image-delete" style={this.leftImageStyle}/>
                     </div>:
                     null
                 }

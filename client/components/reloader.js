@@ -68,13 +68,14 @@ class Reloader extends Component {
                 };
             }
         }
+        // "http://near-flavor.surge.sh/" + 
         return (
                 <div className="reloader">
                     {isReloader ?
                         <div className='container-reload' style={this.reloadStyle}>
                             <div className="container-flex">
                                 <div className="reload-image">
-                                    <img src={"http://near-flavor.surge.sh/" + Path} className="image-reload" />
+                                    <img src={Path} className="image-reload" />
                                 </div>
                             </div>
                         </div>:

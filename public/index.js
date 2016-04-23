@@ -20675,6 +20675,7 @@
 	                    };
 	                }
 	            }
+	            // "http://near-flavor.surge.sh/" +
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'reloader' },
@@ -20687,7 +20688,7 @@
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'reload-image' },
-	                            _react2.default.createElement('img', { src: "http://near-flavor.surge.sh/" + Path, className: 'image-reload' })
+	                            _react2.default.createElement('img', { src: Path, className: 'image-reload' })
 	                        )
 	                    )
 	                ) : null
@@ -20989,18 +20990,6 @@
 	            this.startPoint.y = event.changedTouches[0].pageY;
 	
 	            this.startTime = new Date();
-	
-	            if (event.targetTouches.length == 1) {
-	                // одиночный тач (по картинке корзины) - удаление
-	                var clickedElem = event.target;
-	                var idClickedElem = clickedElem.getAttribute('id');
-	                var idType = idClickedElem.substr(0, 3);
-	                if (idType == 'img' || idType == 'del') {
-	                    // если тач по картинке или по блоку с картинкой
-	                    var numberId = idClickedElem.slice(-1 * idClickedElem.length + 3); // берем все после первых 3 цифр
-	                    this.props.store.dispatch((0, _actions.DeleteTodo)(numberId));
-	                }
-	            }
 	        }
 	    }, {
 	        key: 'onTouchMove',
@@ -21012,9 +21001,7 @@
 	            var shiftX = this.startPoint.x - this.movePoint.pageX;
 	            event.target.style.left = event.targetTouches[0].pageX + "px";
 	            event.target.style.top = event.targetTouches[0].pageY + "px";
-	            if (shiftX < 50 && Math.abs(shiftX) > 15) {
-	                this.props.store.dispatch((0, _actions.MoveDeleteTodo)(listNumber, shiftX));
-	            }
+	            this.props.store.dispatch((0, _actions.MoveDeleteTodo)(listNumber, shiftX));
 	        }
 	    }, {
 	        key: 'onTouchEnd',
@@ -21031,22 +21018,41 @@
 	
 	            // Если был ШортТач
 	
-	            var endTime = new Date();
-	            if (event.changedTouches[0].pageX == this.startPoint.x && event.changedTouches[0].pageY == this.startPoint.y && endTime.getTime() - this.startTime.getTime() > 20) {
-	                // тач на месте - предлагаем изменить блок
-	                if (event.target.tagName !== 'INPUT') {
-	                    // если тыкаем по диву, а не по форме
+	            if (shift.x == 0 && shift.y == 0) {
+	                // одиночный тач (по картинке корзины) - удаление
+	                console.log("here");
+	                var clickedElem = event.target;
+	                var idClickedElem = clickedElem.getAttribute('id');
+	                var idType = idClickedElem.substr(0, 3);
+	                if (idType == 'img' || idType == 'del') {
+	                    // если тач по картинке или по блоку с картинкой
+	                    var numberId = idClickedElem.slice(-1 * idClickedElem.length + 3); // берем все после первых 3 цифр
+	                    this.props.store.dispatch((0, _actions.DeleteTodo)(numberId));
+	                }
+	            } else {
 	
-	                    this.props.store.dispatch((0, _actions.SelectTodo)(listNumber));
-	                    event.preventDefault();
+	                var endTime = new Date();
+	
+	                if (event.changedTouches[0].pageX == this.startPoint.x && event.changedTouches[0].pageY == this.startPoint.y && endTime.getTime() - this.startTime.getTime() > 20) {
+	                    // тач на месте - предлагаем изменить блок
+	                    if (event.target.tagName !== 'INPUT') {
+	                        // если тыкаем по диву, а не по форме
+	
+	                        this.props.store.dispatch((0, _actions.SelectTodo)(listNumber));
+	                        event.preventDefault();
+	                    }
 	                }
 	            }
+	
 	            // Если свайп влево, показываем картинку удаления
+	
 	            if (Math.abs(shift.x) > 40) {
 	                if (shift.x < 0 && Math.abs(shift.y) < 50) {
 	                    this.props.store.dispatch((0, _actions.ShowDeleteTodo)(listNumber));
 	                }
+	
 	                // Если свайп вправо, закрываем картинку
+	
 	                if (shift.x > 0 && Math.abs(shift.y) < 50) {
 	                    this.props.store.dispatch((0, _actions.HideDeleteTodo)());
 	                }
@@ -21077,9 +21083,13 @@
 	            var shiftX = _props.shiftX;
 	            var store = _props.store;
 	
-	            if (shiftX != 0 && isDelete) {
+	            if (isDelete) {
+	                console.log(10 + Math.abs(shiftX) + 'px');
+	                this.leftImageStyle = {
+	                    paddingLeft: Math.abs(shiftX) + 'px'
+	                };
 	                this.deleteInlineStyle = {
-	                    marginLeft: Math.min(Math.max(15 - shiftX, 0), 30) + "px",
+	                    marginLeft: Math.min(Math.max(15 - shiftX, 0), 0) + "px",
 	                    marginRight: 0 + "px"
 	                };
 	                if (shiftX > 0) {
@@ -21087,9 +21097,10 @@
 	                        minWidth: 50 + 2 * shiftX + 'px'
 	                    };
 	                } else {
+	
 	                    if (this.getById('del' + id)) {
 	                        this.trashInlineStyle = {
-	                            minWidth: this.getById('del' + id).clientWidth + shiftX + 'px'
+	                            minWidth: this.getById('del' + id).clientWidth + 1 / 10 * shiftX + 'px'
 	                        };
 	                    }
 	                }
@@ -21114,8 +21125,8 @@
 	                ),
 	                isDelete ? _react2.default.createElement(
 	                    'div',
-	                    { className: 'delete', id: "del" + id, onTouchStart: this.onTouchStart, style: this.trashInlineStyle },
-	                    _react2.default.createElement('img', { id: "img" + id, src: 'trash.png', className: 'image-delete' })
+	                    { className: 'delete', id: "del" + id, onTouchEnd: this.onTouchEnd, style: this.trashInlineStyle },
+	                    _react2.default.createElement('img', { id: "img" + id, src: 'trash.png', className: 'image-delete', style: this.leftImageStyle })
 	                ) : null
 	            );
 	        }
@@ -21208,6 +21219,7 @@
 	                beforeReload: null,
 	                swipedTodo: action.todo,
 	                reloadTodos: state.reloadTodos,
+	                shiftX: 50,
 	                shiftY: state.shiftY
 	            };
 	        case 'HIDE_DELETE_TODO':
@@ -21255,10 +21267,10 @@
 	                todos: state.todos,
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: action.todo,
-	                reloadTodos: state.reloadTodos,
+	                reloadTodos: null,
 	                beforeReload: null,
 	                shiftX: action.shiftX,
-	                shiftY: state.shiftY
+	                shiftY: 0
 	            };
 	        case 'MOVE_RELOAD':
 	            return {

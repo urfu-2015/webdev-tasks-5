@@ -73,6 +73,7 @@ exports.TodoApp = (state, action) => {
                 beforeReload: null,
                 swipedTodo: action.todo,
                 reloadTodos: state.reloadTodos,
+                shiftX: 50,
                 shiftY: state.shiftY
             };
         case 'HIDE_DELETE_TODO':
@@ -120,10 +121,10 @@ exports.TodoApp = (state, action) => {
                 todos: state.todos,
                 selectedTodo: state.selectedTodo,
                 swipedTodo: action.todo,
-                reloadTodos: state.reloadTodos,
+                reloadTodos: null,
                 beforeReload: null,
                 shiftX: action.shiftX,
-                shiftY: state.shiftY
+                shiftY: 0
             };
         case 'MOVE_RELOAD' :
             return {
