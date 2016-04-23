@@ -79,7 +79,6 @@ export const save = (textSaveItem, store) => {
 export const deleteItem = (target, store, successHandler) => {
     var name = target.childNodes[0].innerText;
     var body = `name=${encodeURIComponent(name)}`;
-    console.log(name);
 
     xhrRequest('DELETE', 'delete-note', (response) => {
         var action = deleteNote(response.name);
