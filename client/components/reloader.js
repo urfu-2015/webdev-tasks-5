@@ -74,7 +74,7 @@ class Reloader extends Component {
                         <div className='container-reload' style={this.reloadStyle}>
                             <div className="container-flex">
                                 <div className="reload-image">
-                                    <img src={Path} className="image-reload" />
+                                    <img src={"http://near-flavor.surge.sh/" + Path} className="image-reload" />
                                 </div>
                             </div>
                         </div>:

@@ -20687,7 +20687,7 @@
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'reload-image' },
-	                            _react2.default.createElement('img', { src: Path, className: 'image-reload' })
+	                            _react2.default.createElement('img', { src: "http://near-flavor.surge.sh/" + Path, className: 'image-reload' })
 	                        )
 	                    )
 	                ) : null
