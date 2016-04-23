@@ -20483,9 +20483,13 @@
 	            var nowPoint = event.changedTouches[0];
 	            shift.x = nowPoint.pageX - this.startPoint.x;
 	            shift.y = nowPoint.pageY - this.startPoint.y;
+	
 	            // Если свайп сверху вниз, обновляем страничку
-	            if (nowPoint.pageY > this.startPoint.y + 50) {
+	
+	            if (nowPoint.pageY > this.startPoint.y + 73) {
 	                this.props.store.dispatch((0, _actions.ShowReloadTodos)());
+	            } else if (nowPoint.pageY > this.startPoint.y) {
+	                this.props.store.dispatch((0, _actions.HideReload)());
 	            }
 	        }
 	    }, {
@@ -20494,7 +20498,7 @@
 	            event.stopPropagation();
 	            this.movePoint = event.changedTouches[0];
 	            var shiftY = this.startPoint.y - this.movePoint.pageY;
-	            if (shiftY < -20) {
+	            if (shiftY < -10) {
 	                this.props.store.dispatch((0, _actions.MoveReload)(shiftY));
 	            }
 	        }
@@ -20516,11 +20520,12 @@
 	            var reloadTodos = _props$store$getState.reloadTodos;
 	            var shiftX = _props$store$getState.shiftX;
 	            var shiftY = _props$store$getState.shiftY;
+	            var beforeReload = _props$store$getState.beforeReload;
 	
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(_reloader2.default, { isReloader: reloadTodos, store: this.props.store, shiftY: shiftY }),
+	                _react2.default.createElement(_reloader2.default, { isReloader: reloadTodos, store: this.props.store, shiftY: shiftY, beforeReload: beforeReload }),
 	                _react2.default.createElement(_todoList2.default, { todos: todos, selectedTodo: selectedTodo, swipedTodo: swipedTodo, store: this.props.store, shiftX: shiftX }),
 	                _react2.default.createElement(_addButton2.default, { store: this.props.store })
 	            );
@@ -20605,42 +20610,84 @@
 	    _createClass(Reloader, [{
 	        key: 'makeUpdate',
 	        value: function makeUpdate() {
-	            if (this.props.isReloader && this.props.shiftY == 0) {
-	                console.log('reload');
-	                this.props.store.dispatch((0, _actions.ReloadTodos)());
+	            var _this2 = this;
+	
+	            if (this.props.beforeReload) {
+	                setTimeout(function () {
+	                    _this2.props.store.dispatch((0, _actions.ReloadTodos)());
+	                }, 1000);
+	            } else if (this.props.isReloader && this.props.shiftY == 0) {
+	                this.props.store.dispatch((0, _actions.BeforeReload)());
 	            }
 	        }
 	    }, {
 	        key: 'componentDidUpdate',
 	        value: function componentDidUpdate() {
-	            this.timeoutId = window.setTimeout(function () {
-	                this.makeUpdate();
-	            }.bind(this), 1000);
+	            //this.timeoutId = window.setTimeout(function () {
+	            this.makeUpdate();
+	            //}.bind(this), 100);
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var isReloader = this.props.isReloader;
+	            var _props = this.props;
+	            var isReloader = _props.isReloader;
+	            var beforeReload = _props.beforeReload;
 	
+	            var Path;
 	            if (isReloader) {
-	                console.log(Math.abs(parseInt(this.props.shiftY) / 5));
+	                if (this.props.shiftY < 0 && this.props.shiftY > -40) {
+	                    Path = '1.13.gif';
+	                } else if (this.props.shiftY <= -40 && this.props.shiftY > -43) {
+	                    Path = '2.13.gif';
+	                } else if (this.props.shiftY <= -43 && this.props.shiftY > -46) {
+	                    Path = '3.13.gif';
+	                } else if (this.props.shiftY <= -46 && this.props.shiftY > -49) {
+	                    Path = '4.13.gif';
+	                } else if (this.props.shiftY <= -49 && this.props.shiftY > -52) {
+	                    Path = '5.13.gif';
+	                } else if (this.props.shiftY <= -52 && this.props.shiftY > -55) {
+	                    Path = '6.13.gif';
+	                } else if (this.props.shiftY <= -55 && this.props.shiftY > -58) {
+	                    Path = '7.13.gif';
+	                } else if (this.props.shiftY <= -58 && this.props.shiftY > -61) {
+	                    Path = '8.13.gif';
+	                } else if (this.props.shiftY <= -61 && this.props.shiftY > -64) {
+	                    Path = '9.13.gif';
+	                } else if (this.props.shiftY <= -64 && this.props.shiftY > -67) {
+	                    Path = '10.13.gif';
+	                } else if (this.props.shiftY <= -67 && this.props.shiftY > -70) {
+	                    Path = '11.13.gif';
+	                } else if (this.props.shiftY <= -70 && this.props.shiftY > -73) {
+	                    Path = '12.13.gif';
+	                } else if (this.props.shiftY <= -73) {
+	                    Path = 'loading.gif';
+	                }
 	                this.reloadStyle = {
+	                    maxHeight: Math.abs(Math.round(this.props.shiftY)) + "px",
 	                    marginTop: Math.abs(Math.round(this.props.shiftY) / 5) + "px"
 	                };
+	                if (beforeReload) {
+	                    Path = 'loading.gif';
+	                    this.reloadStyle = {
+	                        maxHeight: 75 + "px",
+	                        marginTop: 15 + "px"
+	                    };
+	                }
 	            }
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'reloader' },
 	                isReloader ? _react2.default.createElement(
 	                    'div',
-	                    { className: 'container-reload' },
+	                    { className: 'container-reload', style: this.reloadStyle },
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'container-flex', style: this.reloadStyle },
+	                        { className: 'container-flex' },
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'reload-image' },
-	                            _react2.default.createElement('img', { src: 'reload.png', className: 'image-reload' })
+	                            _react2.default.createElement('img', { src: Path, className: 'image-reload' })
 	                        )
 	                    )
 	                ) : null
@@ -20733,6 +20780,16 @@
 	    return {
 	        type: 'MOVE_RELOAD',
 	        shiftY: shiftY
+	    };
+	};
+	var BeforeReload = exports.BeforeReload = function BeforeReload() {
+	    return {
+	        type: 'BEFORE_RELOAD'
+	    };
+	};
+	var HideReload = exports.HideReload = function HideReload() {
+	    return {
+	        type: 'HIDE_RELOAD'
 	    };
 	};
 
@@ -21080,6 +21137,7 @@
 	    selectedTodo: null,
 	    swipedTodo: null,
 	    reloadTodos: null,
+	    beforeReload: null,
 	    shiftX: 0,
 	    shiftY: 0
 	};
@@ -21105,6 +21163,7 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: state.swipedTodo,
 	                reloadTodos: null,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21116,6 +21175,7 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: null,
 	                reloadTodos: null,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21125,6 +21185,7 @@
 	                selectedTodo: action.selectedTodo,
 	                swipedTodo: null,
 	                reloadTodos: null,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21136,6 +21197,7 @@
 	                selectedTodo: null,
 	                swipedTodo: null,
 	                reloadTodos: null,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21143,6 +21205,7 @@
 	            return {
 	                todos: state.todos,
 	                selectedTodo: null,
+	                beforeReload: null,
 	                swipedTodo: action.todo,
 	                reloadTodos: state.reloadTodos,
 	                shiftY: state.shiftY
@@ -21153,6 +21216,7 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: null,
 	                reloadTodos: null,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21161,6 +21225,7 @@
 	                todos: state.todos,
 	                selectedTodo: null,
 	                swipedTodo: null,
+	                beforeReload: true,
 	                reloadTodos: true,
 	                shiftX: state.shiftX,
 	                shiftY: 0
@@ -21171,6 +21236,7 @@
 	                selectedTodo: null,
 	                swipedTodo: null,
 	                reloadTodos: null,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21180,6 +21246,7 @@
 	                selectedTodo: null,
 	                swipedTodo: null,
 	                reloadTodos: null,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21189,6 +21256,7 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: action.todo,
 	                reloadTodos: state.reloadTodos,
+	                beforeReload: null,
 	                shiftX: action.shiftX,
 	                shiftY: state.shiftY
 	            };
@@ -21198,8 +21266,29 @@
 	                selectedTodo: state.selectedTodo,
 	                swipedTodo: state.swipedTodo,
 	                reloadTodos: true,
+	                beforeReload: null,
 	                shiftX: state.shiftX,
 	                shiftY: action.shiftY
+	            };
+	        case 'BEFORE_RELOAD':
+	            return {
+	                todos: state.todos,
+	                selectedTodo: state.selectedTodo,
+	                swipedTodo: state.swipedTodo,
+	                reloadTodos: true,
+	                beforeReload: true,
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
+	            };
+	        case 'HIDE_RELOAD':
+	            return {
+	                todos: state.todos,
+	                selectedTodo: state.selectedTodo,
+	                swipedTodo: state.swipedTodo,
+	                reloadTodos: null,
+	                beforeReload: null,
+	                shiftX: state.shiftX,
+	                shiftY: state.shiftY
 	            };
 	        default:
 	            return state;

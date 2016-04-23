@@ -65,9 +65,19 @@ export const MoveDeleteTodo = (todo, shiftX) => {
         shiftX: shiftX
     }
 };
-    export const MoveReload = (shiftY) => {
-        return {
-            type: 'MOVE_RELOAD',
-            shiftY: shiftY
-        };
+export const MoveReload = (shiftY) => {
+    return {
+        type: 'MOVE_RELOAD',
+        shiftY: shiftY
+    };
+};
+export const BeforeReload = () => {
+    return {
+        type: 'BEFORE_RELOAD'
+    };
+};
+export const HideReload = () => {
+    return {
+        type: 'HIDE_RELOAD'
+    };
 };

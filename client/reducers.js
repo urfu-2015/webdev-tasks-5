@@ -3,6 +3,7 @@ const initialState = {
     selectedTodo: null,
     swipedTodo: null,
     reloadTodos: null,
+    beforeReload: null,
     shiftX: 0,
     shiftY: 0
 };
@@ -27,6 +28,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: state.selectedTodo,
                 swipedTodo: state.swipedTodo,
                 reloadTodos: null,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: state.shiftY
             };
@@ -38,6 +40,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: state.selectedTodo,
                 swipedTodo: null,
                 reloadTodos: null,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: state.shiftY
             };
@@ -47,6 +50,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: action.selectedTodo,
                 swipedTodo: null,
                 reloadTodos: null,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: state.shiftY
             };
@@ -58,6 +62,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: null,
                 swipedTodo: null,
                 reloadTodos: null,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: state.shiftY
             };
@@ -65,6 +70,7 @@ exports.TodoApp = (state, action) => {
             return {
                 todos: state.todos,
                 selectedTodo: null,
+                beforeReload: null,
                 swipedTodo: action.todo,
                 reloadTodos: state.reloadTodos,
                 shiftY: state.shiftY
@@ -75,6 +81,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: state.selectedTodo,
                 swipedTodo: null,
                 reloadTodos: null,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: state.shiftY
             };
@@ -83,6 +90,7 @@ exports.TodoApp = (state, action) => {
                 todos: state.todos,
                 selectedTodo: null,
                 swipedTodo: null,
+                beforeReload: true,
                 reloadTodos: true,
                 shiftX: state.shiftX,
                 shiftY: 0
@@ -93,6 +101,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: null,
                 swipedTodo: null,
                 reloadTodos: null,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: state.shiftY
             };
@@ -102,6 +111,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: null,
                 swipedTodo: null,
                 reloadTodos: null,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: state.shiftY
             };
@@ -111,6 +121,7 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: state.selectedTodo,
                 swipedTodo: action.todo,
                 reloadTodos: state.reloadTodos,
+                beforeReload: null,
                 shiftX: action.shiftX,
                 shiftY: state.shiftY
             };
@@ -120,8 +131,29 @@ exports.TodoApp = (state, action) => {
                 selectedTodo: state.selectedTodo,
                 swipedTodo: state.swipedTodo,
                 reloadTodos: true,
+                beforeReload: null,
                 shiftX: state.shiftX,
                 shiftY: action.shiftY
+            };
+        case 'BEFORE_RELOAD' :
+            return {
+                todos: state.todos,
+                selectedTodo: state.selectedTodo,
+                swipedTodo: state.swipedTodo,
+                reloadTodos: true,
+                beforeReload: true,
+                shiftX: state.shiftX,
+                shiftY: state.shiftY
+            };
+        case 'HIDE_RELOAD' :
+            return {
+                todos: state.todos,
+                selectedTodo: state.selectedTodo,
+                swipedTodo: state.swipedTodo,
+                reloadTodos: null,
+                beforeReload: null,
+                shiftX: state.shiftX,
+                shiftY: state.shiftY
             };
         default:
             return state;

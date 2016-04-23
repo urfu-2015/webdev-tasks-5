@@ -5,7 +5,7 @@ import AddButton from './addButton';
 import TodoList from './todoList';
 import {ReloadTodos} from '../actions';
 import {Component} from 'react';
-import {ShowReloadTodos, MoveReload} from '../actions';
+import {ShowReloadTodos, MoveReload, WaitBeforeReload, BeforeReload, HideReload} from '../actions';
 
 class Page extends Component {
 
@@ -33,9 +33,13 @@ class Page extends Component {
         var nowPoint = event.changedTouches[0];
         shift.x = nowPoint.pageX - this.startPoint.x;
         shift.y = nowPoint.pageY - this.startPoint.y;
+        
         // Если свайп сверху вниз, обновляем страничку
-        if(nowPoint.pageY > this.startPoint.y + 50) {
+        
+        if (nowPoint.pageY > this.startPoint.y + 73) {
             this.props.store.dispatch(ShowReloadTodos());
+        } else if (nowPoint.pageY > this.startPoint.y) {
+            this.props.store.dispatch(HideReload());
         }
     }
     
@@ -43,7 +47,7 @@ class Page extends Component {
         event.stopPropagation();
         this.movePoint = event.changedTouches[0];
         var shiftY = this.startPoint.y - this.movePoint.pageY;
-        if (shiftY < - 20) {
+        if (shiftY < - 10) {
             this.props.store.dispatch(MoveReload(shiftY));
         }
     }
@@ -55,10 +59,10 @@ class Page extends Component {
     };
 
     render() {
-        const {todos, selectedTodo, swipedTodo, reloadTodos, shiftX, shiftY} = this.props.store.getState();
+        const {todos, selectedTodo, swipedTodo, reloadTodos, shiftX, shiftY, beforeReload} = this.props.store.getState();
         return (
             <div>
-                <Reloader isReloader={reloadTodos} store={this.props.store} shiftY={shiftY}/>
+                <Reloader isReloader={reloadTodos} store={this.props.store} shiftY={shiftY} beforeReload={beforeReload} />
                     <TodoList todos={todos} selectedTodo={selectedTodo} swipedTodo={swipedTodo} store={this.props.store} shiftX={shiftX}/>
                 <AddButton store={this.props.store} />
             </div>

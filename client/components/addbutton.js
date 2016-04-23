@@ -3,6 +3,7 @@ import {Component} from 'react';
 import {AddTodo} from '../actions';
 
 class addButton extends Component {
+    
     constructor(props) {
         super(props);
         this.textInputStyle = {
@@ -10,6 +11,7 @@ class addButton extends Component {
         };
         this.onClick = this.onClick.bind(this);
     }
+    
     onClick(event) {
         event.preventDefault();
         this.props.store.dispatch(AddTodo(document.getElementById('input-text').value));
