@@ -1,3 +1,5 @@
+'use strict';
+
 const sizeOfUpdater = 50;
 
 export const shiftUpdater = (value) => {

@@ -1,3 +1,5 @@
+'use strict';
+
 export const resetTransform = (target) => {
     if (!target) return;
 

@@ -36,7 +36,7 @@ var direction = 'x';
 update(store);
 store.subscribe(render);
 
-document.querySelector('.add').addEventListener('submit', (event) => {
+document.querySelector('.add').addEventListener('submit', event => {
     event.preventDefault();
 
     var note = document.querySelector('#input_text').value;
@@ -59,7 +59,7 @@ function replace() {
 document.querySelector('.delete').addEventListener('touchstart', handlerDelete, false);
 document.querySelector('.delete').addEventListener('orientationchange', moveDel, false);
 
-document.addEventListener('touchstart', function (event) {
+document.addEventListener('touchstart', event => {
     if (event.targetTouches.length === 1) {
         let touch = event.targetTouches[0];
         startPoint = touch;
@@ -83,7 +83,7 @@ document.addEventListener('touchstart', function (event) {
 
 var countMove = 0;
 
-document.addEventListener('touchmove', (event) => {
+document.addEventListener('touchmove', event => {
     clearTimeout(longTouch);
     if (document.querySelector('.save')) return;
 
@@ -117,7 +117,7 @@ document.addEventListener('touchmove', (event) => {
     countMove += 1;
 }, false);
 
-document.addEventListener('touchend', (event) => {
+document.addEventListener('touchend', event => {
     clearTimeout(longTouch);
     let target = event.changedTouches[0].target;
     countMove = 0;

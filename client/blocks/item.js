@@ -1,3 +1,5 @@
+'use strict';
+
 import React from 'react';
 import xhrRequest from '../client-request';
 import {changeNote} from '../actions';

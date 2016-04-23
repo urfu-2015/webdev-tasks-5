@@ -12,7 +12,7 @@ function xhrRequest (method, puth, hundler, body) {
     } else {
         xhr.send();
     }
-    xhr.onreadystatechange = function () {
+    xhr.onreadystatechange = () => {
         if (xhr.readyState != 4) return;
         if (xhr.status != 200) {
             alert(`${xhr.status}:${ xhr.statusText}`);
@@ -38,13 +38,13 @@ export const update = (store, successHandler) => {
 export const updateOrder = (store) => {
     var body = '';
     var divsNotes = [...document.querySelectorAll('.container__item')];
-    divsNotes.forEach(function (name) {
+    divsNotes.forEach(name => {
         resetTransform(name);
         body += `&name_${divsNotes.indexOf(name)}=${encodeURIComponent(name.childNodes[0].innerHTML)}`;
     });
     body = body.slice(1);
 
-    xhrRequest('PUT', '/change-chain', function (response) {
+    xhrRequest('PUT', '/change-chain', (response) => {
         var action = getNotes(response);
         store.dispatch(action);
     }, body);
@@ -70,7 +70,7 @@ export const save = (textSaveItem, store) => {
 
     var body = `name=${encodeURIComponent(textSaveItem)}&changeNote=${encodeURIComponent(text)}`;
 
-    xhrRequest('PUT', '/change-note', function (response) {
+    xhrRequest('PUT', '/change-note', (response) => {
         var action = changeNote(textSaveItem, response.name);
         store.dispatch(action);
     }, body);
