@@ -1,0 +1,113 @@
+html,
+body
+{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    user-select: none;
+}
+
+.root,
+.root__todos-container,
+.todo,
+.input-form
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.root__todos
+{
+    margin: 10px 0;
+}
+
+.todos-container__todo
+{
+    width: 90%;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.root__header
+{
+    color:red;
+    font-size: 20px;
+}
+
+.input-form__input
+{
+    width: 90%;
+    margin: 5px;
+}
+
+.input-form__submit
+{
+    margin-right: 5%;
+    align-self: flex-end;
+}
+
+.todo
+{
+    position: relative;
+    transition: all 0.7s;
+}
+
+.todo_swiped
+{
+    transform: translateX(-40px);
+}
+
+.todo__delete
+{
+    display: none;
+    position: absolute;
+    top: 0;
+    right: -25px;
+    height: 100%;
+    color: red;
+    font-size: 25px;
+}
+
+.todo__text_hidden,
+.todo__form_hidden
+{
+    display: none;
+}
+
+.todo_swiped .todo__delete
+{
+    display: block;
+}
+
+.root__load
+{
+    position: fixed;
+    top: -30px;
+    left: 50%;
+    margin-left: -15px;
+    width: 30px;
+    height: 30px;
+    background-repeat: round;
+    background-image: url('/load.png');
+
+    animation-name: spin;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+
+    z-index: 100;
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+/*# sourceMappingURL=index.map*/
