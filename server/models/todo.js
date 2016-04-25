@@ -6,7 +6,7 @@ class Todo {
     constructor(props) {
         this.text = props.text;
         this.order = props.order;
-        this.createdAt = (new Date()).getTime();
+        this.createdAt = Date.now();
     }
 
     save() {
@@ -15,7 +15,7 @@ class Todo {
     }
 
     delete() {
-        todosStorage[this._id] = undefined;
+        delete todosStorage[this._id];
     }
 
     static findById(id) {

@@ -6,10 +6,12 @@ module.exports.list = (req, res) => {
     let todos = Todo.findAll();
 
     todos = todos.filter((todo) => {
+
         return todo !== undefined;
     });
 
     todos = todos.map((todo) => {
+
         return {
             text: todo.text,
             order: todo.order,
@@ -26,11 +28,18 @@ module.exports.create = (req, res) => {
     const todo = new Todo ({
        text: req.body.text
     });
+
+    if (req.body.text === '') {
+        res.sendStatus(406);
+
+        return;
+    }
+
     todo.save();
 
-    res.send({
+    res.json({
         text: todo.text,
-        oreder: todo.order,
+        order: todo.order,
         _id: todo._id
     });
 };
@@ -45,7 +54,7 @@ module.exports.item = (req, res) => {
     }
 
     res.json({
-        name: todo.name,
+        text: todo.text,
         order: todo.order,
         _id: todo._id
     });
@@ -57,6 +66,12 @@ module.exports.patch = (req, res) => {
 
     if (!todo) {
         res.sendStatus(404);
+
+        return;
+    }
+
+    if (req.body.text === '') {
+        res.sendStatus(406);
 
         return;
     }

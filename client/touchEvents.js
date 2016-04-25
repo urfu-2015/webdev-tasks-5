@@ -31,12 +31,16 @@ function handleTouchStart(event) {
 }
 
 function  handleTouchEnd(event) {
-    document.querySelector('.root__load').style.top = '-30px';
+    let load = document.querySelector('.root__load');
+
+    load.classList.remove('root__load_spinning');
+    load.style.top = '-30px';
 
     if (Math.abs(touch.startPosition.pageX - event.changedTouches[0].pageX) < 5 &&
         Math.abs(touch.startPosition.pageY - event.changedTouches[0].pageY) < 5)
     {
         event.target.dispatchEvent(new Event('tap', { bubbles: true }));
+
         return;
     }
 
@@ -44,6 +48,7 @@ function  handleTouchEnd(event) {
         touch.startPosition.pageX - event.changedTouches[0].pageX > 50)
     {
         event.target.dispatchEvent(new Event('swipe-left', { bubbles: true }));
+
         return;
     }
 
@@ -51,19 +56,24 @@ function  handleTouchEnd(event) {
         event.changedTouches[0].pageX - touch.startPosition.pageX > 50)
     {
         event.target.dispatchEvent(new Event('swipe-right', { bubbles: true }));
+
         return;
     }
 
 
     if (window.pageYOffset + 60 < event.changedTouches[0].pageY - touch.startPosition.pageY) {
         event.target.dispatchEvent(new Event('scroll-load', { bubbles: true }));
+
         return;
     }
 }
 
 function handleTouchMove(event) {
     if (window.pageYOffset + 60 >= event.changedTouches[0].pageY - touch.startPosition.pageY) {
-        document.querySelector('.root__load').style.top =
+        let load = document.querySelector('.root__load');
+
+        load.classList.add('root__load_spinning');
+        load.style.top =
             (-30 + event.targetTouches[0].pageY - touch.startPosition.pageY - window.pageYOffset)+'px';
     }
 }
