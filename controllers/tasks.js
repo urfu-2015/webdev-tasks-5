@@ -4,9 +4,9 @@
 var lastID = 3;
 var tasksList = {
     tasks: [
-        { id: "1", text: "SAMPLE 1"},
-        { id: "2", text: "SAMPLE 2"},
-        { id: "3", text: "SAMPLE 3"}
+        { id: "1", text: "Buy a cat!"},
+        { id: "2", text: "Buy a dog!"},
+        { id: "3", text: "Buy a badger!"}
     ]
 };
 
