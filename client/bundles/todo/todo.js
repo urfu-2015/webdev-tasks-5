@@ -47,10 +47,11 @@ module.exports = React.createClass({
     },
     onTodoUpdate: function (todo) {
         var todos = this.state.data;
-
-        var index = todos.map(function (item) {
+        var list_index = todos.map(function (item) {
             return item.id
-        }).indexOf(todo.id);
+        });
+        var index = list_index.indexOf(todo.id);
+        var ajax_index = list_index.reverse().indexOf(todo.id);
         todos[index] = todo;
         var editing_id = todo.id;
         var formData = new FormData();
@@ -59,7 +60,7 @@ module.exports = React.createClass({
         formData.append('dateUpdate', todo.dateUpdate);
         formData.append('dateCreate', todo.dateCreate);
         var self = this;
-        fetch('/api/v1/todo/' + index, {
+        fetch('/api/v1/todo/' + ajax_index, {
             method: 'PUT',
             body: formData
         }).then(function () {
@@ -73,10 +74,12 @@ module.exports = React.createClass({
     onTodoDestroy: function (todo_id) {
         var self = this;
         var todos = this.state.data;
-        var index = todos.map(function (item) {
+        var list_index = todos.map(function (item) {
             return item.id
-        }).indexOf(parseInt(todo_id));
-        fetch('/api/v1/todo/' + index, {
+        });
+        var index = list_index.indexOf(todo.id);
+        var ajax_index = list_index.reverse().indexOf(todo.id);
+        fetch('/api/v1/todo/' + ajax_index, {
             method: 'DELETE'
         }).then(function () {
             todos.splice(index, 1);
@@ -135,7 +138,7 @@ module.exports = React.createClass({
                         var onTodoUpdate = this.onTodoUpdate;
                         return (
                             <Todo
-                                key={todo.id}
+                                key={i}
                                 id={todo.id}
                                 todo={todo.todo}
                                 dateCreate={todo.dateCreate}
