@@ -15,8 +15,8 @@ module.exports = React.createClass({
         return {
             data: [],
             update: true,
-            editing: false,
-            trashing: false
+            editing: -1,
+            trashing: -1
         }
     },
     loadTodosFromServer: function () {
@@ -52,6 +52,7 @@ module.exports = React.createClass({
             return item.id
         }).indexOf(todo.id);
         todos[index] = todo;
+        var editing_id = todo.id;
         var formData = new FormData();
         formData.append('todo', todo.todo);
         formData.append('id', todo.id);
@@ -63,7 +64,10 @@ module.exports = React.createClass({
             body: formData
         }).then(function () {
             self.setState({data: todos});
-            self.setState({editing: false});
+            if (self.state.editing === editing_id) {
+                self.setState({editing: -1});
+            }
+            self.setState({trashing: -1});
         });
     },
     onTodoDestroy: function (todo_id) {
@@ -107,11 +111,15 @@ module.exports = React.createClass({
     componentDidMount: function () {
         this.loadTodosFromServer();
     },
-    edit: function () {
-        this.setState({editing: true});
+    edit: function (todo) {
+        this.setState({editing: todo.id});
     },
-    trash: function (trashing) {
-        this.setState({trashing: trashing});
+    trash: function (todo, view_trash) {
+        if (view_trash) {
+            this.setState({trashing: todo.id});
+        } else {
+            this.setState({trashing: -1});
+        }
     },
     render: function () {
         return (
@@ -124,7 +132,6 @@ module.exports = React.createClass({
                 <div className="todo-list">
                     {this.state.data.map(function (todo, i) {
                         var onTodoDestroy = this.onTodoDestroy;
-
                         var onTodoUpdate = this.onTodoUpdate;
                         return (
                             <Todo
@@ -135,8 +142,8 @@ module.exports = React.createClass({
                                 dateUpdate={todo.dateUpdate}
                                 onTodoUpdate={onTodoUpdate}
                                 onTodoDestroy={onTodoDestroy}
-                                editing={this.state.editing}
-                                trashing={this.state.trashing}
+                                editing={this.state.editing === todo.id}
+                                trashing={this.state.trashing === todo.id}
                                 onEdit={this.edit.bind(this, todo)}
                                 onTrash={this.trash.bind(this, todo)}
                             />

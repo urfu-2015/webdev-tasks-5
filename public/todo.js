@@ -19733,8 +19733,8 @@
 	        return {
 	            data: [],
 	            update: true,
-	            editing: false,
-	            trashing: false
+	            editing: -1,
+	            trashing: -1
 	        };
 	    },
 	    loadTodosFromServer: function loadTodosFromServer() {
@@ -19769,6 +19769,7 @@
 	            return item.id;
 	        }).indexOf(todo.id);
 	        todos[index] = todo;
+	        var editing_id = todo.id;
 	        var formData = new FormData();
 	        formData.append('todo', todo.todo);
 	        formData.append('id', todo.id);
@@ -19780,7 +19781,10 @@
 	            body: formData
 	        }).then(function () {
 	            self.setState({ data: todos });
-	            self.setState({ editing: false });
+	            if (self.state.editing === editing_id) {
+	                self.setState({ editing: -1 });
+	            }
+	            self.setState({ trashing: -1 });
 	        });
 	    },
 	    onTodoDestroy: function onTodoDestroy(todo_id) {
@@ -19824,11 +19828,15 @@
 	    componentDidMount: function componentDidMount() {
 	        this.loadTodosFromServer();
 	    },
-	    edit: function edit() {
-	        this.setState({ editing: true });
+	    edit: function edit(todo) {
+	        this.setState({ editing: todo.id });
 	    },
-	    trash: function trash(trashing) {
-	        this.setState({ trashing: trashing });
+	    trash: function trash(todo, view_trash) {
+	        if (view_trash) {
+	            this.setState({ trashing: todo.id });
+	        } else {
+	            this.setState({ trashing: -1 });
+	        }
 	    },
 	    render: function render() {
 	        return _react2.default.createElement(
@@ -19844,7 +19852,6 @@
 	                { className: 'todo-list' },
 	                this.state.data.map(function (todo, i) {
 	                    var onTodoDestroy = this.onTodoDestroy;
-	
 	                    var onTodoUpdate = this.onTodoUpdate;
 	                    return _react2.default.createElement(_todoItem2.default, {
 	                        key: todo.id,
@@ -19854,8 +19861,8 @@
 	                        dateUpdate: todo.dateUpdate,
 	                        onTodoUpdate: onTodoUpdate,
 	                        onTodoDestroy: onTodoDestroy,
-	                        editing: this.state.editing,
-	                        trashing: this.state.trashing,
+	                        editing: this.state.editing === todo.id,
+	                        trashing: this.state.trashing === todo.id,
 	                        onEdit: this.edit.bind(this, todo),
 	                        onTrash: this.trash.bind(this, todo)
 	                    });
@@ -19972,9 +19979,6 @@
 	            if (event.target.tagName.toLowerCase() != "img") {
 	                event.preventDefault();
 	                this.props.onEdit();
-	                var node = _reactDom2.default.findDOMNode(this.refs.editField);
-	                node.focus();
-	                node.blur();
 	            }
 	        } else if (xAbs > 20 || yAbs > 20) {
 	            if (xAbs > yAbs) {
@@ -20010,6 +20014,15 @@
 	            this.props.onTodoDestroy(parentElement.id);
 	        }
 	    },
+	
+	    componentDidUpdate: function componentDidUpdate(prevProps) {
+	        if (!prevProps.editing && this.props.editing) {
+	            var node = _reactDom2.default.findDOMNode(this.refs.editField);
+	            node.focus();
+	            node.setSelectionRange(node.value.length, node.value.length);
+	        }
+	    },
+	
 	    render: function render() {
 	        return _react2.default.createElement(
 	            'section',

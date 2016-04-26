@@ -15,9 +15,7 @@ module.exports = React.createClass({
             if (event.target.tagName.toLowerCase() != "img") {
                 event.preventDefault();
                 this.props.onEdit();
-                var node = ReactDom.findDOMNode(this.refs.editField);
-                node.focus();
-                node.blur();
+
             }
         } else if (xAbs > 20 || yAbs > 20) {
             if (xAbs > yAbs) {
@@ -56,6 +54,15 @@ module.exports = React.createClass({
             this.props.onTodoDestroy(parentElement.id);
         }
     },
+
+    componentDidUpdate: function (prevProps) {
+        if (!prevProps.editing && this.props.editing) {
+            var node = ReactDom.findDOMNode(this.refs.editField);
+            node.focus();
+            node.setSelectionRange(node.value.length, node.value.length);
+        }
+    },
+
     render: function () {
         return (
             <section id={this.props.id} className={classNames(
