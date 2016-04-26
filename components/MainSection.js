@@ -7,12 +7,12 @@ class MainSection extends Component {
     }
 
     render() {
-        const {todos, actions} = this.props;
+        const {todos, swipe, actions} = this.props;
 
         return (
             <section className="todo-app">
                 {todos.map(todo =>
-                    <TodoItem key={todo.id} todo={todo} {...actions} />
+                    <TodoItem key={todo.id} todo={todo} swipe={swipe} {...actions} />
                 )}
             </section>
         )
@@ -21,6 +21,7 @@ class MainSection extends Component {
 
 MainSection.propTypes = {
     todos: PropTypes.array.isRequired,
+    swipe: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired
 };
 

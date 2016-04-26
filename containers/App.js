@@ -31,10 +31,12 @@ class App extends Component {
         this.startPoint.x = event.changedTouches[0].pageX;
         this.startPoint.y = event.changedTouches[0].pageY;
         this.ldelay = new Date();
+        this.startTarget = event.target;
         console.log('handleTouchStart');
     }
 
     handleTouchMove(event) {
+        const {todos, swipe, actions, dispatch} = this.props;
         //event.stopPropagation();
         let nowPoint = event.changedTouches[0];
         //console.log(nowPoint.pageX, nowPoint.pageY);
@@ -42,34 +44,120 @@ class App extends Component {
             x: [nowPoint.pageX - this.startPoint.x],
             y: [nowPoint.pageY - this.startPoint.y]
         };
-        if (Math.abs(offset.y) > 20) {
-            if (offset.y > 0) {
-                console.log(`Down ${this.state.pullPixels}px touchmove`);
+        if (swipe.verticalSwipe.state) {
+            actions.verticalMove(event.target, offset.y);
+
+            // Дальше код, который относится к локальной обработке pull-to-refresh
+            if (swipe.verticalSwipe.offset > 0) {
                 this.setState({
-                    pulling: true,
-                    pullPixels: [parseInt(this.state.pullPixels, 10) + 20]
+                    pullPixels: swipe.verticalSwipe.offset
                 });
-                if (this.state.pullPixels >= 100) {
+                if (swipe.verticalSwipe.offset >= 100) {
                     this.setState({
                         spinning: true,
                         pullPixels: 100
                     })
                 }
-                this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
-            }
-            if (offset.y < 0) {
-                this.setState({
-                    pulling: false,
-                    pullPixels: 0,
-                    spinning: false
-                });
-                this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
             }
         }
+        if (swipe.horizontalSwipe.state) {
+            actions.horizontalMove(event.target, offset.x);
+        }
+        if (Math.abs(offset.y) > 20 || Math.abs(offset.x) > 20) {
+            if (Math.abs(offset.y) > Math.abs(offset.x)) {
+                if (!swipe.verticalSwipe.state && !swipe.horizontalSwipe.state) {
+                    actions.verticalStart(event.target);
+                }
+            } else {
+                if (!swipe.verticalSwipe.state && !swipe.horizontalSwipe.state) {
+                    actions.horizontalStart(event.target);
+                }
+            }
+        }
+        // if (Math.abs(offset.y) > 20) {
+        //     if (offset.y > 0) {
+        //         console.log(`Down ${this.state.pullPixels}px touchmove`);
+        //         this.setState({
+        //             pulling: true,
+        //             pullPixels: [parseInt(this.state.pullPixels, 10) + 20]
+        //         });
+        //         if (this.state.pullPixels >= 100) {
+        //             this.setState({
+        //                 spinning: true,
+        //                 pullPixels: 100
+        //             })
+        //         }
+        //         this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
+        //     }
+        //     if (offset.y < 0) {
+        //         this.setState({
+        //             pulling: false,
+        //             pullPixels: 0,
+        //             spinning: false
+        //         });
+        //         this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
+        //     }
+        // }
     }
 
+    // handleTouchMove(event) {
+    //     //event.stopPropagation();
+    //     let nowPoint = event.changedTouches[0];
+    //     //console.log(nowPoint.pageX, nowPoint.pageY);
+    //     var offset = {
+    //         x: [nowPoint.pageX - this.startPoint.x],
+    //         y: [nowPoint.pageY - this.startPoint.y]
+    //     };
+    //     if (Math.abs(offset.y) > 20) {
+    //         if (offset.y > 0) {
+    //             console.log(`Down ${this.state.pullPixels}px touchmove`);
+    //             this.setState({
+    //                 pulling: true,
+    //                 pullPixels: [parseInt(this.state.pullPixels, 10) + 20]
+    //             });
+    //             if (this.state.pullPixels >= 100) {
+    //                 this.setState({
+    //                     spinning: true,
+    //                     pullPixels: 100
+    //                 })
+    //             }
+    //             this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
+    //         }
+    //         if (offset.y < 0) {
+    //             this.setState({
+    //                 pulling: false,
+    //                 pullPixels: 0,
+    //                 spinning: false
+    //             });
+    //             this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
+    //         }
+    //     }
+    // }
+
     handleTouchEnd(event) {
+        const {todos, swipe, actions} = this.props;
         console.log('handleTouchEnd');
+        let nowPoint = event.changedTouches[0];
+        let delay = new Date();
+        var offset = {
+            x: [nowPoint.pageX - this.startPoint.x],
+            y: [nowPoint.pageY - this.startPoint.y]
+        };
+
+        if (swipe.verticalSwipe.state) {
+            actions.verticalStop(event.target, offset.y);
+        }
+        if (swipe.horizontalSwipe.state) {
+            actions.horizontalStop(event.target, offset.x);
+        }
+        // Уже точно не свайп - проверим на tap
+        if (delay - this.ldelay < 300) {
+            if (this.startTarget == event.target) {
+                //console.log('Eq target');
+                actions.tap(event.target);
+            }
+        }
+        // Дальше код, который относится к локальной обработке pull-to-refresh
         if (this.state.pullPixels > 0) {
             this.setState({
                 pulling: false,
@@ -88,13 +176,13 @@ class App extends Component {
     }
 
     render() {
-        const {todos, actions} = this.props;
+        const {todos, swipe, actions} = this.props;
         let spinner;
         var spinnerClass = classnames({
             'todo__refresh': true,
             'animate': this.state.spinning
         });
-        if (this.state.pullPixels) {
+        if (this.state.pullPixels > 15) {
             if (this.state.spinning) {
                 spinner = (
                     <img
@@ -127,7 +215,7 @@ class App extends Component {
                 {spinner}
                 {space}
                 <Header/>
-                <MainSection todos={todos} actions={actions}/>
+                <MainSection todos={todos} swipe={swipe} actions={actions}/>
                 <Footer addTodo={actions.addTodo}/>
             </div>
         )
@@ -136,13 +224,15 @@ class App extends Component {
 
 App.propTypes = {
     todos: PropTypes.array.isRequired,
+    swipe: PropTypes.object.isRequired,
     actions: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        todos: state.todos
+        todos: state.todos,
+        swipe: state.swipe
     }
 }
 

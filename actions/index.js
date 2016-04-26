@@ -6,6 +6,79 @@ import fetch from 'isomorphic-fetch'
 //     return {type: types.ADD_TODO, text}
 // }
 
+export function verticalStart(target) {
+    return {
+        type: types.VERTICAL_STARTED,
+        verticalSwipe: {
+            state: true,
+            target
+        }
+    }
+}
+
+export function verticalMove(target, offset) {
+    return {
+        type: types.VERTICAL_MOVED,
+        verticalSwipe: {
+            state: true,
+            target,
+            offset: offset[0]
+        }
+    }
+}
+
+export function verticalStop(target, offset) {
+    return {
+        type: types.VERTICAL_STOPPED,
+        verticalSwipe: {
+            state: false,
+            target,
+            offset: offset[0]
+        }
+    }
+}
+
+export function horizontalStart(target) {
+    return {
+        type: types.HORIZONTAL_STARTED,
+        horizontalSwipe: {
+            state: true,
+            target
+        }
+    }
+}
+
+export function horizontalMove(target, offset) {
+    return {
+        type: types.HORIZONTAL_MOVED,
+        horizontalSwipe: {
+            state: true,
+            target,
+            offset: offset[0]
+        }
+    }
+}
+
+export function horizontalStop(target, offset) {
+    return {
+        type: types.HORIZONTAL_STOPPED,
+        horizontalSwipe: {
+            state: false,
+            target,
+            offset: offset[0]
+        }
+    }
+}
+
+export function tap(target) {
+    return {
+        type: types.TAPPED,
+        tap: {
+            target
+        }
+    }
+}
+
 export function todoAdded(json) {
     return {
         type: types.TODO_ADDED,
