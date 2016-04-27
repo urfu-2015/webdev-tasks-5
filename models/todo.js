@@ -14,25 +14,31 @@ class Todo {
     }
 
     static changeTodo(num, newText) {
-        const index = this.find(num);
+        const index = this.findIndex(num);
         if (index > -1) {
             todoList[index].todo = newText;
         }
     }
 
     static deleteTodo(num) {
-        const index = this.find(num);
+        const index = this.findIndex(num);
         if (index > -1) {
             todoList.splice(index, 1);
         }
     }
 
-    static find(num) {
+    static findIndex(num) {
+        let result;
+        
+        num = Number(num);
         todoList.forEach(function (item, i) {
             if (item.num === num) {
-                return i;
+                result = i;
+                return;
             }
-        })
+        });
+
+        return result;
     }
 
     static findAll() {

@@ -19,10 +19,17 @@ exports.createTodo = function (request, response) {
 };
 
 exports.deleteTodo = function (request, response) {
-    console.log('~~~', request.body);
+    // console.log('~~~', request.body);
     Todo.deleteTodo(request.body.num);
 
-    response.redirect('/');
+    response.sendStatus(200);
+};
+
+exports.changeTodo = function (request, response) {
+    // console.log('~~~', request.body);
+    Todo.changeTodo(request.body.num, request.body.text);
+
+    response.sendStatus(200);
 };
 
 exports.list = list;
