@@ -1,14 +1,38 @@
 'use strict';
 
-var todoList = [];
+let todoList = [];
+let inc = 0;
 
 class Todo {
     constructor(text) {
+        this.num = inc++;
         this.todo = text;
     }
 
     save() {
         todoList.push(this);
+    }
+
+    static changeTodo(num, newText) {
+        const index = this.find(num);
+        if (index > -1) {
+            todoList[index].todo = newText;
+        }
+    }
+
+    static deleteTodo(num) {
+        const index = this.find(num);
+        if (index > -1) {
+            todoList.splice(index, 1);
+        }
+    }
+
+    static find(num) {
+        todoList.forEach(function (item, i) {
+            if (item.num === num) {
+                return i;
+            }
+        })
     }
 
     static findAll() {

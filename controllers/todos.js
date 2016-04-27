@@ -12,17 +12,17 @@ function list(request, response) {
 
 exports.createTodo = function (request, response) {
     const text = request.body.text;
-    // console.log(request.body.text, '~~~');
     const todo = new Todo(text);
     todo.save();
 
-    const todos = Todo.findAll();
-    // console.log(todos);
-    const data = {
-        todoList: todos
-    };
-    response.render('index', Object.assign(data, request.commonData));
-    // response.send(text);
+    response.redirect('/');
+};
+
+exports.deleteTodo = function (request, response) {
+    console.log('~~~', request.body);
+    Todo.deleteTodo(request.body.num);
+
+    response.redirect('/');
 };
 
 exports.list = list;

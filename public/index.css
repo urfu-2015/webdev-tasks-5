@@ -10,6 +10,24 @@ body
     font-size: 18px;
 }
 
+.main
+{
+    display: flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.spinner
+{
+    position: fixed;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+}
+
 .todo-list
 {
     text-align: center;
@@ -23,18 +41,15 @@ body
     display: -webkit-flex;
     justify-content: center;
     max-width: 500px;
-    padding: 5px;
     margin-bottom: 5px;
-    border: 1px solid #000;
-    background-color: #fef873;
 }
 
-.todo-list__delete
+.todo-list__text
 {
-    display: none;
     width: 100%;
-    background: url("Recycle_bin.png") no-repeat;
-    background-size: contain;
+    border: 1px solid #000;
+    background-color: #fef873;
+    padding: 5px;
 }
 
 button
@@ -43,7 +58,13 @@ button
     font-size: 18px;
 }
 
-.todo-list__form_visible
+.todo-list__delete
+{
+    background: url("Recycle_bin.png") no-repeat center;
+    background-size: contain;
+}
+
+.todo-list__form
 {
     display: flex;
     display: -webkit-box;
@@ -52,7 +73,15 @@ button
     flex-direction: column;
 }
 
-.todo-list__form_hidden
+.todo-list__textarea_invalid
+{
+    border: 1px solid #f00;
+}
+
+.spinner_hidden,
+.todo-list__delete_hidden,
+.todo-list__form_hidden,
+.todo-list__text_hidden
 {
     display: none;
 }

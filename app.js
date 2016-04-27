@@ -16,10 +16,11 @@ app.set('view engine', 'html');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(publicDir));
-// app.use(function (request, response, next) {
-//     console.log(`→ ${request.method} ${request.originalUrl} ${request.body.text}`);
-//     next();
-// });
+
+app.use(function (request, response, next) {
+    console.log(`→ ${request.method} ${request.originalUrl} ${request.body.text}`);
+    next();
+});
 
 require('./routes')(app);
 

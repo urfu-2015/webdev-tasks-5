@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>TODO'хи</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="index.css">
     <link href='https://fonts.googleapis.com/css?family=Neucha&subset=latin,cyrillic' rel='stylesheet'
           type='text/css'>
 </head>
 <body>
+    <img class="spinner spinner_hidden" src="spinner2.gif">
     <header>
         <h1>TODO'хи</h1>
     </header>
@@ -15,9 +17,9 @@
         <article class="todo-list">
             {% if todoList %}
                 {% for item in todoList %}
-                    <section class="todo-list__item">
-                        <div class="todo-list__text">{{ item.todo }}</div>
-                        <div class="todo-list__delete"></div>
+                    <section class="todo-list__item" data-id="{{ item.num }}">
+                        <div class="todo-list__text todo-list__text_visible">{{ item.todo }}</div>
+                        <button class="todo-list__delete todo-list__delete_hidden"></button>
                         {% include './form.html' with item %}
                     </section>
                 {% endfor %}
