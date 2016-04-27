@@ -17,7 +17,8 @@ class Task {
             }
             return task;
         });
-        tasks.push(this);
+        tasks.splice(this.position, 0, this);
+        return this;
     }
 
     static find(id) {
@@ -28,19 +29,15 @@ class Task {
         return tasks;
     }
 
-    static getTasksCount() {
-        return tasks.length;
-    }
-
     static removeTask(id) {
-        const removedTask = this.find(id);
-        if (!removedTask) {
+        const removingTask = this.find(id);
+        if (!removingTask) {
             return;
         }
         tasks = tasks
             .filter(task => task.id !== id)
             .map(task => {
-                if (task.position > removedTask.position) {
+                if (task.position > removingTask.position) {
                     --task.position;
                 }
                 return task;

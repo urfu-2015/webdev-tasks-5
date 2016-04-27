@@ -39,14 +39,16 @@ exports.delete = (req, res) => {
 exports.replace = (req, res) => {
     const id = req.params.id;
     const task = Task.find(id);
-    if (!id || !task) {
+    if (!task) {
         res.sendStatus(400);
         return;
     }
     Task.removeTask(id);
     const text = req.body.text || task.text;
-    const position = req.body.position || task.position;
-    const newTask = new Task(text, position);
-    newTask.save();
-    res.send(Task.find(newTask.id));
+    let position = task.position;
+    if (typeof position === 'number') {
+        position = req.body.position;
+    }
+    const newTask = new Task(text, position).save();
+    res.send(newTask);
 };

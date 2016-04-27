@@ -7,7 +7,7 @@ import NewTaskForm from './newTaskForm';
 import Update from './update';
 import {swipe} from './touchEvents';
 import request from '../request';
-import {addTask, turnUpdatingOn, turnUpdatingOff} from '../action';
+import {updateTasks, turnUpdatingOn} from '../action';
 
 export default ({store}) => {
     const {tasks, isAddNewTaskFormVisible, isUpdating} = store.getState();
@@ -17,10 +17,9 @@ export default ({store}) => {
             request('GET', '/tasks', null, function (err, tasks) {
                 if (err) {
                     console.error(err);
-                } else {
-                    tasks.forEach(task => store.dispatch(addTask(task)));
-                    store.dispatch(turnUpdatingOff());
+                    return;
                 }
+                store.dispatch(updateTasks(tasks));
             });
         });
     }

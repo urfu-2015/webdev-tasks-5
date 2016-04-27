@@ -14,9 +14,7 @@ module.exports = function (app) {
 
     app.all('*', pages.error404);
 
-    /* eslint no-unused-vars: 0 */
-    /* eslint max-params: [2, 4] */
-    app.use((err, req, res, next) => {
+    app.use((err, req, res) => {
         console.error(err);
         res.sendStatus(500);
     });

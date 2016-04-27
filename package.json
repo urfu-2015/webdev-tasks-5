@@ -8,7 +8,7 @@
     "lint:css": "stylelint **/*.css",
     "start": "webpack && node app.js",
     "build": "webpack",
-    "dev": "webpack --config webpack.dev.config.js && npm start"
+    "dev": "webpack --config webpack.dev.config.js && node app.js"
   },
   "license": "MIT",
   "dependencies": {

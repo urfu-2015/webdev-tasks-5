@@ -1,59 +1,75 @@
 "use strict";
 
 import React from 'react';
-import {swipe, tap} from './touchEvents';
-import {showDeleteButton, removeDeleteButton, editTask, changeTask} from '../action';
-import DeleteButton from './deleteButton';
+import {swipe, tap, longTap} from './touchEvents';
+import {showDeleteButton, editTask, moveTask, changeTaskPosition, endMove} from '../action';
+import TaskWithDeleteButton from './taskWithDeleteButton';
+import EditingTask from './editingTask';
 import request from '../request';
 
+export const getTaskId = target => {
+    return target.dataset.reactid
+        .replace(/.+\$(\w+)\..+/, '$1');
+};
+
 export default ({key, id, text, store}) => {
-    function getTaskId(e) {
-        return e.target.dataset.reactid
-            .replace(/.+\$(\w+)\..+/, '$1');
-    }
     function onTouchStart(e) {
-        tap(e, e => store.dispatch(editTask(getTaskId(e))));
-        swipe(e, 'left', e => {
-                console.log('left swipe');
-                store.dispatch(showDeleteButton(getTaskId(e)));
-            }
-        );
-    }
-    function removeDeleteButtonListener(e) {
-        swipe(e, 'right', () => {
-            store.dispatch(removeDeleteButton());
-        });
-    }
-    function saveChange(e) {
-        tap(e, e => {
-            let id = getTaskId(e);
-            request('POST', '/tasks/' + id, {text: e.target.parentElement.children[0].value},
-                (err, task) => {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-                    store.dispatch(changeTask(id, task));
-                });
+        tap(e, target => store.dispatch(editTask(getTaskId(target))));
+        swipe(e, 'left', target => store.dispatch(showDeleteButton(getTaskId(target))));
+        longTap(e, data => {
+            store.dispatch(moveTask(getTaskId(data.target), data.pageX, data.pageY));
         });
     }
 
     let state = store.getState();
 
+    function movingTask(e) {
+        var offset = e.targetTouches[0].pageY - state.movingTask.pageY;
+        var style = e.currentTarget.parentElement.style;
+        style['margin-top'] = offset + 'px';
+        style['margin-bottom'] = -offset + 'px';
+        if (offset < -20) {
+            store.dispatch(changeTaskPosition(getTaskId(e.currentTarget), -1));
+            style['margin-top'] = '20px';
+            style['margin-bottom'] = '-20px';
+        }
+        if (offset > 20) {
+            store.dispatch(changeTaskPosition(getTaskId(e.currentTarget), 1));
+            style['margin-top'] = '-20px';
+            style['margin-bottom'] = '20px';
+        }
+    }
+
+    function endMoving(e) {
+        const style = e.currentTarget.parentElement.style;
+        style.removeProperty('margin-top');
+        style.removeProperty('margin-bottom');
+        store.dispatch(endMove());
+        const taskId = getTaskId(e.currentTarget);
+        const task = state.tasks.find(task => task.id === taskId);
+        request('POST', '/tasks/' + taskId, {position: task.position}, err => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    }
+
     if (state.deleteButtonOnTask === id) {
-        return <div className="task" key={key}>
-            <div className="task__name" onTouchStart={removeDeleteButtonListener}>
+        return <TaskWithDeleteButton key={key} text={text} store={store}/>;
+    }
+
+    if (state.editingTaskId === id) {
+        return <EditingTask key={key} text={text} store={store}/>;
+    }
+
+    if (state.movingTask.id === id) {
+        return <div className="task_move" key={key}>
+            <div className="task__name" onTouchMove={movingTask} onTouchEnd={endMoving}>
                 {text}
             </div>
-            <DeleteButton store={store}/>
         </div>;
     }
-    if (state.editingTaskId === id) {
-        return <div className="task_edit" key={key}>
-            <input className="task__edit-field" defaultValue={text}/>
-            <button className="task__save-edit" onTouchStart={saveChange}>Сохранить</button>
-        </div>
-    }
+
     return <div className="task" key={key}>
         <div className="task__name" onTouchStart={onTouchStart}>
             {text}

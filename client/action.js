@@ -7,11 +7,18 @@ export const addTask = task => {
     };
 };
 
+export const updateTasks = tasks => {
+    return {
+        type: 'UPDATE_TASKS',
+        tasks
+    };
+};
+
 export const editTask = taskId => {
     return {
         type: 'EDIT_TASK',
         taskId
-    }
+    };
 };
 
 export const changeTask = (id, task) => {
@@ -19,7 +26,7 @@ export const changeTask = (id, task) => {
         type: 'CHANGE_TASK',
         id,
         task
-    }
+    };
 };
 
 export const removeTask = task => {
@@ -60,8 +67,25 @@ export const turnUpdatingOn = () => {
     };
 };
 
-export const turnUpdatingOff = () => {
+export const moveTask = (id, pageX, pageY) => {
     return {
-        type: 'TURN_UPDATING_OFF'
+        type: 'MOVE_TASK',
+        id,
+        pageX,
+        pageY
+    };
+};
+
+export const changeTaskPosition = (id, direction) => {
+    return {
+        type: 'CHANGE_TASK_POSITION',
+        id,
+        direction
+    };
+};
+
+export const endMove = () => {
+    return {
+        type: 'END_MOVE_TASK'
     };
 };
