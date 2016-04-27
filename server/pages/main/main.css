@@ -1,0 +1,223 @@
+html,
+body,
+#root,
+.wrapper
+{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.wrapper
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #eee;
+}
+
+button
+{
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+
+.tasks
+{
+    width: Calc(100% - 20px);
+}
+
+.task
+{
+    display: flex;
+    width: 100%;
+    height: 40px;
+}
+
+.task_move
+{
+    display: flex;
+    width: 100%;
+    border: 5px none;
+    height: 40px;
+    transform: scale(1.05);
+}
+
+.task_edit
+{
+    width: 100%;
+    margin: 5px 0;
+    text-align: right;
+    padding: 3px;
+    background: #ddd;
+}
+
+.task__name,
+.add-task__name
+{
+    display: flex;
+    width: 100%;
+    height: 30px;
+    padding: 3px;
+    align-items: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: #aaa 1px 1px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    transition-duration: .5s;
+}
+
+.task__name_with-del-btn
+{
+    display: flex;
+    width: 100%;
+    height: 30px;
+    margin-left: -30px;
+    padding: 3px;
+    align-items: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: #aaa 1px 1px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    transition-duration: .5s;
+}
+
+.task__delete-button
+{
+    height: 100%;
+    width: 30px;
+    margin-top: 5px;
+    background: url("https://cdn.onlinewebfonts.com/svg/thumbnails_60_19039.png") no-repeat 0 0;
+    -webkit-background-size: contain;
+    background-size: contain;
+    animation: display .2s;
+}
+
+.task__edit-field
+{
+    width: 100%;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+.task__save-edit
+{
+    height: 30px;
+    width: 50%;
+    max-width: 200px;
+    margin-top: 5px;
+    background: #fff;
+    box-shadow: #aaa 1px 1px;
+}
+
+.add-task
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.add-task__button
+{
+    display: block;
+    height: 30px;
+    width: 50%;
+    max-width: 200px;
+    background: #fff;
+    box-shadow: #aaa 1px 1px;
+}
+
+.refresh
+{
+    height: 50px;
+    width: 50px;
+    background: url("//www.macupdate.com/images/icons256/24714.png");
+    -webkit-background-size: contain;
+    background-size: contain;
+    animation-delay: 0s, .2s;
+    animation-duration: .2s, 2s;
+    animation-iteration-count: 1, infinite;
+    animation-name: display, rotating;
+}
+
+@-webkit-keyframes display
+{
+    0%
+    {
+        transform: scale(0);
+    }
+    80%
+    {
+        transform: scale(1.2);
+    }
+    100%
+    {
+        transform: scale(1);
+    }
+}
+
+@keyframes display
+{
+    0%
+    {
+        transform: scale(0);
+    }
+    80%
+    {
+        transform: scale(1.2);
+    }
+    100%
+    {
+        transform: scale(1);
+    }
+}
+
+@-webkit-keyframes rotating
+{
+    from
+    {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to
+    {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotating
+{
+    from
+    {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to
+    {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
