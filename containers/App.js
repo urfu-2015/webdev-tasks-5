@@ -36,8 +36,9 @@ class App extends Component {
     }
 
     handleTouchMove(event) {
-        const {todos, swipe, actions, dispatch} = this.props;
+        //event.preventDefault(); // Можно конечно, но тогда писать свой скролл
         //event.stopPropagation();
+        const {todos, swipe, actions, dispatch} = this.props;
         let nowPoint = event.changedTouches[0];
         //console.log(nowPoint.pageX, nowPoint.pageY);
         var offset = {
@@ -74,65 +75,8 @@ class App extends Component {
                 }
             }
         }
-        // if (Math.abs(offset.y) > 20) {
-        //     if (offset.y > 0) {
-        //         console.log(`Down ${this.state.pullPixels}px touchmove`);
-        //         this.setState({
-        //             pulling: true,
-        //             pullPixels: [parseInt(this.state.pullPixels, 10) + 20]
-        //         });
-        //         if (this.state.pullPixels >= 100) {
-        //             this.setState({
-        //                 spinning: true,
-        //                 pullPixels: 100
-        //             })
-        //         }
-        //         this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
-        //     }
-        //     if (offset.y < 0) {
-        //         this.setState({
-        //             pulling: false,
-        //             pullPixels: 0,
-        //             spinning: false
-        //         });
-        //         this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
-        //     }
-        // }
     }
-
-    // handleTouchMove(event) {
-    //     //event.stopPropagation();
-    //     let nowPoint = event.changedTouches[0];
-    //     //console.log(nowPoint.pageX, nowPoint.pageY);
-    //     var offset = {
-    //         x: [nowPoint.pageX - this.startPoint.x],
-    //         y: [nowPoint.pageY - this.startPoint.y]
-    //     };
-    //     if (Math.abs(offset.y) > 20) {
-    //         if (offset.y > 0) {
-    //             console.log(`Down ${this.state.pullPixels}px touchmove`);
-    //             this.setState({
-    //                 pulling: true,
-    //                 pullPixels: [parseInt(this.state.pullPixels, 10) + 20]
-    //             });
-    //             if (this.state.pullPixels >= 100) {
-    //                 this.setState({
-    //                     spinning: true,
-    //                     pullPixels: 100
-    //                 })
-    //             }
-    //             this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
-    //         }
-    //         if (offset.y < 0) {
-    //             this.setState({
-    //                 pulling: false,
-    //                 pullPixels: 0,
-    //                 spinning: false
-    //             });
-    //             this.startPoint = {x: nowPoint.pageX, y: nowPoint.pageY};
-    //         }
-    //     }
-    // }
+    
 
     handleTouchEnd(event) {
         const {todos, swipe, actions} = this.props;
