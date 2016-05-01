@@ -1,0 +1,20 @@
+.todo__item
+    z-index: 1
+    height: 100%
+    width: 100%
+    display: block
+    margin: 0 auto
+    min-height: 100px
+    background-color: #eaeaea
+
+.todo__item.animate-left
+    transform: translate(-100px);
+    transition-property: transform;
+    transition-duration: 0.4s;
+    transition-timing-function: linear;
+
+.todo__item.animate-right
+    transform: translate(0);
+    transition-property: transform ;
+    transition-duration: 0.4s;
+    transition-timing-function: linear;

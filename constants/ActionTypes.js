@@ -1,0 +1,18 @@
+export const ADD_TODO = 'ADD_TODO';
+export const DELETE_TODO = 'DELETE_TODO';
+export const EDIT_TODO = 'EDIT_TODO';
+
+export const REQUEST_TODOS = 'REQUEST_TODOS';
+export const RECEIVE_TODOS = 'RECEIVE_TODOS';
+
+export const TODO_ADDED = 'TODO_ADDED';
+export const TODO_DELETED = 'TODO_DELETED';
+export const TODO_EDITED = 'TODO_EDITED';
+
+export const VERTICAL_STARTED = 'VERTICAL_STARTED';
+export const VERTICAL_MOVED = 'VERTICAL_MOVED';
+export const VERTICAL_STOPPED = 'VERTICAL_STOPPED';
+export const HORIZONTAL_STARTED = 'HORIZONTAL_STARTED';
+export const HORIZONTAL_MOVED = 'HORIZONTAL_MOVED';
+export const HORIZONTAL_STOPPED = 'HORIZONTAL_STOPPED';
+export const TAPPED = 'TAPPED';
