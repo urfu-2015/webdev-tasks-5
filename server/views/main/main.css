@@ -1,0 +1,50 @@
+@import '../../blocks/tasks/tasks.css';
+
+.content {
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+}
+
+.header {
+    text-align: center;
+    font-size: 7vh;
+    margin: 5% auto;
+}
+
+.refresh {
+    width: 150px;
+    height: 150px;
+    background: url('reload.gif') no-repeat center;
+    background-size: contain;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    position: absolute;
+    top: -150px;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.add-task-form {
+    margin: 10% auto;
+    width: 75%;
+}
+
+.add-task-form__text {
+    font-size: 4vh;
+    max-width: 99%;
+    margin: 3% auto;
+    display: none;
+}
+
+.add-task-form__submit {
+    font-size: 3vh;
+    margin: 3px auto;
+    display: block;
+}
