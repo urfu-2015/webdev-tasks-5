@@ -1,4 +1,9 @@
 exports.reducers = (state, action) => {
+    if ((action.type === 'DELETE' && typeof action.id !== 'number') ||
+    action.type === 'RENAME' &&
+    (typeof action.id !== 'number' || typeof action.text === 'undefined')) {
+        return state;
+    }
     switch (action.type) {
         case 'ADD':
             return Array.prototype.concat.call(action.task, state);

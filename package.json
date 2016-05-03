@@ -33,7 +33,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "jscs .",
     "build": "webpack",
-    "start": "npm run build && node app.js"
+    "start": "npm run build && node app.js",
+    "devbuild": "webpack --config webpack.dev.config.js"
   },
   "repository": {
     "type": "git",
