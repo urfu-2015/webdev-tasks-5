@@ -10,7 +10,6 @@ function initialize() {
     button.addEventListener('touchstart', () => {
         var text = document.querySelector('.task-creator .task-form').value;
         createTask(text, (err, res) => {
-            console.log(text, res);
             var task = makeTask(text, res);
             var taskList = document.querySelector('.tasks');
             taskList.appendChild(task);
@@ -38,7 +37,6 @@ function initialize() {
 
     document.body.addEventListener('touchend', () => {
         if (delta >= 40) {
-            console.log('refreshing');
             update();
             setTimeout(() => {
                 tasks.style.top = '0px';
@@ -55,16 +53,16 @@ function update() {
     while(todolist.length) {
         todolist[0].parentNode.removeChild(todolist[0]);
     }
-    var taskList = getTaskList(function (err, data) {
+    getTaskList(function (err, data) {
         if (err) {
             alert(err);
             return;
         }
         var taskList = document.querySelector('.tasks');
-        for (var i = 0; i < data.length; i++) {
-            var newTask = makeTask(data[i].text, data[i].id);
+        Object.keys(data).forEach((index) => {
+            var newTask = makeTask(data[index], index);
             taskList.appendChild(newTask);
-        }
+        });
     });
 }
 
@@ -100,7 +98,6 @@ function makeTask(text, id) {
 
     taskButton.addEventListener('touchstart', event => {
         deleteTask(id, (err, res) => {
-            console.log(id);
             if (err) {
                 console.log(err);
             } else {
@@ -215,7 +212,7 @@ function getTaskList(callback) {
         if (req.status != 200) {
             callback(req.status + ': ' + req.statusText, null);
         } else {
-            callback(null, JSON.parse(req.response).tasks);
+            callback(null, JSON.parse(req.response));
         }
     };
 }

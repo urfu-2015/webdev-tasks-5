@@ -2,34 +2,34 @@
  * Created by Max on 20.04.2016.
  */
 var lastID = 3;
-var tasksList = {
-    tasks: [
-        { id: "1", text: "Buy a cat!"},
-        { id: "2", text: "Buy a dog!"},
-        { id: "3", text: "Buy a badger!"}
-    ]
+var tasks = {
+    1: "Buy a cat!",
+    2: "Buy a dog!",
+    3: "Buy a badger!"
 };
+//var tasks = [
+//    { id: "1", text: "Buy a cat!"},
+//    { id: "2", text: "Buy a dog!"},
+//    { id: "3", text: "Buy a badger!"}
+//];
 
 exports.getTaskList = (req, res) => {
     res.status(200);
-    res.json(tasksList);
+    res.json(tasks);
 };
 
 function getIndexOfTaskWithId(taskId) {
-    var tasks = tasksList.tasks;
     for (var i = 0; i < tasks.length; i++) {
         if (tasks[i].id === taskId) {
             return i;
         }
     }
-    return undefined;
 }
 
 exports.deleteTask = (req, res) => {
     var taskId = req.params.id;
-    var index = getIndexOfTaskWithId(taskId);
-    if (index || index === 0) {
-        tasksList.tasks.splice(index, 1);
+    if (tasks.hasOwnProperty(taskId)) {
+        delete tasks[taskId];
         res.status(200);
     } else {
         res.status(204);
@@ -39,10 +39,8 @@ exports.deleteTask = (req, res) => {
 
 exports.changeTask = (req, res) => {
     var taskId = req.params.id;
-    var index = getIndexOfTaskWithId(taskId);
-    var newTask = { id: taskId, text: req.body.text };
-    if (index || index === 0) {
-        tasksList.tasks.splice(index, 1, newTask);
+    if (tasks.hasOwnProperty(taskId)) {
+        tasks[taskId] = req.body.text;
         res.status(200);
     } else {
         res.status(204);
@@ -53,8 +51,7 @@ exports.changeTask = (req, res) => {
 exports.createTask = (req, res) => {
     var text = req.body.text;
     lastID = lastID + 1;
-    var newTask = { id: lastID.toString(), text };
-    tasksList.tasks.push(newTask);
+    tasks[lastID] = text;
     res.status(201);
     res.json(lastID);
 };
