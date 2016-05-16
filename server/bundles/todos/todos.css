@@ -1,0 +1,126 @@
+@import '../../blocks/page/page.css';
+
+body,
+html {
+    position: fixed;
+}
+
+
+/*html {*/
+main {
+    /*body {*/
+    /*overflow-scrolling: touch;*/
+    /*overflow: scroll;*/
+    transform: translateY(-80px);
+}
+
+.todos-container {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 200px;
+    margin: auto;
+}
+
+.todo-item {
+    text-align: center;
+    font-size: 30px;
+    height: auto;
+    display: flex;
+    min-height: 60px;
+    min-width: 200px;
+    margin-bottom: 5px;
+}
+
+.todo__text {
+    border-radius: 10px;
+    background-color: #00d4b4;
+    flex-basis: 100%;
+    z-index: 1000;
+    position: relative;
+    margin-right: -60px;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    display: inline-block;
+    line-height: 60px;
+}
+
+.todo__edit-form {
+    width: 100%;
+    flex-basis: 100%;
+    font-size: 20px;
+}
+
+.todo__create-form {
+    width: 100%;
+    flex-basis: 100%;
+    font-size: 20px;
+}
+
+.todo__delete-button {
+    z-index: 0;
+}
+
+.todo__edit-checkbox,
+.todo__edit-checkbox:not(:checked) ~ .todo__edit-form,
+.todo__edit-checkbox:not(:checked) ~ .todo__submit-button,
+.todo__edit-checkbox:checked ~ .todo__text,
+.todo__edit-checkbox:checked ~ .todo__delete-button {
+    display: none;
+}
+
+.todo__submit-button, .todo__delete-button {
+    min-width: 60px;
+    min-height: 60px;
+    width: 60px;
+    border-radius: 10px;
+    height: 60px;
+}
+
+.todo__submit-button {
+    background: url(//toodoohi.surge.sh/confirm.png) center no-repeat;
+}
+
+.todo__delete-button {
+    background: url(//toodoohi.surge.sh/trash.png) center no-repeat;
+}
+
+.refresh-container {
+    margin: auto auto 10px;
+    width: 60px;
+    text-align: center;
+}
+
+.refresh-checker {
+    display: none;
+}
+
+.refresh-checker:checked ~ .refresh-image {
+    animation: spin 1s linear infinite;
+}
+
+.refresh-image {
+    margin: auto;
+    padding-bottom: -20px;
+    width: 100%;
+}
+
+@viewport {
+    width: auto;
+    max-width: auto;
+    min-width: auto;
+    zoom: auto;
+    max-zoom: 5;
+    min-zoom: 0.25;
+    user-zoom: zoom;
+    orientation: auto;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}
