@@ -29,7 +29,7 @@ class Todo {
 
     static findIndex(num) {
         let result;
-        
+
         num = Number(num);
         todoList.forEach(function (item, i) {
             if (item.num === num) {

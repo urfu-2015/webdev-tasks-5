@@ -4,30 +4,21 @@
     <meta charset="UTF-8">
     <title>TODO'хи</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="/index.css">
     <link href='https://fonts.googleapis.com/css?family=Comfortaa:400,700&subset=latin,cyrillic'
           rel='stylesheet' type='text/css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.16/browser.js"></script>
 </head>
 <body>
-    <img class="spinner spinner_hidden" src="spinner2.gif">
-    <header>
-        <h1>TODO'хи</h1>
-    </header>
-    <main class="main">
-        <article class="todo-list">
-            {% if todoList %}
-                {% for item in todoList %}
-                    <section class="todo-list__item" data-id="{{ item.num }}">
-                        <div class="todo-list__text todo-list__text_visible">{{ item.todo }}</div>
-                        <button class="todo-list__delete todo-list__delete_hidden"></button>
-                        {% include './form.html' with item %}
-                    </section>
-                {% endfor %}
-            {% endif %}
-            <button class="todo-list__add-button" type="button">Добавить</button>
-            {% include './form.html' %}
-        </article>
-    </main>
-    <script src="index.js"></script>
+<img class="spinner spinner_hidden" src="spinner2.gif">
+<header>
+    <h1>TODO'хи</h1>
+</header>
+<main class="main"></main>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/babel" src="form.jsx"></script>
+<script type="text/babel" src="reactive.jsx"></script>
 </body>
 </html>

@@ -1,7 +1,0 @@
-<form class="todo-list__form{% if not item %} todo-list__form-add {%else%} todo-list__form-edit{% endif %}
-    todo-list__form_hidden" {% if not item %}method="post"{% endif %} action="/">
-        <textarea class="todo-list__textarea" name="text">{% if item %}{{ item.todo }}{% endif %}</textarea>
-    <button class="todo-list__submit {% if item %}todo-list__submit-edit{% endif %}" type="submit">
-        Сохранить
-    </button>
-</form>
