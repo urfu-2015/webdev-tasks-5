@@ -2,10 +2,14 @@
 
 const FORM = 'todo-list__form';
 const TEXT = 'todo-list__text';
-const ITEM = 'todo-list__item';
 const DELETE = 'todo-list__delete';
 const TEXTAREA = 'todo-list__textarea';
 
+let startY, startPageY, startX, endX, endY, endPageY, spinner = document.querySelector('.spinner');
+const pullDivide = document.documentElement.clientHeight; // докуда можно пальцем тянуть
+const defaultTop = -52;
+
+//функци, не относящиеся к самим компонентам, а лишь к элементам страницы
 function makeVisible(element, param) {
     element.classList.remove('todo-list__' + param + '_hidden');
     element.classList.add('todo-list__' + param + '_visible');
@@ -55,11 +59,44 @@ function checkForActiveElement() {
     }
 }
 
-function reload() {
-    let spinner = document.querySelector('.spinner_hidden');
+function showDeleteButton(event) {
+    if (startX - endX > 50) {
+        checkForActiveElement();
 
-    if (spinner) {
-        spinner.classList.remove('spinner_hidden');
+        let deleteButton =
+            event.target.parentElement.parentElement.querySelector('.' + DELETE);
+
+        deleteButton.dataset.active = '';
+        deleteButton.style.width = event.target.clientHeight + 'px';
+        makeVisible(deleteButton, 'delete');
     }
-    location.reload();
+
+    startX = undefined;
+    endX = undefined;
+}
+
+function showAddForm() {
+    checkForActiveElement();
+
+    let addForm = document.querySelector('.' + FORM + '-add');
+
+    addForm.dataset.active = '';
+    makeVisible(addForm, 'form');
+    addForm.querySelector('.' + TEXTAREA).focus();
+}
+
+function showEditForm(event) {
+    checkForActiveElement();
+
+    if (!event.target.classList.contains(TEXT)) {
+        return;
+    }
+
+    let editForm = event.target.parentElement.parentElement.querySelector('.' + FORM);
+
+    editForm.dataset.active = '';
+    makeVisible(editForm, 'form');
+
+    makeHidden('text', event.target);
+    editForm.querySelector('.' + TEXTAREA).focus();
 }
