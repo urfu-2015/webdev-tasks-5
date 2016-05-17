@@ -46,7 +46,7 @@ class Todo {
     }
 }
 
-todoList.push(new Todo('сделать всю домашку'));
-todoList.push(new Todo('купить слона!'));
+// todoList.push(new Todo('сделать всю домашку'));
+// todoList.push(new Todo('купить слона!'));
 
 module.exports = Todo;
