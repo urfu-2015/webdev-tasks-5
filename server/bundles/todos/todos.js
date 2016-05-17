@@ -20,7 +20,7 @@ function render() {
 render();
 store.subscribe(render);
 
-fetch('/api/todos' + window.location.search)
+fetch('/api/todos')
     .then(function (response) {
         return response.json();
     })
