@@ -1,16 +1,9 @@
-@import '../../blocks/page/page.css';
-
 body,
 html {
     position: fixed;
 }
 
-
-/*html {*/
 main {
-    /*body {*/
-    /*overflow-scrolling: touch;*/
-    /*overflow: scroll;*/
     transform: translateY(-80px);
 }
 

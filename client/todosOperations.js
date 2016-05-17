@@ -1,26 +1,11 @@
 'use strict';
 
-import {editTodo} from '../actions';
-import {addTodo} from '../actions';
-
-function sendRequest(body, method, action) {
-    fetch('/todos', {
-        method,
-        headers: {
-            "Content-type": "application/json"
-        },
-        body: JSON.stringify(body)
-    })
-        .then(data => {
-            if (data.status !== 200) {
-                return;
-            }
-            action();
-        });
-}
+import {editTodo, addTodo} from './actions';
+import {getCurrentTranslate} from './cssHelper';
+import apiProvider from './apiProvider';
 
 exports.showEditForm = function (event) {
-    if (event.target.style.transform !== "" && parseInt(event.target.style.transform.split('(')[1], 10) != 0) {
+    if (event.target.style.transform !== "" && getCurrentTranslate(event.target) != 0) {
         event.preventDefault();
     }
     var editForm = event.target.parentElement.querySelector(".todo__edit-form");
@@ -34,7 +19,10 @@ exports.editTodoOnClick = function (store, id, event) {
     checkbox.checked = false;
     var text = event.target.parentElement.querySelector(".todo__edit-form").value;
     var todo = {id, text};
-    sendRequest(todo, 'put', () => store.dispatch(editTodo(todo)));
+    apiProvider('/todos', 'put', todo)
+        .then(function (data) {
+            store.dispatch(editTodo(data));
+        });
 };
 
 function getNextId(store) {
@@ -42,6 +30,7 @@ function getNextId(store) {
     if (todos.length == 0) {
         return 0;
     }
+    var result = Math.max.apply(null, todos.map(todo => todo.id)) + 1;
     return Math.max.apply(null, todos.map(todo => todo.id)) + 1;
 }
 
@@ -57,7 +46,14 @@ exports.createTodoOnClick = function (store, event) {
         return;
     }
     var todo = {id: todoId, text};
-    sendRequest(todo, 'post', () => store.dispatch(addTodo(todo)));
+    fetch('/todos', {
+        method: 'post',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(todo)
+    }).then(function () {
+        store.dispatch(addTodo(todo));
+    });
+
     textBox.value = "";
 };
 

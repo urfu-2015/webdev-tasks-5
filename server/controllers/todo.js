@@ -15,6 +15,7 @@ exports.create = (req, res) => {
         req.body.id,
         req.body.text
     );
+    console.log(todo);
     todo.save();
     res.status(200).send();
 };

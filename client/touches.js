@@ -1,16 +1,45 @@
+'use strict';
+
+import {getCurrentTranslate, buildNewTransform, activateDeleteButton, disableDeleteButton} from './cssHelper';
+
 function getSwipeHandlers() {
     document.ontouchmove = function (event) {
         event.preventDefault();
     };
     var isVertical = false;
     var isHorizontal = false;
+    const todoTextClass = 'todo__text';
 
-    function getCurrentTranslate(element) {
-        return element.style.transform ? parseInt(element.style.transform.split('(')[1], 10) : 0;
+    function handleLeftSwipe(todo, event, distX) {
+        var currentTranslate = getCurrentTranslate(todo);
+        if (currentTranslate == -60) {
+            return;
+        }
+        todo.style.transform = buildNewTransform(-Math.min(-distX - 20, 60), 'X');
+        event.stopImmediatePropagation();
     }
 
-    function buildNewTrasnform(translateValue, dir) {
-        return `translate${dir}(${translateValue.toString()}px)`
+    function handleRightSwipe(todo, event, distX) {
+        var currentTranslate = getCurrentTranslate(todo);
+        if (currentTranslate == 0) {
+            return;
+        }
+        todo.style.transform = buildNewTransform(Math.min(-80 + distX, 0), 'X');
+        event.stopImmediatePropagation();
+    }
+
+    function handleDownSwipe(swipeTarget, startTranslate, distY) {
+        isVertical = true;
+        swipeTarget.style.transform = buildNewTransform(Math.min(startTranslate + distY, 0), "Y");
+    }
+
+    function handleUpSwipe(swipeTarget, startTranslate, distY) {
+        isVertical = true;
+        var height = parseInt(getComputedStyle(swipeTarget).height, 10);
+        if (-(height - 55) > startTranslate + distY) {
+            return;
+        }
+        swipeTarget.style.transform = buildNewTransform((startTranslate + distY), 'Y');
     }
 
     return {
@@ -25,11 +54,9 @@ function getSwipeHandlers() {
             function prepareDisableButton() {
                 var currentTranslate = getCurrentTranslate(swipeTarget);
                 if (currentTranslate < -30) {
-                    setTimeout(() =>
-                            swipeTarget.parentElement.querySelector('.todo__delete-button').removeAttribute('disabled'),
-                        200);
+                    setTimeout(() => activateDeleteButton(swipeTarget), 100);
                 } else {
-                    swipeTarget.parentElement.querySelector('.todo__delete-button').setAttribute('disabled', 'disabled');
+                    disableDeleteButton(swipeTarget);
                 }
             }
 
@@ -39,7 +66,7 @@ function getSwipeHandlers() {
                 }
                 isHorizontal = false;
                 var currentTranslate = getCurrentTranslate(swipeTarget);
-                swipeTarget.style.transform = buildNewTrasnform(Math.abs(currentTranslate) > 30 ? -60 : 0, 'X');
+                swipeTarget.style.transform = buildNewTransform(Math.abs(currentTranslate) > 30 ? -60 : 0, 'X');
                 prepareDisableButton();
             }
 
@@ -49,8 +76,9 @@ function getSwipeHandlers() {
                 startX = touchobj.pageX;
                 startY = touchobj.pageY;
             }, false);
+
             touchsurface.addEventListener('touchmove', function (event) {
-                if (swipeTarget.className !== 'todo__text' || isVertical) {
+                if (swipeTarget.className !== todoTextClass || isVertical) {
                     return;
                 }
                 var touchobj = event.changedTouches[0];
@@ -62,19 +90,9 @@ function getSwipeHandlers() {
                     isHorizontal = true;
                 }
                 if (distX < -20) {
-                    var currentTranslate = getCurrentTranslate(todo);
-                    if (currentTranslate == -60) {
-                        return;
-                    }
-                    todo.style.transform = buildNewTrasnform(-Math.min(-distX - 20, 60), 'X');
-                    event.stopImmediatePropagation();
+                    handleLeftSwipe(todo, event, distX);
                 } else if (distX > 20) {
-                    currentTranslate = getCurrentTranslate(todo);
-                    if (currentTranslate == 0) {
-                        return;
-                    }
-                    todo.style.transform = buildNewTrasnform(Math.min(-80 + distX, 0), 'X');
-                    event.stopImmediatePropagation();
+                    handleRightSwipe(todo, event, distX);
                 }
             }, false);
 
@@ -107,18 +125,13 @@ function getSwipeHandlers() {
                     return;
                 }
                 if (distY > 5) {
-                    isVertical = true;
-                    swipeTarget.style.transform = buildNewTrasnform(Math.min(startTranslate + distY, 0), "Y");
+                    handleDownSwipe(swipeTarget, startTranslate, distY);
                 }
                 else if (distY < -5) {
-                    isVertical = true;
-                    var height = parseInt(getComputedStyle(swipeTarget).height, 10);
-                    if (-(height - 55) > startTranslate + distY) {
-                        return;
-                    }
-                    swipeTarget.style.transform = buildNewTrasnform((startTranslate + distY), 'Y');
+                    handleUpSwipe(swipeTarget, startTranslate, distY);
                 }
             }, false);
+
             function setReturnAnimation() {
                 swipeTarget.style.transition = "transform";
                 swipeTarget.style.transitionDelay = distY >= 80 ? ".9s" : "0s";

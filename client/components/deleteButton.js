@@ -6,6 +6,7 @@ export default React.createClass({
     componentDidMount() {
         this.refs.deleteButton.setAttribute('disabled', 'disable')
     },
+
     onClick(event) {
         event.preventDefault();
         if (event.target.className != this.refs.deleteButton.className || this.refs.deleteButton.disabled) {
@@ -18,7 +19,7 @@ export default React.createClass({
                 store.dispatch(deleteTodo(data.id));
             });
     },
-
+    
     render() {
         return (
             <input ref="deleteButton" type="button" className="todo__delete-button" onClick={this.onClick}/>
