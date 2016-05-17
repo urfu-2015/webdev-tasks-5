@@ -30,7 +30,6 @@ function getNextId(store) {
     if (todos.length == 0) {
         return 0;
     }
-    var result = Math.max.apply(null, todos.map(todo => todo.id)) + 1;
     return Math.max.apply(null, todos.map(todo => todo.id)) + 1;
 }
 
