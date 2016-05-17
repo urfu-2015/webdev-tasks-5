@@ -3,21 +3,25 @@
 import {editTodo, addTodo} from './actions';
 import {getCurrentTranslate} from './cssHelper';
 import apiProvider from './apiProvider';
+const editFormClass = '.todo__edit-form';
+const todoTextClass = '.todo__text';
+const editCheckbox = '.todo__edit-checkbox';
+const createForm = '.todo__create-form';
 
 exports.showEditForm = function (event) {
     if (event.target.style.transform !== "" && getCurrentTranslate(event.target) != 0) {
         event.preventDefault();
     }
-    var editForm = event.target.parentElement.querySelector(".todo__edit-form");
-    editForm.value = event.target.parentElement.querySelector(".todo__text").innerText;
+    var editForm = event.target.parentElement.querySelector(editFormClass);
+    editForm.value = event.target.parentElement.querySelector(todoTextClass).innerText;
 };
 
 exports.editTodoOnClick = function (store, id, event) {
     event.stopPropagation();
     event.preventDefault();
-    var checkbox = event.target.parentElement.querySelector(".todo__edit-checkbox");
+    var checkbox = event.target.parentElement.querySelector(editCheckbox);
     checkbox.checked = false;
-    var text = event.target.parentElement.querySelector(".todo__edit-form").value;
+    var text = event.target.parentElement.querySelector(editFormClass).value;
     var todo = {id, text};
     apiProvider('/todos', 'put', todo)
         .then(function (data) {
@@ -39,7 +43,7 @@ exports.createTodoOnClick = function (store, event) {
     event.preventDefault();
     var targetElement = event.target;
     var todoId = getNextId(store);
-    var textBox = targetElement.parentElement.querySelector('.todo__create-form');
+    var textBox = targetElement.parentElement.querySelector(createForm);
     var text = textBox.value;
     if (!text) {
         return;

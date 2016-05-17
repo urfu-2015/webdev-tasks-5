@@ -139,8 +139,10 @@ function getSwipeHandlers() {
                 swipeTarget.style.transform = "translateY(-80px)";
             }
 
+            const refreshChecker = '.refresh-checker';
+
             function startRefreshAnimation() {
-                var checker = document.querySelector('.refresh-checker');
+                var checker = document.querySelector(refreshChecker);
                 checker.checked = true;
                 setTimeout(() => {
                     checker.checked = false;
