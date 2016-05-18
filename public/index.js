@@ -45,6 +45,7 @@ function eventListenerForNewNote() {
         newNote.setAttribute('class', 'note');
         newNote.innerHTML = inputArea.value;
         container.insertBefore(newNote, container.firstChild);
+        addDeleteEvent(newNote);
         if (isTouched) {
             submitButton.classList.remove('touched');
             sendXHR('POST', '/', document.getElementsByClassName("input-area")[0].value);
@@ -135,6 +136,7 @@ function reloadNotes() {
     }
     xhr.send();
 };
+
 
 window.onload = function() {
     reloadNotes();
