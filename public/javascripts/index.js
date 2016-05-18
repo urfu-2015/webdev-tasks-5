@@ -70,7 +70,6 @@
 	        this.handleUpdate();
 	        document.addEventListener('touchstart', this.handleTouchStart);
 	        document.addEventListener('touchend', this.handleTouchEnd);
-	        document.addEventListener('touchmove', this.handleTouchMove);
 	    },
 
 	    setEditingModelId: function (TodoId) {
@@ -96,28 +95,26 @@
 	        this.eventObj.startY = touch.pageY;
 	    },
 
-	    handleTouchMove: function (e) {
-	        e.preventDefault();
-	    },
-
 	    handleTouchEnd: function (e) {
 	        var touch = e.changedTouches[0];
 	        this.eventObj.endX = touch.pageX;
 	        this.eventObj.endY = touch.pageY;
 
 	        if (!this.state.dragging) {
-	            if (this.eventObj.startY - this.eventObj.endY > -200 && this.eventObj.startY - this.eventObj.endY < -50 && Math.abs(this.eventObj.startX - this.eventObj.endX) < 25) {
-	                this.handleAddEmptyObject();
-	            }
-
 	            if (this.eventObj.startY - this.eventObj.endY < -200 && Math.abs(this.eventObj.startX - this.eventObj.endX) < 25) {
 	                this.handleUpdate();
 	            }
 	        }
 	    },
 
+	    handleAddButtonTouchEnd: function (e) {
+	        e.preventDefault();
+	        this.handleAddEmptyObject();
+	    },
+
 	    handleAddEmptyObject: function () {
-	        this.state.todos.unshift({ _id: 'newTodo' });
+	        window.scroll(0, 0);
+	        this.state.todos.unshift({ _id: 'newTodo', focused: true });
 	        this.setState({ todos: this.state.todos });
 	    },
 
@@ -168,7 +165,8 @@
 	        newItems.splice(i, 1);
 	        this.setState({ todos: newItems, leftDraggingElement: {} });
 
-	        this.state.todos.length === 0 ? document.body.style.position = 'relative' : document.body.style.position = 'static';
+	        //this.state.todos.length === 0 ? document.body.style.position = 'relative' :
+	        //    document.body.style.position = 'static';
 	    },
 
 	    handleElementSetDrag: function (key, left, top) {
@@ -213,6 +211,7 @@
 	                prev: todo.prev || null,
 	                next: todo.next || null,
 	                todo: todo,
+	                focused: todo.focused,
 	                remove: this.handleRemove.bind(this, i),
 	                editing: todo._id !== 'newTodo' ? this.state.editingTodoId === todo._id : true,
 	                onStartEditing: this.setEditingModelId,
@@ -223,13 +222,21 @@
 	                left: this.state.draggingElement.left,
 	                top: this.state.draggingElement.top,
 	                onElementDragLeft: this.handleElementDragLeft,
-	                style: todo._id === this.state.leftDraggingElement.id && this.state.leftDraggingElement.offset < 0 ? { marginLeft: this.state.leftDraggingElement.offset + 'px' } : undefined
+	                deleteButtonStyle: todo._id === this.state.leftDraggingElement.id && this.state.leftDraggingElement.offset < 0 ? { width: Math.min(-this.state.leftDraggingElement.offset, 100) + 'px' } : undefined
+	                //style={todo._id === this.state.leftDraggingElement.id
+	                //&& this.state.leftDraggingElement.offset < 0 ?
+	                //{marginLeft: this.state.leftDraggingElement.offset + 'px'} : undefined}
 	            }), this.state.draggingElement.overKey === todo._id ? React.createElement('li', { key: 'empty-li', className: 'empty-li' }) : undefined];
 	        }, this);
 
 	        return React.createElement(
 	            'div',
 	            { className: 'todo-list-container' },
+	            React.createElement(
+	                'div',
+	                { className: 'btn', onTouchEnd: this.handleAddButtonTouchEnd },
+	                '+'
+	            ),
 	            React.createElement(
 	                'div',
 	                { className: this.state.loadingVisible ? 'grid-row' : 'grid-row hidden' },
@@ -19951,6 +19958,7 @@
 	var assign = __webpack_require__(162);
 
 	var React = __webpack_require__(3);
+	var ReactDom = __webpack_require__(160);
 
 	module.exports = React.createClass({
 	    displayName: 'exports',
@@ -19960,6 +19968,12 @@
 	        return {
 	            text: this.props.todo.text
 	        };
+	    },
+
+	    componentDidMount: function () {
+	        if (this.props.focused) {
+	            ReactDom.findDOMNode(this.refs.todoInput).focus();
+	        }
 	    },
 
 	    startEditing: function () {
@@ -19974,7 +19988,13 @@
 	        this.setState({ text: e.target.value });
 	    },
 
-	    handleBlur: function (e) {
+	    onKeypressHandler: function (e) {
+	        if (e.charCode === 13 || e.which === 13) {
+	            e.target.blur();
+	        }
+	    },
+
+	    onBlurHandler: function (e) {
 	        this.stopEditing();
 	        var newText = e.target.value;
 	        if (this.props.todo._id === 'newTodo') {
@@ -19990,7 +20010,7 @@
 	        }
 	    },
 
-	    handleSwipeRight: function () {
+	    onDeleteButtonTap: function () {
 	        xhr.delete({ _id: this.props.todo._id, text: this.props.todo.text }, function () {
 	            this.props.remove();
 	        }.bind(this));
@@ -20058,8 +20078,15 @@
 	        if (this.eventObj.startX - this.eventObj.endX === 0 && this.eventObj.startY - this.eventObj.endY === 0) {
 	            this.startEditing();
 	        }
-	        if (this.eventObj.startX - this.eventObj.endX > 130 && Math.abs(this.eventObj.startY - this.eventObj.endY) < 15) {
-	            this.handleSwipeRight(this.props.id);
+	        //if (this.eventObj.startX - this.eventObj.endX > 100 &&
+	        //    Math.abs(this.eventObj.startY - this.eventObj.endY) < 15) {
+	        //    this.handleSwipeRight(this.props.id);
+	        //} else {
+	        //}
+
+	        var offset = this.eventObj.endX - this.eventObj.startX;
+	        if (offset <= -100) {
+	            this.props.onElementDragLeft(this.props.id, offset);
 	        } else {
 	            this.props.onElementDragLeft();
 	        }
@@ -20075,7 +20102,7 @@
 	        } else {
 	            inputStyles.display = "none";
 	        }
-
+	        console.log(this.props.deleteButtonStyle);
 	        return React.createElement(
 	            'li',
 	            { id: this.props.id,
@@ -20086,23 +20113,30 @@
 	                style: assign({ left: this.props.left, top: this.props.top }, this.props.style) },
 	            React.createElement(
 	                'div',
-	                { className: 'view', style: viewStyles,
-	                    onTouchStart: this.handleTouchStart,
-	                    onTouchMove: this.handleTouchMove,
-	                    onTouchEnd: this.handleTouchEnd },
-	                this.state.text
+	                { className: 'container' },
+	                React.createElement(
+	                    'div',
+	                    { className: 'view', style: viewStyles,
+	                        onTouchStart: this.handleTouchStart,
+	                        onTouchMove: this.handleTouchMove,
+	                        onTouchEnd: this.handleTouchEnd },
+	                    this.state.text
+	                ),
+	                React.createElement('input', { className: 'edit', type: 'text',
+	                    ref: 'todoInput',
+	                    onBlur: this.onBlurHandler,
+	                    onKeyPress: this.onKeypressHandler,
+	                    style: inputStyles,
+	                    value: this.state.text,
+	                    onChange: this.onChangeHandler
+	                })
 	            ),
-	            React.createElement('input', { className: 'edit', type: 'text',
-	                ref: function (input) {
-	                    if (input != null) {
-	                        input.focus();
-	                    }
-	                },
-	                onBlur: this.handleBlur,
-	                style: inputStyles,
-	                value: this.state.text,
-	                onChange: this.onChangeHandler
-	            })
+	            React.createElement(
+	                'div',
+	                { className: 'deleteBtn', style: this.props.deleteButtonStyle,
+	                    onTouchEnd: this.onDeleteButtonTap },
+	                'Удалить'
+	            )
 	        );
 	    }
 	});

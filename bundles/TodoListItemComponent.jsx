@@ -2,6 +2,7 @@ var xhr = require('./../scripts/xhr.js');
 var assign = require('./../scripts/assign.js');
 
 var React = require('react');
+var ReactDom = require('react-dom');
 
 module.exports = React.createClass({
 
@@ -9,6 +10,12 @@ module.exports = React.createClass({
         return {
             text: this.props.todo.text
         };
+    },
+
+    componentDidMount: function () {
+        if (this.props.focused) {
+            ReactDom.findDOMNode(this.refs.todoInput).focus();
+        }
     },
 
     startEditing: function () {
@@ -23,7 +30,13 @@ module.exports = React.createClass({
         this.setState({text: e.target.value})
     },
 
-    handleBlur: function (e) {
+    onKeypressHandler: function (e) {
+        if (e.charCode === 13 || e.which === 13) {
+            e.target.blur();
+        }
+    },
+
+    onBlurHandler: function (e) {
         this.stopEditing();
         var newText = e.target.value;
         if (this.props.todo._id === 'newTodo') {
@@ -39,7 +52,7 @@ module.exports = React.createClass({
         }
     },
 
-    handleSwipeRight: function () {
+    onDeleteButtonTap: function () {
         xhr.delete({_id: this.props.todo._id, text: this.props.todo.text}, function () {
             this.props.remove();
         }.bind(this));
@@ -111,9 +124,9 @@ module.exports = React.createClass({
             this.eventObj.startY - this.eventObj.endY === 0) {
             this.startEditing();
         }
-        if (this.eventObj.startX - this.eventObj.endX > 130 &&
-            Math.abs(this.eventObj.startY - this.eventObj.endY) < 15) {
-            this.handleSwipeRight(this.props.id);
+        var offset = this.eventObj.endX - this.eventObj.startX;
+        if (offset <= -100) {
+            this.props.onElementDragLeft(this.props.id, offset);
         } else {
             this.props.onElementDragLeft();
         }
@@ -129,7 +142,7 @@ module.exports = React.createClass({
         } else {
             inputStyles.display = "none";
         }
-
+        console.log(this.props.deleteButtonStyle);
         return (
             <li id={this.props.id}
                 onTouchStart={this.handleTouchLiStart}
@@ -137,19 +150,25 @@ module.exports = React.createClass({
                 onTouchMove={this.handleTouchLiMove}
                 className={this.props.dragging ? 'dragging' : ''}
                 style={assign({left: this.props.left, top: this.props.top}, this.props.style)}>
-                <div className='view' style={viewStyles}
-                     onTouchStart={this.handleTouchStart}
-                     onTouchMove={this.handleTouchMove}
-                     onTouchEnd={this.handleTouchEnd}>
-                    {this.state.text}
+                <div className="container">
+                    <div className='view' style={viewStyles}
+                         onTouchStart={this.handleTouchStart}
+                         onTouchMove={this.handleTouchMove}
+                         onTouchEnd={this.handleTouchEnd}>
+                        {this.state.text}
+                    </div>
+                    <input className='edit' type='text'
+                           ref='todoInput'
+                           onBlur={this.onBlurHandler}
+                           onKeyPress={this.onKeypressHandler}
+                           style={inputStyles}
+                           value={this.state.text}
+                           onChange={this.onChangeHandler}
+                    />
                 </div>
-                <input className='edit' type='text'
-                       ref={function(input) { if (input != null) {input.focus();}}}
-                       onBlur={this.handleBlur}
-                       style={inputStyles}
-                       value={this.state.text}
-                       onChange={this.onChangeHandler}
-                />
+                <div className="deleteBtn" style={this.props.deleteButtonStyle}
+                     onTouchEnd={this.onDeleteButtonTap}>Удалить
+                </div>
             </li>
         );
     }

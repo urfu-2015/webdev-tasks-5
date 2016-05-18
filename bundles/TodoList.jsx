@@ -22,7 +22,6 @@ var TodoList = React.createClass({
         this.handleUpdate();
         document.addEventListener('touchstart', this.handleTouchStart);
         document.addEventListener('touchend', this.handleTouchEnd);
-        document.addEventListener('touchmove', this.handleTouchMove);
     },
 
     setEditingModelId: function (TodoId) {
@@ -48,31 +47,27 @@ var TodoList = React.createClass({
         this.eventObj.startY = touch.pageY;
     },
 
-    handleTouchMove: function (e) {
-        e.preventDefault();
-    },
-
     handleTouchEnd: function (e) {
         var touch = e.changedTouches[0];
         this.eventObj.endX = touch.pageX;
         this.eventObj.endY = touch.pageY;
 
         if (!this.state.dragging) {
-            if (this.eventObj.startY - this.eventObj.endY > -200 &&
-                this.eventObj.startY - this.eventObj.endY < -50 &&
-                Math.abs(this.eventObj.startX - this.eventObj.endX) < 25) {
-                this.handleAddEmptyObject();
-            }
-
-            if (this.eventObj.startY - this.eventObj.endY < -200 &&
+            if (this.eventObj.startY - this.eventObj.endY < -150 &&
                 Math.abs(this.eventObj.startX - this.eventObj.endX) < 25) {
                 this.handleUpdate();
             }
         }
     },
 
+    handleAddButtonTouchEnd: function (e) {
+        e.preventDefault();
+        this.handleAddEmptyObject();
+    },
+
     handleAddEmptyObject: function () {
-        this.state.todos.unshift({_id: 'newTodo'});
+        window.scroll(0,0);
+        this.state.todos.unshift({_id: 'newTodo', focused: true});
         this.setState({todos: this.state.todos});
     },
 
@@ -172,6 +167,7 @@ var TodoList = React.createClass({
                     prev={todo.prev || null}
                     next={todo.next || null}
                     todo={todo}
+                    focused={todo.focused}
                     remove={this.handleRemove.bind(this, i)}
                     editing={todo._id !== 'newTodo' ? this.state.editingTodoId === todo._id : true}
                     onStartEditing={this.setEditingModelId}
@@ -182,9 +178,9 @@ var TodoList = React.createClass({
                     left={this.state.draggingElement.left}
                     top={this.state.draggingElement.top}
                     onElementDragLeft={this.handleElementDragLeft}
-                    style={todo._id === this.state.leftDraggingElement.id
+                    deleteButtonStyle={todo._id === this.state.leftDraggingElement.id
                     && this.state.leftDraggingElement.offset < 0 ?
-                    {marginLeft: this.state.leftDraggingElement.offset + 'px'} : undefined}
+                    {width: Math.min(-this.state.leftDraggingElement.offset, 100) + 'px'} : undefined}
                 />,
                 this.state.draggingElement.overKey === todo._id ?
                     (<li key="empty-li" className="empty-li"/>) : undefined
@@ -194,6 +190,7 @@ var TodoList = React.createClass({
 
         return (
             <div className='todo-list-container'>
+                <div className='btn' onTouchEnd={this.handleAddButtonTouchEnd}>+</div>
                 <div className={this.state.loadingVisible ? 'grid-row' : 'grid-row hidden'}>
                     <div className="col">
                         <ul className="loading">
