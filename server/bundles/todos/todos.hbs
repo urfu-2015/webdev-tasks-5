@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="{{ meta.charset }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+    <meta name="description" content="{{ meta.description }}">
+
+    {{#if isDev}}
+        <link rel="stylesheet" href="//localhost:8080/todos.bundle.css">
+    {{else}}
+        <link rel="stylesheet" href="//toodoohi.surge.sh/todos.css">
+    {{/if}}
+</head>
+<body>
+<div id="root">
+    Пожалуйста, подождите.
+</div>
+
+{{> footer/footer }}
+
+{{#if isDev}}
+    <script src="//localhost:8080/todos.bundle.js"></script>
+{{else}}
+    <script src="//toodoohi.surge.sh/todos.js"></script>
+{{/if}}
+</body>
+</html>
