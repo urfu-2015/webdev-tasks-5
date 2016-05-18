@@ -15,6 +15,7 @@ class Todo {
 
     static changeTodo(num, newText) {
         const index = this.findIndex(num);
+
         if (index > -1) {
             todoList[index].todo = newText;
         }
@@ -22,6 +23,7 @@ class Todo {
 
     static deleteTodo(num) {
         const index = this.findIndex(num);
+
         if (index > -1) {
             todoList.splice(index, 1);
         }
@@ -31,10 +33,10 @@ class Todo {
         let result;
 
         num = Number(num);
-        todoList.forEach(function (item, i) {
+        todoList.some(function (item, i) {
             if (item.num === num) {
                 result = i;
-                return;
+                return true;
             }
         });
 

@@ -2,7 +2,14 @@
 
 let TodoBlock = React.createClass({
     getInitialState: function () {
-        return {data: []};
+        return {
+            data: [],
+            spinner: document.querySelector('.spinner'),
+            startY: undefined,
+            endY: undefined,
+            startPageY: undefined,
+            endPageY: undefined
+        };
     },
 
     componentDidMount: function () {
@@ -11,17 +18,9 @@ let TodoBlock = React.createClass({
         document.addEventListener('touchmove', this.handleTouchMove);
         document.addEventListener('touchend', this.handleTouchEnd);
 
-        let xhr = new XMLHttpRequest();
-
-        xhr.open('GET', this.props.url, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send();
-
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                this.setState({data: JSON.parse(xhr.response)});
-            }
-        };
+        xhr('GET', this.props.url, (response) => {
+            this.setState({data: response});
+        })
     },
 
     handleClickOnEmptySpace: function (event) {
@@ -30,45 +29,57 @@ let TodoBlock = React.createClass({
         if (!event.target.classList.length || event.target.classList.contains('todo-list') ||
             event.target.classList.contains('header') ||
             event.target.classList.contains('header__title')) {
-            checkForActiveElement();
+            hideOtherActiveElement();
         }
     },
 
     handleTouchStart: function (event) {
         event = event || window.event;
-        startY = event.changedTouches[0].clientY;
-        startPageY = event.changedTouches[0].pageY;
+
+        this.setState({
+            startY: event.changedTouches[0].clientY,
+            startPageY: event.changedTouches[0].pageY
+        });
+
     },
 
     handleTouchMove: function (event) {
         event = event || window.event;
         const lastTouch = event.changedTouches[event.changedTouches.length - 1];
-        let currentTop = parseInt(window.getComputedStyle(spinner, null)['top'].slice(0, -2));
-        let height = parseInt(window.getComputedStyle(spinner, null)['height'].slice(0, -2));
-        endY = lastTouch.clientY;
-        endPageY = lastTouch.pageY;
+        let currentTop = parseInt(window.getComputedStyle(this.state.spinner, null)['top'].slice(0, -2)),
+            height = parseInt(window.getComputedStyle(this.state.spinner, null)['height'].slice(0, -2));
+
+        this.setState({
+            endY: lastTouch.clientY,
+            endPageY: lastTouch.pageY
+        });
 
         // чтобы не утянуть спиннер слишком низко и не запульнуть выше дефолтного положения
-        if (defaultTop + endY - startY + height < pullDivide / 3 && currentTop >= defaultTop) {
-            spinner.classList.remove('spinner_hidden');
-            spinner.style.top = (defaultTop + endY - startY) + 'px';
+        if (defaultTop + this.state.endY - this.state.startY + height < pullDivide / 3 &&
+            currentTop >= defaultTop) {
 
-            let angle = ((pullDivide - endPageY) / pullDivide) * 800;
-            spinner.querySelector('img').style.transform = 'rotate(' + angle + 'deg)';
+            makeVisible(this.state.spinner, 'spinner');
+            this.state.spinner.style.top = (defaultTop + this.state.endY - this.state.startY) + 'px';
+
+            let angle = ((pullDivide - this.state.endPageY) / pullDivide) * 800;
+            this.state.spinner.querySelector('img').style.transform = 'rotate(' + angle + 'deg)';
         }
     },
 
     handleTouchEnd: function () {
-        if (endY - startY > 80 && startPageY < pullDivide && endPageY < pullDivide) {
+        if (this.state.endY - this.state.startY > 90 && this.state.startPageY < pullDivide &&
+            this.state.endPageY < pullDivide) {
             location.reload();
         } else {
-            startY = undefined;
-            endY = undefined;
-            endPageY = undefined;
-            startPageY = undefined;
+            this.setState({
+                startY: undefined,
+                endY: undefined,
+                endPageY: undefined,
+                startPageY: undefined
+            });
 
-            spinner.classList.add('spinner_hidden');
-            spinner.style.top = defaultTop + 'px';
+            hideElement('spinner');
+            this.state.spinner.style.top = defaultTop + 'px';
         }
     },
 
@@ -86,10 +97,9 @@ let TodoBlock = React.createClass({
 
 let TodoList = React.createClass({
     submitTodo: function (todo, classList) {
-        let xhr = new XMLHttpRequest();
         let req, data = {};
 
-        if (classList.contains(FORM + '-add')) {
+        if (isAddForm(classList)) {
             req = 'POST';
             data.text = todo.text;
         } else {
@@ -97,19 +107,16 @@ let TodoList = React.createClass({
             data = todo;
         }
 
-        xhr.open(req, this.props.url, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(data));
+        xhr(req, this.props.url, (response) => {
+            this.props.changeTodoList(response);
+        }, data);
 
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                this.props.changeTodoList(JSON.parse(xhr.response));
-            }
-        };
-        checkForActiveElement();
+        hideOtherActiveElement();
     },
 
     showForm: function () {
+        hideOtherActiveElement();
+
         showAddForm();
     },
 
@@ -136,25 +143,27 @@ let TodoList = React.createClass({
 });
 
 let TodoItem = React.createClass({
+    getInitialState: function () {
+        return {
+            startX: undefined,
+            endX: undefined
+        }
+    },
+
     deleteTodo: function (event) {
         event = event || window.event;
         event.persist();
 
         let todoNum = event.target.parentElement.parentElement.getAttribute('data-id');
-        let xhr = new XMLHttpRequest();
 
-        xhr.open('DELETE', this.props.url, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({num: todoNum}));
-
-        xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                this.props.changeTodoList(JSON.parse(xhr.response));
-            }
-        };
+        xhr('DELETE', this.props.url, (response) => {
+            this.props.changeTodoList(response);
+        }, {num: todoNum});
     },
 
-    handleClick: function (event) {
+    showEditForm: function (event) {
+        hideOtherActiveElement();
+
         event = event || window.event;
 
         showEditForm(event);
@@ -163,19 +172,26 @@ let TodoItem = React.createClass({
     handleTouchStart: function (event) {
         event = event || window.event;
 
-        startX = event.changedTouches[0].clientX;
+        this.setState({startX: event.changedTouches[0].clientX});
     },
 
     handleTouchMove: function (event) {
         event = event || window.event;
 
-        endX = event.changedTouches[event.changedTouches.length - 1].clientX;
+        this.setState({endX: event.changedTouches[event.changedTouches.length - 1].clientX});
     },
 
     handleTouchEnd: function (event) {
+        hideOtherActiveElement();
+
         event = event || window.event;
 
-        showDeleteButton(event);
+        showDeleteButton(event, this.state.startX, this.state.endX);
+
+        this.setState({
+            startX: undefined,
+            endX: undefined
+        });
     },
 
     render: function () {
@@ -183,10 +199,11 @@ let TodoItem = React.createClass({
             <section className="todo-list__item" data-id={this.props.num}
                      onTouchStart={this.handleTouchStart} onTouchMove={this.handleTouchMove}
                      onTouchEnd={this.handleTouchEnd}>
-                <div className="todo-list__text-delete">
-                    <div className="todo-list__text todo-list__text_visible"
-                         onClick={this.handleClick}>{this.props.text}</div>
-                    <button className="todo-list__delete todo-list__delete_hidden"
+                <div className="todo-list__text-and-delete">
+                    <div className="todo-list__text js-todo-list__text js-todo-list__text_visible"
+                         onClick={this.showEditForm}>{this.props.text}</div>
+                    <button
+                        className="todo-list__delete js-todo-list__delete todo-list__delete_hidden"
                             onClick={this.deleteTodo}></button>
                 </div>
                 <Form submitTodo={this.props.submitTodo} text={this.props.text}/>
@@ -217,8 +234,8 @@ let Form = React.createClass({
         event = event || window.event;
         event.preventDefault();
 
-        const text = this.state.text.trim();
-        const num = event.target.parentElement.getAttribute('data-id');
+        const text = this.state.text.trim(),
+            num = event.target.parentElement.getAttribute('data-id');
 
         if (!text) {
             return;
@@ -228,16 +245,20 @@ let Form = React.createClass({
             num: num,
             text: text
         }, event.target.classList);
-        this.setState({text: ''});
+        if (isAddForm(event.target.classList)) {
+            this.setState({text: ''});
+        }
     },
 
     render: function () {
         return (
             <form className={this.props.text ?
-                "todo-list__form todo-list__form-edit todo-list__form_hidden" :
-                "todo-list__form todo-list__form-add todo-list__form_hidden"}
+                "todo-list__form todo-list__form-edit js-todo-list__form-edit" +
+                 " todo-list__form_hidden" :
+                "todo-list__form todo-list__form-add js-todo-list__form-add" +
+                 " todo-list__form_hidden"}
                   onSubmit={this.handleSubmit}>
-                    <textarea className="todo-list__textarea" name="text"
+                    <textarea className="todo-list__textarea js-todo-list__textarea" name="text"
                               onChange={this.handleTextChange} value={this.state.text}></textarea>
                 <button className={this.props.text ? "todo-list__submit todo-list__submit-edit" :
                     "todo-list__submit"} type="submit">

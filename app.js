@@ -8,9 +8,6 @@ const app = express();
 const publicDir = path.join(__dirname, 'public');
 const viewsDir = path.join(__dirname, 'views');
 
-// app.set('views', viewsDir);
-// app.set('view engine', 'html');
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(publicDir));

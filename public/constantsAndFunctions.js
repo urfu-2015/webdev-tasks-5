@@ -1,56 +1,81 @@
 'use strict';
 
-const FORM = 'todo-list__form';
-const TEXT = 'todo-list__text';
-const DELETE = 'todo-list__delete';
-const TEXTAREA = 'todo-list__textarea';
-
-let startY, startPageY, startX, endX, endY, endPageY, spinner = document.querySelector('.spinner');
-const pullDivide = document.documentElement.clientHeight; // докуда можно пальцем тянуть
-const defaultTop = -52;
+const FORM = 'js-todo-list__form',
+    TEXT = 'js-todo-list__text',
+    DELETE = 'js-todo-list__delete',
+    TEXTAREA = 'js-todo-list__textarea',
+    pullDivide = document.documentElement.clientHeight, // докуда можно пальцем тянуть
+    defaultTop = -52;
 
 //функци, не относящиеся к самим компонентам, а лишь к элементам страницы
-function makeVisible(element, param) {
-    element.classList.remove('todo-list__' + param + '_hidden');
-    element.classList.add('todo-list__' + param + '_visible');
+function isAddForm(classList) {
+    return classList.contains(FORM + '-add');
 }
 
-function makeHidden(param, element) {
-    let elem = element || document.querySelector('.todo-list__' + param + '_visible');
+function isEditForm(classList) {
+    return classList.contains(FORM + '-edit');
+}
+
+function isText(classList) {
+    return classList.contains(TEXT);
+}
+
+function makeVisible(element, param) {
+    element.classList.remove('todo-list__' + param + '_hidden');
+    element.classList.add('js-todo-list__' + param + '_visible');
+}
+
+function setFocus(element) {
+    element.focus();
+}
+
+function setActiveAttribute(element) {
+    element.dataset.active = '';
+}
+
+function getGrandParent(element, param) {
+    return element.parentElement.parentElement.querySelector('.' + param);
+}
+
+function getTextArea(element) {
+    return element.querySelector('.' + TEXTAREA);
+}
+
+function hideElement(param, element) {
+    let elem = element || document.querySelector('.js-todo-list__' + param + '_visible');
 
     if (elem) {
-        elem.classList.remove('todo-list__' + param + '_visible');
+        elem.classList.remove('js-todo-list__' + param + '_visible');
         elem.classList.add('todo-list__' + param + '_hidden');
     }
 }
 
 function defaultCondition(element) {
-    let classList = element.classList;
-    if (classList.contains(FORM + '-add')) { //форма добавления
-        makeHidden('form');
+    let classList = element.classList,
+        text = element.parentElement.querySelector('.' + TEXT);
 
-        let textarea = element.querySelector('.' + TEXTAREA);
+    if (isAddForm(classList)) { //форма добавления
+        hideElement('form');
+
+        let textarea = getTextArea(element);
 
         textarea.value = '';
-        textarea.classList.remove(TEXTAREA + '_invalid');
-    } else if (classList.contains(FORM + '-edit')) { //форма изменения
-        makeHidden('form');
+    } else if (isEditForm(classList)) { //форма изменения
+        hideElement('form');
 
-        let textarea = element.querySelector('.' + TEXTAREA);
+        let textarea = getTextArea(element);
 
-        textarea.value = element.parentElement.querySelector('.' + TEXT).textContent;
-        textarea.classList.remove(TEXTAREA + '_invalid');
-
-        makeVisible(element.parentElement.querySelector('.' + TEXT), 'text');
-    } else if (classList.contains(TEXT)){
-        element.classList.remove(TEXT + '_hidden');
-        element.classList.add(TEXT + '_visible');
+        textarea.value = text.textContent;
+        
+        makeVisible(text, 'text');
+    } else if (isText(classList)){
+        makeVisible(element, 'text');
     } else {
-        makeHidden('delete');
+        hideElement('delete');
     }
 }
 
-function checkForActiveElement() {
+function hideOtherActiveElement() {
     let otherActiveElement = document.querySelector('[data-active]');
 
     if (otherActiveElement) {
@@ -59,44 +84,60 @@ function checkForActiveElement() {
     }
 }
 
-function showDeleteButton(event) {
+function showDeleteButton(event, startX, endX) {
     if (startX - endX > 50) {
-        checkForActiveElement();
+        let element = event.target,
+            deleteButton = getGrandParent(element, DELETE);
 
-        let deleteButton =
-            event.target.parentElement.parentElement.querySelector('.' + DELETE);
-
-        deleteButton.dataset.active = '';
-        deleteButton.style.width = event.target.clientHeight + 'px';
+        setActiveAttribute(deleteButton);
+        deleteButton.style.width = element.clientHeight + 'px';
         makeVisible(deleteButton, 'delete');
     }
-
-    startX = undefined;
-    endX = undefined;
 }
 
 function showAddForm() {
-    checkForActiveElement();
-
     let addForm = document.querySelector('.' + FORM + '-add');
 
-    addForm.dataset.active = '';
+    setActiveAttribute(addForm);
     makeVisible(addForm, 'form');
-    addForm.querySelector('.' + TEXTAREA).focus();
+    setFocus(getTextArea(addForm));
 }
 
 function showEditForm(event) {
-    checkForActiveElement();
+    let element = event.target,
+        editForm = getGrandParent(element, FORM + '-edit'),
+        textarea = getTextArea(editForm);
 
-    if (!event.target.classList.contains(TEXT)) {
-        return;
+    setActiveAttribute(editForm);
+    makeVisible(editForm, 'form');
+    hideElement('text', element);
+
+    setFocus(textarea);
+}
+
+function xhr(requestType, url, func, data) {
+    let xhr = new XMLHttpRequest();
+
+    xhr.open(requestType, url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    if (requestType === 'GET') {
+        xhr.send();
+    } else {
+        xhr.send(JSON.stringify(data));
     }
 
-    let editForm = event.target.parentElement.parentElement.querySelector('.' + FORM);
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            let parsedResponse;
 
-    editForm.dataset.active = '';
-    makeVisible(editForm, 'form');
+            try {
+                parsedResponse = JSON.parse(xhr.response);
+            } catch (err) {
+                return;
+            }
 
-    makeHidden('text', event.target);
-    editForm.querySelector('.' + TEXTAREA).focus();
+            func(parsedResponse);
+        }
+    };
 }
