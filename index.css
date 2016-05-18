@@ -1,0 +1,30 @@
+html,
+body
+{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 30px;
+}
+
+.app-name
+{
+    margin: 20px;
+    text-align: center;
+}
+
+.notes-container
+{
+    display: flex;
+    flex-direction: column;
+    margin: 0 30px;
+}
+
+.note
+{
+    border: 1px solid #ccc;
+    padding: 10px 0 10px 10px;
+    margin: 5% 0;
+    margin-bottom: 20px;
+}
