@@ -48,6 +48,7 @@ function eventListenerForNewNote() {
         if (isTouched) {
             submitButton.classList.remove('touched');
             sendXHR('POST', '/', document.getElementsByClassName("input-area")[0].value);
+            inputArea.value = "";
         }
     }, false);
 }
@@ -98,12 +99,12 @@ function addDeleteEvent(note) {
         touch = touches[touches.length - 1];
         endX = touch.pageX;
         endY = touch.pageY;
-        if ((startX - endX) > 20 && Math.abs(startY - endY) < 10) {
+        if ((startX - endX) > 30 && Math.abs(startY - endY) < 15) {
             note.classList.add('for-deletion');
         }
     })
     note.addEventListener('touchend', function(event) {
-        if ((startX - endX) > 20 && Math.abs(startY - endY) < 10) {
+        if ((startX - endX) > 30 && Math.abs(startY - endY) < 15) {
             container.removeChild(note);
             sendXHR('DELETE', '/', note.innerHTML);
         }

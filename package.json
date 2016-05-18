@@ -13,8 +13,7 @@
     "lint:css": "stylelint **/*.css",
     "lint": "npm-run-all lint:*",
     "start": "node ./bin/www",
-    "test": "mocha --recursive tests/",
-    "precommit": "npm-run-all lint:* test"
+    "test": "mocha --recursive tests/"
   },
   "license": "MIT",
   "dependencies": {
