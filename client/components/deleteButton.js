@@ -17,6 +17,9 @@ export default React.createClass({
         apiProvider('/todos', 'delete', {id})
             .then(function (data) {
                 store.dispatch(deleteTodo(data.id));
+            })
+            .catch(function (err) {
+                store.dispatch(deleteTodo(id));
             });
     },
     
