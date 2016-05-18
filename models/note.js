@@ -26,6 +26,4 @@ class Note {
     }
 }
 
-var testNote = new Note({text: 'Test-note'});
-memoryStorage.push(testNote)
 module.exports = Note;

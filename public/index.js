@@ -1,8 +1,38 @@
-// require('./index.css');
+var imgSrc = 'http://autoeurope-au2c.pricecoach.com/Content/themes/base/images/loading.gif';
+
+function sendXHR(method, address, text) {
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, address, true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send('text=' + text);
+}
+
+function getRefreshElement() {
+    var element = document.createElement('img');
+    element.setAttribute('src', imgSrc);
+    element.setAttribute('class', 'reload');
+    return element;
+}
+
+function getDeleteButton() {
+    var button = document.createElement('div');
+    element.setAttribute('class', 'delete-button');
+    return element;
+}
+
+function createNotes(notes, container) {
+    for (var note in notes) {
+        var newNote = document.createElement('div');
+        newNote.setAttribute('class', 'note');
+        newNote.innerHTML = notes[note].text;
+        container.appendChild(newNote);
+        addDeleteEvent(newNote);
+    }
+}
 
 
 function eventListenerForNewNote() {
-    const submitButton = document.getElementsByClassName('add-note')[0];
+    var submitButton = document.getElementsByClassName('add-note')[0];
     var allNotes = document.getElementsByClassName('note');
     var container = document.getElementsByClassName('notes-container')[0];
     var inputArea = document.getElementsByClassName("input-area")[0];
@@ -13,32 +43,29 @@ function eventListenerForNewNote() {
         var isTouched = submitButton.classList.contains('touched');
         var newNote = document.createElement('div');
         newNote.setAttribute('class', 'note');
-        //todo add listener, r
         newNote.innerHTML = inputArea.value;
         container.insertBefore(newNote, container.firstChild);
         if (isTouched) {
             submitButton.classList.remove('touched');
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/', true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send('text=' + document.getElementsByClassName("input-area")[0].value);
+            sendXHR('POST', '/', document.getElementsByClassName("input-area")[0].value);
         }
     }, false);
 }
 
 function addMoveReaction() {
     var container = document.getElementsByClassName('notes-container')[0];
-    const body = document.getElementsByTagName('body')[0];
+    var body = document.getElementsByTagName('body')[0];
     var startX = 0;
     var startY = 0;
     var endX = 0;
     var endY = 0;
-    body.addEventListener('touchstart', function (event) {
+    var refreshElement = getRefreshElement();
+    body.addEventListener('touchstart', function(event) {
         var touch = event.changedTouches[0];
         startX = touch.pageX;
         startY = touch.pageY;
     })
-    body.addEventListener('touchmove', function (event) {
+    body.addEventListener('touchmove', function(event) {
         touches = event.changedTouches;
         touch = touches[touches.length - 1];
         endX = touch.pageX;
@@ -46,26 +73,27 @@ function addMoveReaction() {
         if ((endY - startY) > 20) {
             if (!body.classList.contains('refresh')) {
                 body.classList.add('refresh');
+                body.insertBefore(refreshElement, body.children[1]);
             }
         }
     })
-    body.addEventListener('touchend', function (event) {
+    body.addEventListener('touchend', function(event) {
         if ((endY - startY) > 20) {
             body.classList.remove('refresh');
+            body.removeChild(body.getElementsByTagName('img')[0]);
             reloadNotes();
         }
     })
 }
 
-function addDeleteEvent (note) {
-    console.log('add delete event');
+function addDeleteEvent(note) {
     var container = document.getElementsByClassName('notes-container')[0];
-    note.addEventListener('touchstart', function (event) {
+    note.addEventListener('touchstart', function(event) {
         touch = event.changedTouches[0];
         startX = touch.pageX;
         startY = touch.pageY;
     })
-    note.addEventListener('touchmove', function (event) {
+    note.addEventListener('touchmove', function(event) {
         touches = event.changedTouches;
         touch = touches[touches.length - 1];
         endX = touch.pageX;
@@ -74,51 +102,40 @@ function addDeleteEvent (note) {
             note.classList.add('for-deletion');
         }
     })
-    note.addEventListener('touchend', function (event) {
+    note.addEventListener('touchend', function(event) {
         if ((startX - endX) > 20 && Math.abs(startY - endY) < 10) {
             container.removeChild(note);
-            var xhr = new XMLHttpRequest();
-            xhr.open('DELETE', '/', true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send('text=' + note.innerHTML);
+            sendXHR('DELETE', '/', note.innerHTML);
         }
     })
 }
 
+
 function reloadNotes() {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/notes', true);
-    xhr.onreadystatechange = function () {
+    xhr.onreadystatechange = function() {
         if (xhr.readyState !== 4) {
             return;
         }
         if (xhr.status != 200) {
+            console.log(xhr.status);
         } else {
             var allNotes = document.getElementsByClassName('note');
             var container = document.getElementsByClassName('notes-container')[0];
             if (allNotes.length > 0) {
                 for (var noteIndex = 0; noteIndex < allNotes.length; noteIndex++) {
-                    console.log(allNotes[noteIndex]);
                     container.removeChild(allNotes[noteIndex]);
                 }
             }
             var notes = JSON.parse(xhr.responseText).notes;
-            for (var note in notes) {
-                var container = document.getElementsByClassName('notes-container')[0];
-                var newNote = document.createElement('div');
-                newNote.setAttribute('class', 'note');
-                //todo add listener, r
-                newNote.innerHTML = notes[note].text;
-                container.appendChild(newNote);
-                addDeleteEvent(newNote);
-            }
+            createNotes(notes, container);
         }
     }
     xhr.send();
 };
 
-
-window.onload = () => {
+window.onload = function() {
     reloadNotes();
     eventListenerForNewNote();
     addMoveReaction();

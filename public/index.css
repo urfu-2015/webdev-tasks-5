@@ -6,12 +6,15 @@ body
     width: 100%;
     font-family: 'Open Sans Condensed', sans-serif;
     font-size: 20px;
+    text-align: center;
+
 }
 
 .app-name
 {
     margin: 20px;
     text-align: center;
+    position: static;
 }
 
 .notes-container
@@ -31,8 +34,11 @@ body
 
 .input-area
 {
-    width: 70%;
-    margin-left: 10px;
+    width: 77%;
+    margin: 5% 0;
+    border: 1px solid #ccc;
+    padding: 10px 0 10px 10px;
+    margin-bottom: 20px;
 }
 
 .hidden-block
@@ -48,4 +54,12 @@ body
 .for-deletion
 {
     margin-left: -20px;
+}
+
+.reload {
+    width: 50px;
+}
+
+.delete-button {
+    height: 100%;
 }

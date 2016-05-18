@@ -6,9 +6,8 @@ exports.list = (req, res) => {
     const notes = Note.findAll();
     console.log(notes);
     const data = {
-        notes: notes
+        notes
     };
-
     res.send(data);
 };
 
@@ -28,18 +27,21 @@ exports.item = (req, res) => {
     res.send(data);
 };
 
-exports.create = (req, res) => {
+exports.create = (req, res, next) => {
     const data = {
         text: req.body.text,
         createdAt: Date.now()
     };
     const note = new Note(data);
     note.save();
-    this.list(req, res);
+    next();
 };
 
 exports.delete = (req, res) => {
     console.log(req.body);
     const note = new Note(req.body);
     note.delete();
+    res.sendStatus(204);
 }
+
+exports.error404 = (req, res) => res.sendStatus(404);
