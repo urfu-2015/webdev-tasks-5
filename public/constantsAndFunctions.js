@@ -66,7 +66,7 @@ function defaultCondition(element) {
         let textarea = getTextArea(element);
 
         textarea.value = text.textContent;
-        
+
         makeVisible(text, 'text');
     } else if (isText(classList)){
         makeVisible(element, 'text');
@@ -84,8 +84,18 @@ function hideOtherActiveElement() {
     }
 }
 
+function clickOnEmptySpace(event) {
+    if (!event.target.classList.length || event.target.classList.contains('todo-list') ||
+        event.target.classList.contains('header') ||
+        event.target.classList.contains('header__title')) {
+        hideOtherActiveElement();
+    }
+}
+
 function showDeleteButton(event, startX, endX) {
     if (startX - endX > 50) {
+        hideOtherActiveElement();
+        
         let element = event.target,
             deleteButton = getGrandParent(element, DELETE);
 
@@ -96,6 +106,8 @@ function showDeleteButton(event, startX, endX) {
 }
 
 function showAddForm() {
+    hideOtherActiveElement();
+
     let addForm = document.querySelector('.' + FORM + '-add');
 
     setActiveAttribute(addForm);
@@ -104,6 +116,8 @@ function showAddForm() {
 }
 
 function showEditForm(event) {
+    hideOtherActiveElement();
+
     let element = event.target,
         editForm = getGrandParent(element, FORM + '-edit'),
         textarea = getTextArea(editForm);
@@ -115,16 +129,16 @@ function showEditForm(event) {
     setFocus(textarea);
 }
 
-function xhr(requestType, url, func, data) {
+function xhr(props, callback) {
     let xhr = new XMLHttpRequest();
 
-    xhr.open(requestType, url, true);
+    xhr.open(props.requestType, props.url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
 
-    if (requestType === 'GET') {
+    if (props.requestType === 'GET') {
         xhr.send();
     } else {
-        xhr.send(JSON.stringify(data));
+        xhr.send(JSON.stringify(props.data));
     }
 
     xhr.onreadystatechange = () => {
@@ -137,7 +151,7 @@ function xhr(requestType, url, func, data) {
                 return;
             }
 
-            func(parsedResponse);
+            callback(parsedResponse);
         }
     };
 }

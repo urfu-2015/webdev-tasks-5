@@ -18,7 +18,9 @@ let TodoBlock = React.createClass({
         document.addEventListener('touchmove', this.handleTouchMove);
         document.addEventListener('touchend', this.handleTouchEnd);
 
-        xhr('GET', this.props.url, (response) => {
+        let url = this.props.url;
+
+        xhr({requestType: 'GET', url: url}, (response) => {
             this.setState({data: response});
         })
     },
@@ -26,11 +28,7 @@ let TodoBlock = React.createClass({
     handleClickOnEmptySpace: function (event) {
         event = event || window.event;
 
-        if (!event.target.classList.length || event.target.classList.contains('todo-list') ||
-            event.target.classList.contains('header') ||
-            event.target.classList.contains('header__title')) {
-            hideOtherActiveElement();
-        }
+        clickOnEmptySpace(event);
     },
 
     handleTouchStart: function (event) {
@@ -97,7 +95,8 @@ let TodoBlock = React.createClass({
 
 let TodoList = React.createClass({
     submitTodo: function (todo, classList) {
-        let req, data = {};
+        let req, data = {},
+            url = this.props.url;
 
         if (isAddForm(classList)) {
             req = 'POST';
@@ -107,16 +106,14 @@ let TodoList = React.createClass({
             data = todo;
         }
 
-        xhr(req, this.props.url, (response) => {
+        xhr({requestType: req, url: url, data: data}, (response) => {
             this.props.changeTodoList(response);
-        }, data);
+        });
 
         hideOtherActiveElement();
     },
 
     showForm: function () {
-        hideOtherActiveElement();
-
         showAddForm();
     },
 
@@ -154,16 +151,16 @@ let TodoItem = React.createClass({
         event = event || window.event;
         event.persist();
 
-        let todoNum = event.target.parentElement.parentElement.getAttribute('data-id');
+        let todoNum = event.target.parentElement.parentElement.getAttribute('data-id'),
+            url = this.props.url,
+            data = {num: todoNum};
 
-        xhr('DELETE', this.props.url, (response) => {
+        xhr({requestType: 'DELETE', url: url, data: data}, (response) => {
             this.props.changeTodoList(response);
-        }, {num: todoNum});
+        });
     },
 
     showEditForm: function (event) {
-        hideOtherActiveElement();
-
         event = event || window.event;
 
         showEditForm(event);
@@ -182,8 +179,6 @@ let TodoItem = React.createClass({
     },
 
     handleTouchEnd: function (event) {
-        hideOtherActiveElement();
-
         event = event || window.event;
 
         showDeleteButton(event, this.state.startX, this.state.endX);
