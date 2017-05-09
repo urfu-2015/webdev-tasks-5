@@ -1,0 +1,19 @@
+{
+  "name": "webdev-task-5",
+  "version": "1.0.0",
+  "description": "В отзывах вы писали нам, что задачи стали простые и однобокие, и мы решили подготовить сложную и многобокую задачу, а именно – реализовать целый сервис «TODOхи» для ведения списка задач.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Strandol/webdev-tasks-5.git"
+  },
+  "author": "dvalian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Strandol/webdev-tasks-5/issues"
+  },
+  "homepage": "https://github.com/Strandol/webdev-tasks-5#readme"
+}
